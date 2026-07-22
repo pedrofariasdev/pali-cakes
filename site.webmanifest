@@ -1,0 +1,21 @@
+{
+  "name": "Pali Cakes",
+  "short_name": "Pali Cakes",
+  "description": "Bolos e doces artesanais personalizados para momentos especiais.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fffaf6",
+  "theme_color": "#d7a2a8",
+  "icons": [
+    {
+      "src": "assets/images/favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/images/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
