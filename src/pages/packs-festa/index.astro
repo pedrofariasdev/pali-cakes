@@ -1,0 +1,87 @@
+---
+import MainLayout from "../../layouts/MainLayout.astro";
+import ProductCard from "../../components/products/ProductCard.astro";
+
+import { products } from "../../data/products";
+
+const packs = products.filter(
+  (product) =>
+    product.active &&
+    product.categorySlug === "packs-festa"
+);
+---
+
+<MainLayout
+  title="Packs Festa | Pali Cakes"
+  description="Packs completos para tornar a sua celebração ainda mais especial."
+>
+
+<section class="catalog-page">
+
+  <div class="container">
+
+    <div class="catalog-page__header">
+
+      <nav class="catalog-breadcrumb">
+        <a href="/packs-festa">
+          Início
+        </a>
+
+        <span>/</span>
+
+        <span>
+          Packs Festa
+        </span>
+      </nav>
+
+
+      <span class="section-title__eyebrow">
+        Packs Pali Cakes
+      </span>
+
+
+      <h1>
+        Packs Festa
+      </h1>
+
+
+      <p>
+        Soluções completas para aniversários,
+        celebrações e momentos especiais.
+        Escolha o pack ideal ou personalize
+        de acordo com a sua festa.
+      </p>
+
+    </div>
+
+
+    <div class="catalog-grid">
+
+      {
+        packs.map((product) => (
+          <ProductCard
+
+            name={product.name}
+
+            category="Pack Festa"
+
+            image={product.image}
+
+            href={`/packs-festa/${product.slug}`}
+
+            price={product.price}
+
+            priceLabel={product.priceLabel}
+
+          />
+        ))
+      }
+
+    </div>
+
+
+  </div>
+
+</section>
+
+</MainLayout>

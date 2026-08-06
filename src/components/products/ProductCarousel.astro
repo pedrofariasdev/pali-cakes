@@ -1,0 +1,89 @@
+---
+import ProductCard from "./ProductCard.astro";
+import { categories } from "../../data/categories";
+
+const featuredCategories = categories.filter(
+  (category) => category.featured && category.active
+);
+
+const carouselDuration = `${Math.max(
+  featuredCategories.length * 8,
+  40
+)}s`;
+---
+
+<section
+  class="catalog-carousel"
+  aria-labelledby="catalog-carousel-title"
+>
+  <div class="container catalog-carousel__header">
+    <div class="section-title">
+      <span class="section-title__eyebrow">
+        Escolha a sua criação
+      </span>
+
+      <h2 id="catalog-carousel-title">
+        Encontre o doce perfeito
+        <span>para o seu momento</span>
+      </h2>
+    </div>
+
+    <div class="catalog-carousel__intro">
+      <p>
+        Explore algumas das opções da Pali Cakes e encontre
+        a inspiração ideal para a sua próxima celebração.
+      </p>
+
+      <a
+        href="/catalogo"
+        class="catalog-carousel__all"
+      >
+        Ver catálogo completo
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="catalog-carousel__viewport">
+    <div
+      class="catalog-carousel__track"
+      style={`--carousel-duration: ${carouselDuration};`}
+    >
+      <div class="catalog-carousel__group">
+        {
+          featuredCategories.map((product) => (
+            <ProductCard
+              name={product.name}
+              category={product.category}
+              image={product.image}
+              href={product.href}
+              price={null}
+              priceLabel="Ver opções"
+              linkLabel="Ver coleção"
+            />
+          ))
+        }
+      </div>
+
+      <div
+        class="catalog-carousel__group"
+        aria-hidden="true"
+        inert
+      >
+        {
+          featuredCategories.map((product) => (
+            <ProductCard
+              name={product.name}
+              category={product.category}
+              image={product.image}
+              href={product.href}
+              price={null}
+              priceLabel="Ver opções"
+              linkLabel="Ver coleção"
+            />
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

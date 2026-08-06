@@ -1,0 +1,242 @@
+---
+import type { GetStaticPaths } from "astro";
+
+import MainLayout from "@/layouts/MainLayout.astro";
+import ProductCard from "@/components/products/ProductCard.astro";
+
+import {
+  categories,
+  type CatalogCategory
+} from "@/data/categories";
+
+import { products } from "@/data/products";
+
+
+export const getStaticPaths = (() => {
+  return categories
+    .filter(
+      (category) =>
+        category.active &&
+        category.categorySlug !== "packs"
+    )
+    .map((category) => ({
+      params: {
+        slug: category.categorySlug
+      },
+
+      props: {
+        category
+      }
+    }));
+}) satisfies GetStaticPaths;
+
+
+interface Props {
+  category: CatalogCategory;
+}
+
+
+const { category } = Astro.props;
+
+const slug = category.categorySlug;
+
+
+const activeCategories = categories.filter(
+  (item) => item.active
+);
+
+const visibleCategories = activeCategories.slice(0, 5);
+
+const hiddenCategories = activeCategories.slice(5);
+
+const activeCategoryIsHidden = hiddenCategories.some(
+  (item) => item.categorySlug === slug
+);
+
+
+const categoryProducts = products.filter(
+  (product) =>
+    product.active &&
+    product.categorySlug === slug
+);
+---
+
+<MainLayout
+  title={`${category.name} | Pali Cakes`}
+  description={category.description}
+>
+  <section class="catalog-hero catalog-hero--category">
+    <div class="container catalog-hero__container">
+
+      <nav
+        class="catalog-breadcrumb"
+        aria-label="Navegação estrutural"
+      >
+        <a href="/">
+          Início
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <a href="/catalogo">
+          Catálogo
+        </a>
+
+        <span aria-hidden="true">/</span>
+
+        <span aria-current="page">
+          {category.name}
+        </span>
+      </nav>
+
+      <span class="section-title__eyebrow">
+        Catálogo Pali Cakes
+      </span>
+
+      <h1>
+        {category.name}
+      </h1>
+
+      <p>
+        {category.description}
+      </p>
+
+    </div>
+  </section>
+
+
+  <section class="catalog-page">
+    <div class="container">
+
+        <nav
+        class="catalog-categories"
+        aria-label="Categorias do catálogo"
+        >
+        {
+            visibleCategories.map((item) => (
+            <a
+                href={item.href}
+                class:list={{
+                "is-active": item.categorySlug === slug
+                }}
+                aria-current={
+                item.categorySlug === slug
+                    ? "page"
+                    : undefined
+                }
+            >
+                {item.name}
+            </a>
+            ))
+        }
+
+        {
+            hiddenCategories.length > 0 && (
+            <details class="catalog-categories__more">
+                <summary>
+                <span>
+                    {
+                    activeCategoryIsHidden
+                        ? category.name
+                        : "Mais"
+                    }
+                </span>
+
+                <span
+                    class="catalog-categories__arrow"
+                    aria-hidden="true"
+                >
+                    ⌄
+                </span>
+                </summary>
+
+                <div class="catalog-categories__dropdown">
+                {
+                    hiddenCategories.map((item) => (
+                    <a
+                        href={item.href}
+                        class:list={{
+                        "is-active":
+                            item.categorySlug === slug
+                        }}
+                        aria-current={
+                        item.categorySlug === slug
+                            ? "page"
+                            : undefined
+                        }
+                    >
+                        {item.name}
+                    </a>
+                    ))
+                }
+                </div>
+            </details>
+            )
+        }
+        </nav>
+
+
+      <div class="catalog-page__header">
+        <div>
+          <span class="section-title__eyebrow">
+            Criações artesanais
+          </span>
+
+          <h2>
+            Explore {category.name}
+          </h2>
+        </div>
+
+        <p>
+          Cada criação pode ser personalizada de acordo
+          com o tema, as cores, os sabores e os detalhes
+          escolhidos para a celebração.
+        </p>
+      </div>
+
+
+      {
+        categoryProducts.length > 0 ? (
+          <div class="catalog-grid">
+            {
+              categoryProducts.map((product) => (
+                <ProductCard
+                  name={product.name}
+                  category={category.name}
+                  image={product.image}
+                  href={`/catalogo/${product.categorySlug}/${product.slug}`}
+                  price={product.price}
+                  priceLabel={product.priceLabel}
+                  linkLabel="Ver detalhes"
+                />
+              ))
+            }
+          </div>
+        ) : (
+          <div class="catalog-empty">
+            <span aria-hidden="true">
+              🧁
+            </span>
+
+            <h2>
+              Novidades a caminho
+            </h2>
+
+            <p>
+              Estamos a preparar as opções desta categoria.
+              Entre em contacto para pedir uma criação personalizada.
+            </p>
+
+            <a
+              href="/contactos"
+              class="button button--primary"
+            >
+              Pedir informações
+            </a>
+          </div>
+        )
+      }
+
+    </div>
+  </section>
+</MainLayout>

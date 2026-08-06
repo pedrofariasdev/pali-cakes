@@ -1,0 +1,168 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+
+const aboutImage = "/images/about/about-pali.png";
+---
+
+<MainLayout
+  title="Sobre | Pali Cakes"
+  description="Conheça a Pali Cakes e o cuidado por detrás de cada bolo e doce artesanal."
+>
+  <section class="about-hero">
+    <div class="container about-hero__container">
+      <div class="about-hero__content">
+        <nav
+          class="catalog-breadcrumb about-hero__breadcrumb"
+          aria-label="Navegação estrutural"
+        >
+          <a href="/">Início</a>
+
+          <span aria-hidden="true">/</span>
+
+          <span aria-current="page">
+            Sobre
+          </span>
+        </nav>
+
+        <span class="section-title__eyebrow">
+          Sobre a Pali Cakes
+        </span>
+
+        <h1>
+          Cada criação começa
+          <span>com uma história</span>
+        </h1>
+
+        <p>
+          Na Pali Cakes, cada bolo e cada doce são preparados
+          artesanalmente para traduzir o estilo, os sabores e os
+          detalhes de cada celebração.
+        </p>
+
+        <div class="about-hero__actions">
+          <a
+            href="/catalogo"
+            class="button button--primary"
+          >
+            Conhecer o catálogo
+          </a>
+
+          <a
+            href="/contactos"
+            class="button button--secondary"
+          >
+            Falar com a Pali
+          </a>
+        </div>
+      </div>
+
+      <div class="about-hero__visual">
+        <div class="about-hero__image">
+          <img
+            src={aboutImage}
+            alt="Produção artesanal da Pali Cakes"
+          />
+        </div>
+
+        <div class="about-hero__seal">
+          <span>Feito com</span>
+          <strong>carinho</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="about-story">
+    <div class="container about-story__container">
+      <div class="about-story__heading">
+        <span class="section-title__eyebrow">
+          A nossa essência
+        </span>
+
+        <h2>
+          Muito mais do que
+          <span>um bolo bonito</span>
+        </h2>
+      </div>
+
+      <div class="about-story__content">
+        <p class="about-story__lead">
+          Cada encomenda é uma oportunidade de transformar uma
+          ideia numa criação especial, pensada exclusivamente para
+          aquele momento.
+        </p>
+
+        <p>
+          Desde a escolha dos sabores até à decoração final, todos
+          os detalhes são preparados com atenção, criatividade e
+          cuidado artesanal.
+        </p>
+
+        <p>
+          O objetivo é que cada cliente receba algo que represente
+          verdadeiramente a sua celebração e que faça parte das
+          memórias daquele dia.
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="about-values">
+    <div class="container">
+      <header class="about-values__header">
+        <span class="section-title__eyebrow">
+          O que nos guia
+        </span>
+
+        <h2>
+          Cuidado presente
+          <span>em cada detalhe</span>
+        </h2>
+      </header>
+
+      <div class="about-values__grid">
+        <article class="about-value">
+          <span class="about-value__number">
+            01
+          </span>
+
+          <h3>Produção artesanal</h3>
+
+          <p>
+            Cada criação é preparada cuidadosamente, respeitando
+            o tempo e os detalhes necessários para um resultado especial.
+          </p>
+        </article>
+
+        <article class="about-value">
+          <span class="about-value__number">
+            02
+          </span>
+
+          <h3>Personalização</h3>
+
+          <p>
+            Temas, cores, sabores e acabamentos são escolhidos
+            de acordo com a identidade de cada celebração.
+          </p>
+        </article>
+
+        <article class="about-value">
+          <span class="about-value__number">
+            03
+          </span>
+
+          <h3>Proximidade</h3>
+
+          <p>
+            Cada pedido é acompanhado de perto para compreender
+            a ideia do cliente e encontrar a melhor solução.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+</MainLayout>

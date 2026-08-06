@@ -1,0 +1,59 @@
+---
+interface Props {
+  name: string;
+  rating: number;
+  comment: string;
+  orderType?: string;
+}
+
+const {
+  name,
+  rating,
+  comment,
+  orderType = "Encomenda personalizada"
+} = Astro.props;
+
+const initial = name.charAt(0).toUpperCase();
+---
+
+<article class="review-card">
+  <div class="review-card__top">
+    <span
+      class="review-card__quote"
+      aria-hidden="true"
+    >
+      “
+    </span>
+
+    <div
+      class="review-card__rating"
+      aria-label={`Avaliação de ${rating} estrelas`}
+    >
+      {
+        Array.from({ length: 5 }, (_, index) => (
+          <span class:list={{ "is-empty": index >= rating }}>
+            ★
+          </span>
+        ))
+      }
+    </div>
+  </div>
+
+  <blockquote>
+    {comment}
+  </blockquote>
+
+  <footer class="review-card__client">
+    <div
+      class="review-card__avatar"
+      aria-hidden="true"
+    >
+      {initial}
+    </div>
+
+    <div>
+      <strong>{name}</strong>
+      <span>{orderType}</span>
+    </div>
+  </footer>
+</article>

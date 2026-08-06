@@ -1,0 +1,199 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { portfolioItems } from "../data/portfolio";
+
+const activePortfolioItems = portfolioItems.filter(
+  (item) => item.active
+);
+
+const portfolioCategories = [
+  "Todos",
+  ...new Set(
+    activePortfolioItems.map((item) => item.category)
+  )
+];
+---
+
+<MainLayout
+  title="Portfólio | Pali Cakes"
+  description="Conheça algumas das criações artesanais e personalizadas produzidas pela Pali Cakes."
+>
+  <section class="portfolio-hero">
+    <div class="container portfolio-hero__container">
+      <nav
+        class="catalog-breadcrumb"
+        aria-label="Navegação estrutural"
+      >
+        <a href="/">Início</a>
+
+        <span aria-hidden="true">/</span>
+
+        <span aria-current="page">
+          Portfólio
+        </span>
+      </nav>
+
+      <span class="section-title__eyebrow">
+        Criações Pali Cakes
+      </span>
+
+      <h1>
+        Momentos transformados
+        <span>em criações especiais</span>
+      </h1>
+
+      <p>
+        Conheça alguns dos trabalhos preparados artesanalmente
+        para aniversários, festas e celebrações inesquecíveis.
+      </p>
+    </div>
+  </section>
+
+
+  <section class="portfolio-page">
+    <div class="container">
+
+      <header class="portfolio-page__header">
+        <div>
+          <span class="section-title__eyebrow">
+            Inspiração
+          </span>
+
+          <h2>
+            Explore o nosso trabalho
+          </h2>
+        </div>
+
+        <p>
+          Cada criação é desenvolvida de acordo com o tema,
+          as cores, os sabores e os detalhes escolhidos pelo cliente.
+        </p>
+      </header>
+
+
+      <nav
+        class="portfolio-filters"
+        aria-label="Filtros do portfólio"
+      >
+        {
+          portfolioCategories.map((category, index) => (
+            <button
+              type="button"
+              class:list={{
+                "is-active": index === 0
+              }}
+              data-portfolio-filter={category}
+            >
+              {category}
+            </button>
+          ))
+        }
+      </nav>
+
+
+      <div
+        class="portfolio-grid"
+        data-portfolio-grid
+      >
+        {
+          activePortfolioItems.map((item, index) => (
+            <article
+              class:list={[
+                "portfolio-item",
+                {
+                  "portfolio-item--featured":
+                    item.featured && index < 3
+                }
+              ]}
+              data-portfolio-item
+              data-category={item.category}
+            >
+                <button
+                type="button"
+                class="portfolio-item__button"
+                aria-label={`Ampliar ${item.title}`}
+                data-portfolio-open
+                data-image={item.image}
+                data-title={item.title}
+                data-category={item.category}
+                data-alt={item.alt}
+                >
+                <img
+                  src={item.image}
+                  alt={item.alt}
+                  loading="lazy"
+                />
+
+                <span class="portfolio-item__overlay">
+                  <span>{item.category}</span>
+                  <strong>{item.title}</strong>
+                  <small>Ver criação</small>
+                </span>
+              </button>
+            </article>
+          ))
+        }
+      </div>
+
+
+      <div class="portfolio-cta">
+        <div>
+          <span class="section-title__eyebrow">
+            A sua celebração
+          </span>
+
+          <h2>
+            Tem uma ideia especial?
+          </h2>
+
+          <p>
+            Explore o catálogo, escolha uma referência e conte-nos
+            como imagina a sua criação.
+          </p>
+        </div>
+
+        <a
+          href="/catalogo"
+          class="button button--primary"
+        >
+          Começar uma encomenda
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+    <dialog
+    class="portfolio-modal"
+    data-portfolio-modal
+    >
+    <button
+        type="button"
+        class="portfolio-modal__close"
+        aria-label="Fechar imagem"
+        data-portfolio-close
+    >
+        ×
+    </button>
+
+    <div class="portfolio-modal__content">
+        <div class="portfolio-modal__visual">
+        <img
+            src=""
+            alt=""
+            data-portfolio-modal-image
+        />
+        </div>
+
+        <div class="portfolio-modal__info">
+        <span data-portfolio-modal-category></span>
+        <h2 data-portfolio-modal-title></h2>
+        </div>
+    </div>
+    </dialog>
+
+    <script>
+    import "../scripts/portfolio.ts";
+    </script>
+
+</MainLayout>

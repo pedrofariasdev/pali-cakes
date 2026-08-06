@@ -1,0 +1,107 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout
+  title="Minha encomenda | Pali Cakes"
+  description="Revise os produtos escolhidos para a sua encomenda Pali Cakes."
+>
+  <section class="cart-page">
+    <div class="container">
+      <header class="cart-page__header">
+        <span class="section-title__eyebrow">
+          A sua seleção
+        </span>
+
+        <h1>
+          Minha encomenda
+        </h1>
+
+        <p>
+          Reveja os produtos escolhidos antes de enviar o pedido
+          de orçamento para a Pali Cakes.
+        </p>
+      </header>
+
+      <div
+        class="cart-layout"
+        data-cart-layout
+        hidden
+      >
+        <div
+          class="cart-list"
+          data-cart-list
+        ></div>
+
+        <aside class="cart-summary">
+          <span class="section-title__eyebrow">
+            Resumo
+          </span>
+
+          <div class="cart-summary__row">
+            <span>Quantidade de itens</span>
+            <strong data-cart-items-count>0</strong>
+          </div>
+
+          <div class="cart-summary__row cart-summary__row--total">
+            <span>Total conhecido</span>
+            <strong data-cart-total>0,00 €</strong>
+          </div>
+
+          <p
+            class="cart-summary__note"
+            data-cart-summary-note
+          >
+            Os produtos sob consulta terão o valor confirmado
+            após o envio do pedido.
+          </p>
+
+            <a
+            href="/finalizar-encomenda"
+            class="button button--primary cart-summary__checkout"
+            >
+            Finalizar encomenda
+            </a>
+
+          <small>
+            A finalização será ativada quando criarmos o formulário
+            de dados e entrega.
+          </small>
+
+          <a
+            href="/catalogo"
+            class="cart-summary__continue"
+          >
+            ← Continuar a escolher
+          </a>
+        </aside>
+      </div>
+
+      <div
+        class="cart-empty"
+        data-cart-empty
+        hidden
+      >
+        <span aria-hidden="true">🧁</span>
+
+        <h2>A sua encomenda está vazia</h2>
+
+        <p>
+          Explore o catálogo e escolha as criações que gostaria
+          de incluir no seu pedido.
+        </p>
+
+        <a
+          href="/catalogo"
+          class="button button--primary"
+        >
+          Explorar catálogo
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    import "../scripts/cart-page.ts";
+  </script>
+</MainLayout>

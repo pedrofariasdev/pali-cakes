@@ -1,0 +1,154 @@
+---
+import type { GetStaticPaths } from "astro";
+
+import MainLayout from "@/layouts/MainLayout.astro";
+
+import {
+  products,
+  type Product
+} from "@/data/products";
+
+
+export const getStaticPaths = (() => {
+  return products
+    .filter(
+      (product) =>
+        product.active &&
+        product.categorySlug === "packs-festa"
+    )
+    .map((product) => ({
+      params: {
+        productSlug: product.slug
+      },
+
+      props: {
+        product
+      }
+    }));
+}) satisfies GetStaticPaths;
+
+
+interface Props {
+  product: Product;
+}
+
+
+const { product } = Astro.props;
+
+
+const formattedPrice =
+  product.price !== null
+    ? new Intl.NumberFormat("pt-PT", {
+        style: "currency",
+        currency: "EUR"
+      }).format(product.price)
+    : product.priceLabel;
+---
+
+<MainLayout
+  title={`${product.name} | Pali Cakes`}
+  description={product.description}
+>
+  <section class="product-detail">
+    <div class="container product-detail__container">
+
+      <div class="product-detail__visual">
+        <div class="product-detail__image">
+          <img
+            src={product.image}
+            alt={product.name}
+          />
+        </div>
+      </div>
+
+
+      <div class="product-detail__content">
+
+        <nav
+          class="catalog-breadcrumb product-detail__breadcrumb"
+          aria-label="Navegação estrutural"
+        >
+          <a href="/">Início</a>
+
+          <span aria-hidden="true">/</span>
+
+          <a href="/packs-festa">
+            Packs Festa
+          </a>
+
+          <span aria-hidden="true">/</span>
+
+          <span aria-current="page">
+            {product.name}
+          </span>
+        </nav>
+
+
+        <span class="section-title__eyebrow">
+          Pack Festa
+        </span>
+
+        <h1>
+          {product.name}
+        </h1>
+
+        <p class="product-detail__description">
+          {product.description}
+        </p>
+
+
+        <div class="product-detail__price">
+          <span>Valor</span>
+
+          <strong>
+            {formattedPrice}
+          </strong>
+        </div>
+
+
+        <div class="product-detail__notice">
+          <span aria-hidden="true">✦</span>
+
+          <p>
+            Os produtos, as quantidades, os sabores, as cores
+            e os detalhes do pack podem ser ajustados de acordo
+            com a celebração.
+          </p>
+        </div>
+
+
+        <div class="product-detail__actions">
+          <button
+            type="button"
+            class="button button--primary"
+            data-add-to-cart
+            data-product-id={product.id}
+            data-product-name={product.name}
+            data-product-image={product.image}
+            data-product-price={product.price ?? ""}
+            data-product-price-label={product.priceLabel}
+            data-category-slug={product.categorySlug}
+            data-product-slug={product.slug}
+          >
+            Adicionar à encomenda
+          </button>
+
+          <a
+            href="/packs-festa"
+            class="button button--secondary"
+          >
+            Ver outros packs
+          </a>
+        </div>
+
+
+        <p class="product-detail__helper">
+          O pedido será enviado para orçamento. Não existe
+          pagamento online nesta etapa.
+        </p>
+
+      </div>
+
+    </div>
+  </section>
+</MainLayout>

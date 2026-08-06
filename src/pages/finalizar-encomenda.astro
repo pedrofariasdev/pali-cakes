@@ -1,0 +1,270 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+---
+
+<MainLayout
+  title="Finalizar encomenda | Pali Cakes"
+  description="Preencha os dados necessários para enviar a sua encomenda à Pali Cakes."
+>
+  <section class="checkout-page">
+    <div class="container">
+      <header class="checkout-page__header">
+        <span class="section-title__eyebrow">
+          Últimos detalhes
+        </span>
+
+        <h1>
+          Finalizar encomenda
+        </h1>
+
+        <p>
+          Preencha os seus dados e as informações da celebração.
+          A Pali Cakes entrará em contacto para confirmar os detalhes,
+          a disponibilidade e o orçamento final.
+        </p>
+      </header>
+
+      <div class="checkout-layout">
+        <form
+          class="checkout-form"
+          data-checkout-form
+        >
+          <section class="checkout-form__section">
+            <div class="checkout-form__title">
+              <span>01</span>
+
+              <div>
+                <h2>Dados de contacto</h2>
+                <p>Como a Pali Cakes poderá entrar em contacto consigo.</p>
+              </div>
+            </div>
+
+            <div class="checkout-form__grid">
+              <label class="form-field form-field--full">
+                <span>Nome completo *</span>
+
+                <input
+                  type="text"
+                  name="customerName"
+                  autocomplete="name"
+                  required
+                />
+              </label>
+
+              <label class="form-field">
+                <span>Email *</span>
+
+                <input
+                  type="email"
+                  name="customerEmail"
+                  autocomplete="email"
+                  required
+                />
+              </label>
+
+              <label class="form-field">
+                <span>Telefone *</span>
+
+                <input
+                  type="tel"
+                  name="customerPhone"
+                  autocomplete="tel"
+                  required
+                />
+              </label>
+            </div>
+          </section>
+
+          <section class="checkout-form__section">
+            <div class="checkout-form__title">
+              <span>02</span>
+
+              <div>
+                <h2>Detalhes da celebração</h2>
+                <p>Conte-nos um pouco sobre o momento especial.</p>
+              </div>
+            </div>
+
+            <div class="checkout-form__grid">
+              <label class="form-field">
+                <span>Data pretendida *</span>
+
+                <input
+                  type="date"
+                  name="eventDate"
+                  required
+                />
+              </label>
+
+              <label class="form-field">
+                <span>Tipo de celebração</span>
+
+                <select name="eventType">
+                  <option value="">Selecionar</option>
+                  <option value="aniversario">Aniversário</option>
+                  <option value="casamento">Casamento</option>
+                  <option value="batizado">Batizado</option>
+                  <option value="baby-shower">Baby shower</option>
+                  <option value="evento">Evento</option>
+                  <option value="outro">Outro</option>
+                </select>
+              </label>
+
+              <label class="form-field form-field--full">
+                <span>Observações e personalização</span>
+
+                <textarea
+                  name="notes"
+                  rows="5"
+                  placeholder="Tema, cores, sabores, quantidade de pessoas e outros detalhes importantes."
+                ></textarea>
+              </label>
+            </div>
+          </section>
+
+          <section class="checkout-form__section">
+            <div class="checkout-form__title">
+              <span>03</span>
+
+              <div>
+                <h2>Receção da encomenda</h2>
+                <p>Escolha entre levantamento ou entrega.</p>
+              </div>
+            </div>
+
+            <div class="checkout-options">
+              <label class="checkout-option">
+                <input
+                  type="radio"
+                  name="fulfillmentType"
+                  value="pickup"
+                  checked
+                  required
+                />
+
+                <span>
+                  <strong>Levantamento</strong>
+                  <small>A encomenda será levantada no local combinado.</small>
+                </span>
+              </label>
+
+              <label class="checkout-option">
+                <input
+                  type="radio"
+                  name="fulfillmentType"
+                  value="delivery"
+                  required
+                />
+
+                <span>
+                  <strong>Entrega</strong>
+                  <small>O valor será calculado de acordo com a zona.</small>
+                </span>
+              </label>
+            </div>
+
+            <div
+              class="checkout-delivery"
+              data-delivery-fields
+              hidden
+            >
+              <div class="checkout-form__grid">
+                <label class="form-field form-field--full">
+                  <span>Morada</span>
+
+                  <input
+                    type="text"
+                    name="deliveryAddress"
+                    autocomplete="street-address"
+                  />
+                </label>
+
+                <label class="form-field">
+                  <span>Código postal</span>
+
+                  <input
+                    type="text"
+                    name="postalCode"
+                    autocomplete="postal-code"
+                    placeholder="0000-000"
+                  />
+                </label>
+
+                <label class="form-field">
+                  <span>Localidade</span>
+
+                  <input
+                    type="text"
+                    name="city"
+                    autocomplete="address-level2"
+                  />
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <label class="checkout-consent">
+            <input
+              type="checkbox"
+              name="contactConsent"
+              required
+            />
+
+            <span>
+              Confirmo que os dados estão corretos e autorizo a
+              Pali Cakes a contactar-me sobre esta encomenda.
+            </span>
+          </label>
+
+            <button
+            type="submit"
+            class="button button--primary checkout-form__submit"
+            data-checkout-submit
+            disabled
+            >
+            Preparar pedido de encomenda
+            </button>
+
+            <p
+            class="checkout-form__helper"
+            data-checkout-helper
+            >
+            Os dados serão guardados neste navegador até ligarmos o envio ao Supabase.
+            </p>
+        </form>
+
+        <aside class="checkout-summary">
+          <span class="section-title__eyebrow">
+            A sua seleção
+          </span>
+
+          <div
+            class="checkout-summary__items"
+            data-checkout-items
+          >
+            <p>
+              Os produtos escolhidos aparecerão aqui.
+            </p>
+          </div>
+
+          <div class="checkout-summary__footer">
+            <span>Total conhecido</span>
+            <strong data-checkout-total>0,00 €</strong>
+          </div>
+
+          <p>
+            Os itens “sob consulta” terão o preço confirmado
+            após a análise do pedido.
+          </p>
+
+          <a href="/carrinho">
+            ← Voltar ao carrinho
+          </a>
+        </aside>
+      </div>
+    </div>
+  </section>
+  <script>
+  import "../scripts/checkout.ts";
+</script>
+</MainLayout>

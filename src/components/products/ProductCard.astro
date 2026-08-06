@@ -1,0 +1,63 @@
+---
+interface Props {
+  name: string;
+  category: string;
+  image: string;
+  href: string;
+  price?: number | null;
+  priceLabel?: string;
+  linkLabel?: string;
+}
+
+const {
+  name,
+  category,
+  image,
+  href,
+  price = null,
+  priceLabel = "Sob consulta",
+  linkLabel = "Ver produto"
+} = Astro.props;
+
+
+const formattedPrice =
+  price !== null
+    ? new Intl.NumberFormat("pt-PT", {
+        style: "currency",
+        currency: "EUR"
+      }).format(price)
+    : priceLabel;
+---
+
+<article class="product-card">
+  <a
+    href={href}
+    class="product-card__image"
+    aria-label={`Ver ${name}`}
+  >
+    <img
+      src={image}
+      alt={name}
+      loading="lazy"
+    />
+
+    <span class="product-card__category">
+      {category}
+    </span>
+  </a>
+
+  <div class="product-card__content">
+    <div>
+      <h3>{name}</h3>
+      <strong>{formattedPrice}</strong>
+    </div>
+
+    <a
+      href={href}
+      class="product-card__link"
+    >
+      Ver produto
+      <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</article>

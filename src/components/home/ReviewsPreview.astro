@@ -1,0 +1,88 @@
+---
+import ReviewCard from "../reviews/ReviewCard.astro";
+
+const mockReviews = [
+  {
+    name: "Cliente Pali Cakes",
+    rating: 5,
+    comment:
+      "Exemplo de avaliação sobre o sabor, a apresentação e o cuidado em cada detalhe da encomenda.",
+    orderType: "Bolo personalizado"
+  },
+  {
+    name: "Cliente Pali Cakes",
+    rating: 5,
+    comment:
+      "Exemplo de avaliação sobre o atendimento, o cumprimento do prazo e a qualidade dos produtos.",
+    orderType: "Pack Festa"
+  },
+  {
+    name: "Cliente Pali Cakes",
+    rating: 5,
+    comment:
+      "Exemplo de avaliação sobre uma criação especial feita para um aniversário inesquecível.",
+    orderType: "Doces para celebração"
+  }
+];
+---
+
+<section class="reviews-preview">
+  <div class="container">
+    <div class="reviews-preview__header">
+      <div class="section-title">
+        <span class="section-title__eyebrow">
+          Experiências especiais
+        </span>
+
+        <h2>
+          O carinho de quem
+          <span>já celebrou connosco</span>
+        </h2>
+      </div>
+
+      <div class="reviews-preview__intro">
+        <p>
+          Cada encomenda faz parte de uma história. Em breve,
+          poderá conhecer aqui as avaliações reais dos clientes
+          da Pali Cakes.
+        </p>
+
+        <small>
+          Conteúdo demonstrativo para apresentação do website.
+        </small>
+      </div>
+    </div>
+
+    <div class="reviews-preview__grid">
+      {
+        mockReviews.map((review) => (
+          <ReviewCard
+            name={review.name}
+            rating={review.rating}
+            comment={review.comment}
+            orderType={review.orderType}
+          />
+        ))
+      }
+    </div>
+
+    <div class="reviews-preview__footer">
+      <div>
+        <strong>Já fez uma encomenda?</strong>
+
+        <p>
+          Depois do lançamento, poderá partilhar a sua experiência
+          diretamente através do website.
+        </p>
+      </div>
+
+      <button
+        class="button button--secondary"
+        type="button"
+        disabled
+      >
+        Enviar avaliação em breve
+      </button>
+    </div>
+  </div>
+</section>

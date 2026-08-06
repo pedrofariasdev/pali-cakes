@@ -1,0 +1,55 @@
+:root {
+  /* =====================
+     CORES DA MARCA
+  ====================== */
+
+  --color-primary: #d7a2a8;
+  --color-primary-dark: #b87882;
+  --color-secondary: #a8b59f;
+
+  --color-background: #fffaf6;
+  --color-surface: #ffffff;
+  --color-soft: #f9eeee;
+
+  --color-text: #604844;
+  --color-text-light: #806b67;
+
+
+  /* =====================
+     TIPOGRAFIA
+  ====================== */
+
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Montserrat", sans-serif;
+
+
+  /* =====================
+     ESTRUTURA
+  ====================== */
+
+  --container-width: 1200px;
+
+
+  /* =====================
+     BORDAS
+  ====================== */
+
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 30px;
+
+
+  /* =====================
+     SOMBRAS
+  ====================== */
+
+  --shadow-soft:
+    0 12px 40px rgba(96, 72, 68, 0.10);
+
+
+  /* =====================
+     ANIMAÇÕES
+  ====================== */
+
+  --transition: 250ms ease;
+}
