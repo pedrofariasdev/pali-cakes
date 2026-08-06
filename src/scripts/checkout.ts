@@ -1,6 +1,10 @@
 
 import { criarEncomenda, type OrderItemInput } from "@/lib/orders";
 import { getCart, clearCart, type CartItem } from "./cart";
+import { calcularEntrega } from "@/lib/delivery";
+
+
+let taxaEntregaActual: number | null = null;
 
 const ORDER_DRAFT_KEY = "pali-cakes-order-draft";
 
@@ -35,6 +39,73 @@ interface OrderDraft {
 
   items: CartItem[];
   knownTotal: number;
+}
+
+async function actualizarEntrega(): Promise<void> {
+  const opcao = document.querySelector<HTMLInputElement>(
+    'input[name="fulfillmentType"]:checked'
+  );
+
+  const campoCP = document.querySelector<HTMLInputElement>(
+    'input[name="postalCode"]'
+  );
+
+  const resultado = document.querySelector<HTMLElement>("[data-delivery-result]");
+  const linha = document.querySelector<HTMLElement>("[data-delivery-line]");
+  const valor = document.querySelector<HTMLElement>("[data-delivery-fee]");
+
+  const isDelivery = opcao?.value === "delivery";
+
+  if (!isDelivery) {
+    taxaEntregaActual = null;
+    if (resultado) resultado.hidden = true;
+    if (linha) linha.hidden = true;
+    renderCheckoutSummary();
+    return;
+  }
+
+  const cp = campoCP?.value.trim() ?? "";
+
+  if (cp.replace(/\D/g, "").length < 4) {
+    taxaEntregaActual = null;
+    if (resultado) resultado.hidden = true;
+    if (linha) linha.hidden = true;
+    renderCheckoutSummary();
+    return;
+  }
+
+  const entrega = await calcularEntrega(cp);
+
+  if (!entrega.encontrada) {
+    taxaEntregaActual = null;
+
+    if (resultado) {
+      resultado.textContent =
+        "Não efectuamos entregas nesta zona. Pode optar por levantamento ou contactar-nos.";
+      resultado.className = "checkout-delivery__result is-error";
+      resultado.hidden = false;
+    }
+
+    if (linha) linha.hidden = true;
+    renderCheckoutSummary();
+    return;
+  }
+
+  taxaEntregaActual = entrega.preco ?? null;
+
+  if (resultado) {
+    resultado.textContent =
+      `${entrega.zona} — taxa de entrega ${currencyFormatter.format(entrega.preco ?? 0)}`;
+    resultado.className = "checkout-delivery__result";
+    resultado.hidden = false;
+  }
+
+  if (linha && valor) {
+    valor.textContent = currencyFormatter.format(entrega.preco ?? 0);
+    linha.hidden = false;
+  }
+
+  renderCheckoutSummary();
 }
 
 function calculateKnownTotal(cart: CartItem[]): number {
@@ -130,7 +201,7 @@ function renderCheckoutSummary(): CartItem[] {
   });
 
   totalElement.textContent = currencyFormatter.format(
-    calculateKnownTotal(cart)
+    calculateKnownTotal(cart) + (taxaEntregaActual ?? 0)
   );
 
   submitButton.disabled = false;
@@ -331,11 +402,15 @@ function initialiseCheckout(): void {
       'input[name="fulfillmentType"]'
     )
     .forEach((option) => {
-      option.addEventListener(
-        "change",
-        updateDeliveryFields
-      );
+      option.addEventListener("change", () => {
+        updateDeliveryFields();
+        actualizarEntrega();
+      });
     });
+
+  document
+    .querySelector<HTMLInputElement>('input[name="postalCode"]')
+    ?.addEventListener("input", actualizarEntrega);
 
   if (form.dataset.checkoutBound !== "true") {
     form.dataset.checkoutBound = "true";

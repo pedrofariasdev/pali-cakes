@@ -1,0 +1,167 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+
+const faqs = [
+  {
+    grupo: "Encomendas",
+    perguntas: [
+      {
+        p: "Como faço uma encomenda?",
+        r: "Escolha os produtos no catálogo, adicione-os à sua encomenda e preencha o formulário com os seus dados, a data da celebração e os detalhes que imagina. Entramos em contacto para confirmar tudo e enviar o orçamento final. Só depois da sua aprovação a data fica reservada."
+      },
+      {
+        p: "Com quanta antecedência devo encomendar?",
+        r: "Recomendamos pelo menos uma semana de antecedência. Para encomendas maiores, packs de festa ou datas muito procuradas (fins de semana, épocas festivas), quanto mais cedo melhor. Pedidos de última hora dependem sempre da disponibilidade."
+      },
+      {
+        p: "O site cobra pagamento online?",
+        r: "Não. O site serve para nos enviar o seu pedido. O valor é definido no orçamento, depois de conhecermos os detalhes da sua encomenda, e o pagamento é combinado directamente consigo."
+      },
+      {
+        p: "Posso alterar ou cancelar a minha encomenda?",
+        r: "Alterações são possíveis desde que comunicadas com antecedência e antes do início da produção. Como cada criação é feita de raiz e por medida, alterações tardias ou cancelamentos próximos da data podem não ser possíveis."
+      }
+    ]
+  },
+  {
+    grupo: "Alergénios e ingredientes",
+    perguntas: [
+      {
+        p: "Que alergénios estão presentes nas criações da Pali Cakes?",
+        r: "As nossas criações contêm habitualmente <strong>cereais com glúten (trigo), ovos, leite e derivados</strong>. Consoante o produto, podem também conter <strong>frutos de casca rija, soja, amendoim e sementes de sésamo</strong>. Indicamos sempre a composição do produto que encomendar — basta perguntar."
+      },
+      {
+        p: "Existe risco de contaminação cruzada?",
+        r: "Sim. A produção é artesanal e decorre numa cozinha onde se manipulam glúten, ovos, leite, frutos de casca rija e outros alergénios, com utensílios e superfícies partilhados. <strong>Por esse motivo, não podemos garantir a ausência total de qualquer alergénio em nenhum produto</strong>, mesmo nas versões preparadas sem determinado ingrediente."
+      },
+      {
+        p: "Tenho uma alergia grave. Posso encomendar?",
+        r: "Se tem alergia grave, intolerância severa ou doença celíaca diagnosticada, <strong>fale connosco antes de encomendar</strong> para avaliarmos em conjunto. Havendo risco para a sua saúde, preferimos ser honestos e recusar a encomenda a assumir um risco que não conseguimos controlar."
+      },
+      {
+        p: "Fazem opções sem glúten, sem lactose ou vegan?",
+        r: "Sim, mediante encomenda especial e sujeitas a disponibilidade. Estas versões são preparadas sem o ingrediente em causa, mas — pelas razões acima — <strong>não são adequadas a alergias graves nem a doença celíaca</strong>. Consulte-nos com antecedência para verificarmos a viabilidade."
+      },
+      {
+        p: "Os ingredientes são frescos?",
+        r: "Sim. Trabalhamos com ingredientes frescos e cada encomenda é preparada especificamente para a sua data, nunca antecipadamente em stock."
+      }
+    ]
+  },
+  {
+    grupo: "Levantamento e entrega",
+    perguntas: [
+      {
+        p: "Como recebo a minha encomenda?",
+        r: "Pode optar por levantamento no local combinado ou por entrega local. A entrega tem um custo que depende da zona e é indicado no orçamento. Ambas as opções são escolhidas no momento do pedido."
+      },
+      {
+        p: "Como devo transportar o bolo?",
+        r: "Se optar por levantamento, transporte a caixa numa superfície plana e nivelada — o chão do carro, atrás do banco, é o mais seguro. Evite o porta-bagagens, bancos inclinados e travagens bruscas. No verão, use ar condicionado e evite deixar o bolo ao sol."
+      }
+    ]
+  },
+  {
+    grupo: "Conservação",
+    perguntas: [
+      {
+        p: "Como devo conservar a minha encomenda?",
+        r: "Guarde no frigorífico, dentro da caixa e afastada de alimentos com cheiro intenso. Retire cerca de 30 a 60 minutos antes de servir, para que os sabores e a textura recuperem à temperatura ambiente."
+      },
+      {
+        p: "Quanto tempo dura?",
+        r: "Recomendamos consumir no próprio dia ou, no máximo, até 48 horas após a entrega, conservando sempre refrigerado. Por serem produtos artesanais e sem conservantes, a qualidade é sempre melhor nas primeiras horas."
+      }
+    ]
+  },
+  {
+    grupo: "Personalização",
+    perguntas: [
+      {
+        p: "Posso escolher o tema, as cores e os sabores?",
+        r: "Sim — é precisamente isso que fazemos. Conte-nos a ocasião, as cores, o tema e as suas preferências de sabor, e desenvolvemos uma proposta à medida. Fotografias de inspiração ajudam muito."
+      },
+      {
+        p: "Fazem réplicas de bolos que eu vi noutro sítio?",
+        r: "Usamos imagens como inspiração, mas cada criação é interpretada ao nosso estilo. Não reproduzimos trabalhos de outros profissionais nem personagens ou marcas protegidas por direitos de autor."
+      },
+      {
+        p: "Porque é que os preços são sob consulta?",
+        r: "Porque cada encomenda é única. O valor depende do tamanho, do número de camadas, do recheio, do nível de detalhe da decoração e da quantidade. Envie-nos a sua ideia e receberá um orçamento personalizado, sem compromisso."
+      }
+    ]
+  }
+];
+---
+
+<MainLayout
+  title="Perguntas frequentes | Pali Cakes"
+  description="Encomendas, alergénios, conservação, entregas e personalização. Tudo o que precisa de saber antes de encomendar na Pali Cakes."
+>
+  <section class="faq-hero">
+    <div class="container">
+      <nav class="catalog-breadcrumb" aria-label="Navegação estrutural">
+        <a href="/">Início</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">FAQ</span>
+      </nav>
+
+      <span class="section-title__eyebrow">Perguntas frequentes</span>
+
+      <h1>Tudo o que precisa de saber</h1>
+
+      <p>
+        Reunimos aqui as dúvidas mais comuns sobre encomendas, ingredientes,
+        conservação e entregas. Se não encontrar a sua resposta, fale connosco.
+      </p>
+    </div>
+  </section>
+
+  <section class="faq-page">
+    <div class="container">
+      {
+        faqs.map((seccao) => (
+          <div class="faq-group">
+            <h2>{seccao.grupo}</h2>
+
+            <div class="faq-list">
+              {
+                seccao.perguntas.map((item) => (
+                  <details class="faq-item">
+                    <summary>
+                      <span>{item.p}</span>
+                      <span class="faq-item__icon" aria-hidden="true">+</span>
+                    </summary>
+                    <div class="faq-item__answer" set:html={item.r} />
+                  </details>
+                ))
+              }
+            </div>
+          </div>
+        ))
+      }
+
+      <aside class="faq-notice">
+        <h2>Informação sobre alergénios</h2>
+        <p>
+          A Pali Cakes é uma produção artesanal. Todos os produtos são preparados
+          numa cozinha onde se manipulam cereais com glúten, ovos, leite, frutos
+          de casca rija e outros alergénios, pelo que <strong>não é possível
+          garantir a ausência de vestígios em nenhuma criação</strong>.
+        </p>
+        <p>
+          Se tem alergia, intolerância ou doença celíaca, contacte-nos antes de
+          encomendar. A informação detalhada sobre a composição de cada produto
+          está disponível a pedido.
+        </p>
+      </aside>
+
+      <div class="faq-cta">
+        <span class="section-title__eyebrow">Não encontrou a resposta?</span>
+        <h2>Fale connosco</h2>
+        <p>Teremos todo o gosto em esclarecer qualquer dúvida sobre a sua encomenda.</p>
+        <a href="/contactos" class="button button--primary">Contactar a Pali Cakes</a>
+      </div>
+    </div>
+  </section>
+</MainLayout>

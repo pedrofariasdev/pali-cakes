@@ -113,3 +113,152 @@ h4 {
   background-color: var(--color-primary);
   color: #ffffff;
 }
+
+/* ============================================
+   FAQ
+   ============================================ */
+
+.faq-hero {
+  padding: 3rem 0 2rem;
+}
+
+.faq-hero h1 {
+  margin: 0.5rem 0 1rem;
+}
+
+.faq-hero p {
+  max-width: 46rem;
+}
+
+.faq-page {
+  padding-bottom: 5rem;
+}
+
+.faq-group {
+  margin-bottom: 3rem;
+}
+
+.faq-group h2 {
+  padding-bottom: 0.75rem;
+  margin-bottom: 1.25rem;
+  font-size: 1.35rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.faq-item {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.15rem 1.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item__icon {
+  flex-shrink: 0;
+  font-size: 1.35rem;
+  line-height: 1;
+  opacity: 0.5;
+  transition: transform 0.25s ease;
+}
+
+.faq-item[open] .faq-item__icon {
+  transform: rotate(45deg);
+}
+
+.faq-item__answer {
+  padding: 0 1.5rem 1.4rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  opacity: 0.85;
+}
+
+.faq-notice {
+  padding: 2rem;
+  margin: 3rem 0;
+  background: rgba(215, 162, 168, 0.1);
+  border-left: 4px solid #d7a2a8;
+  border-radius: 14px;
+}
+
+.faq-notice h2 {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+}
+
+.faq-notice p {
+  margin: 0 0 0.85rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.faq-notice p:last-child {
+  margin-bottom: 0;
+}
+
+.faq-cta {
+  padding: 3rem 2rem;
+  text-align: center;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.faq-cta h2 {
+  margin: 0.5rem 0 0.75rem;
+}
+
+.faq-cta p {
+  margin-bottom: 1.75rem;
+}
+
+@media (max-width: 640px) {
+  .faq-item summary {
+    padding: 1rem 1.15rem;
+    gap: 1rem;
+  }
+
+  .faq-item__answer {
+    padding: 0 1.15rem 1.15rem;
+  }
+}
+
+.checkout-delivery__result {
+  padding: 0.85rem 1.1rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  background: rgba(215, 162, 168, 0.12);
+  border-radius: 10px;
+}
+
+.checkout-delivery__result.is-error {
+  color: #b3261e;
+  background: #fdecea;
+}
+
+.checkout-summary__delivery {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
