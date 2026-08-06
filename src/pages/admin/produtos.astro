@@ -1,0 +1,43 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+---
+
+<MainLayout
+  title="Produtos | Pali Cakes"
+  description="Gestão de produtos."
+  noindex
+>
+  <section class="admin-page">
+    <div class="container">
+
+      <header class="admin-page__header">
+        <div>
+          <span class="section-title__eyebrow">Área reservada</span>
+          <h1>Produtos</h1>
+        </div>
+
+        <div class="admin-nav">
+          <a href="/admin/encomendas">Encomendas</a>
+          <a href="/admin/produtos" class="is-active">Produtos</a>
+          <button type="button" class="button button--secondary" data-logout>
+            Sair
+          </button>
+        </div>
+      </header>
+
+      <p class="admin-hint">
+        As alterações ficam guardadas de imediato, mas o site público
+        só as mostra após a próxima publicação (cerca de 2 minutos).
+      </p>
+
+      <div data-products-list>
+        <p class="admin-loading">A carregar produtos…</p>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    import "@/scripts/admin-produtos.ts";
+  </script>
+</MainLayout>

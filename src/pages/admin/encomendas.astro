@@ -1,0 +1,47 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+---
+
+<MainLayout
+  title="Encomendas | Pali Cakes"
+  description="Gestão de encomendas."
+  noindex
+>
+  <section class="admin-page">
+    <div class="container">
+
+      <header class="admin-page__header">
+        <div>
+          <span class="section-title__eyebrow">Área reservada</span>
+          <h1>Encomendas</h1>
+        </div>
+
+        <div class="admin-nav">
+          <a href="/admin/encomendas" class="is-active">Encomendas</a>
+          <a href="/admin/produtos">Produtos</a>
+          <button type="button" class="button button--secondary" data-logout>
+            Sair
+          </button>
+        </div>
+      </header>
+
+      <div class="admin-filters" data-filters>
+        <button type="button" class="is-active" data-filter="todos">Todas</button>
+        <button type="button" data-filter="novo">Novas</button>
+        <button type="button" data-filter="confirmado">Confirmadas</button>
+        <button type="button" data-filter="em_producao">Em produção</button>
+        <button type="button" data-filter="pronto">Prontas</button>
+        <button type="button" data-filter="entregue">Entregues</button>
+      </div>
+
+      <div data-orders-list>
+        <p class="admin-loading">A carregar encomendas…</p>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    import "@/scripts/admin-encomendas.ts";
+  </script>
+</MainLayout>

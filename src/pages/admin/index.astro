@@ -1,0 +1,55 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+---
+
+<MainLayout
+  title="Área reservada | Pali Cakes"
+  description="Acesso reservado à gestão da Pali Cakes."
+  noindex
+>
+  <section class="admin-login">
+    <div class="admin-login__box">
+      <span class="section-title__eyebrow">Área reservada</span>
+
+      <h1>Entrar</h1>
+
+      <p>Acesso exclusivo à gestão da Pali Cakes.</p>
+
+      <form data-login-form>
+        <label class="form-field">
+          <span>Email</span>
+          <input
+            type="email"
+            name="email"
+            autocomplete="username"
+            required
+          />
+        </label>
+
+        <label class="form-field">
+          <span>Palavra-passe</span>
+          <input
+            type="password"
+            name="password"
+            autocomplete="current-password"
+            required
+          />
+        </label>
+
+        <button
+          type="submit"
+          class="button button--primary"
+          data-login-submit
+        >
+          Entrar
+        </button>
+
+        <p class="admin-login__error" data-login-error hidden></p>
+      </form>
+    </div>
+  </section>
+
+  <script>
+    import "@/scripts/admin-login.ts";
+  </script>
+</MainLayout>

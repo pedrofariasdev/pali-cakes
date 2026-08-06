@@ -12,10 +12,15 @@ export interface Categoria {
   id: string;
   slug: string;
   nome: string;
+  grupo: string | null;
   descricao: string | null;
   imagem_url: string | null;
-  ordem: number;
+  href: string;
+  preco: number | null;
+  preco_label: string;
+  destaque: boolean;
   ativa: boolean;
+  ordem: number;
   criado_em: string;
 }
 
@@ -24,11 +29,11 @@ export interface Produto {
   slug: string;
   nome: string;
   descricao: string | null;
-  categoria_id: string | null;
-  preco: number | null;
-  preco_nota: string | null;
+  categoria_slug: string;
   imagem_url: string | null;
   imagens: string[];
+  preco: number | null;
+  preco_label: string;
   destaque: boolean;
   ativo: boolean;
   ordem: number;
@@ -71,6 +76,24 @@ export interface OrderItemPayload {
   categoria: string;
   quantidade: number;
   preco: number | null;
+}
+
+export interface Encomenda {
+  id: string;
+  referencia: string;
+  criado_em: string;
+  estado: EstadoEncomenda;
+  cliente_nome: string;
+  cliente_telefone: string;
+  cliente_email: string | null;
+  metodo_entrega: MetodoEntrega;
+  morada: string | null;
+  codigo_postal: string | null;
+  localidade: string | null;
+  data_evento: string | null;
+  tipo_celebracao: string | null;
+  observacoes: string | null;
+  total_estimado: number | null;
 }
 
 // Estrutura que o Supabase espera para tipar as queries
