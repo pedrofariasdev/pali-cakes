@@ -1,3 +1,13 @@
+---
+import { getCategories } from "@/lib/categories";
+
+const categories = await getCategories();
+
+const catalogCategories = categories.filter(
+  (category) => category.categorySlug !== "packs"
+);
+---
+
 <nav
   class="mobile-menu"
   id="mobile-menu"
@@ -14,12 +24,13 @@
       </summary>
 
       <div class="mobile-menu__submenu">
-        <a href="/catalogo/bolos">Bolos</a>
-        <a href="/catalogo/doces">Doces</a>
-        <a href="/catalogo/cupcakes">Cupcakes</a>
-        <a href="/catalogo/bento-cakes">Bento Cakes</a>
-
-        <!-- Adicione aqui as novas categorias que criou -->
+        {
+          catalogCategories.map((category) => (
+            <a href={category.href}>
+              {category.name}
+            </a>
+          ))
+        }
       </div>
     </details>
 
