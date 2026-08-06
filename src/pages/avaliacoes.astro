@@ -1,0 +1,151 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+import ReviewCard from "@/components/reviews/ReviewCard.astro";
+import { getAvaliacoesAprovadas } from "@/lib/reviews";
+
+const avaliacoes = await getAvaliacoesAprovadas(12);
+---
+
+<MainLayout
+  title="Avaliações | Pali Cakes"
+  description="Conheça as experiências de quem já celebrou com a Pali Cakes e partilhe a sua."
+>
+  <section class="reviews-hero">
+    <div class="container">
+      <nav class="catalog-breadcrumb" aria-label="Navegação estrutural">
+        <a href="/">Início</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Avaliações</span>
+      </nav>
+
+      <span class="section-title__eyebrow">Experiências</span>
+
+      <h1>Histórias de quem <span>celebrou connosco</span></h1>
+
+      <p>
+        Cada criação faz parte de um momento especial. Conheça as experiências
+        partilhadas pelos nossos clientes e conte-nos a sua.
+      </p>
+    </div>
+  </section>
+
+  <section class="reviews-page">
+    <div class="container">
+
+      <div class="reviews-form-wrapper">
+        <div class="reviews-form__intro">
+          <span class="section-title__eyebrow">Partilhe a sua experiência</span>
+          <h2>Deixe a sua avaliação</h2>
+          <p>
+            A sua opinião ajuda-nos a melhorar e orienta quem procura a criação
+            certa para a sua celebração.
+          </p>
+          <small>
+            As avaliações são revistas antes de serem publicadas, para garantir
+            que dizem respeito a encomendas reais.
+          </small>
+        </div>
+
+        <form class="reviews-form" data-review-form>
+          <div class="reviews-form__grid">
+            <label class="form-field">
+              <span>O seu nome *</span>
+              <input type="text" name="nome" maxlength="80" required />
+            </label>
+
+            <label class="form-field">
+              <span>Localidade</span>
+              <input type="text" name="localidade" maxlength="80" placeholder="Amadora" />
+            </label>
+
+            <label class="form-field">
+              <span>Email (não será publicado)</span>
+              <input type="email" name="email" maxlength="160" />
+            </label>
+
+            <label class="form-field">
+              <span>Tipo de encomenda</span>
+              <select name="ocasiao">
+                <option value="">Selecionar</option>
+                <option value="Bolo personalizado">Bolo personalizado</option>
+                <option value="Doces para festa">Doces para festa</option>
+                <option value="Cupcakes">Cupcakes</option>
+                <option value="Bento Cake">Bento Cake</option>
+                <option value="Chocolates">Chocolates</option>
+                <option value="Pack Festa">Pack Festa</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </label>
+          </div>
+
+          <fieldset class="reviews-form__rating">
+            <legend>Classificação *</legend>
+
+            <div class="rating-stars" data-rating>
+              {
+                [5, 4, 3, 2, 1].map((valor) => (
+                  <>
+                    <input
+                      type="radio"
+                      name="classificacao"
+                      id={`estrela-${valor}`}
+                      value={valor}
+                      required
+                    />
+                    <label for={`estrela-${valor}`} title={`${valor} estrelas`}>
+                      ★
+                    </label>
+                  </>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <label class="form-field">
+            <span>A sua avaliação *</span>
+            <textarea
+              name="comentario"
+              rows="5"
+              minlength="10"
+              maxlength="1200"
+              required
+              placeholder="Conte-nos como foi a sua experiência: o sabor, a apresentação, o atendimento…"
+            ></textarea>
+          </label>
+
+          <button type="submit" class="button button--primary" data-review-submit>
+            Enviar avaliação
+          </button>
+
+          <p class="reviews-form__status" data-review-status hidden></p>
+        </form>
+      </div>
+
+      {
+        avaliacoes.length > 0 && (
+          <div class="reviews-page__list">
+            <h2>O que dizem os nossos clientes</h2>
+
+            <div class="reviews-preview__grid">
+              {
+                avaliacoes.map((review) => (
+                  <ReviewCard
+                    name={review.nome}
+                    rating={review.classificacao}
+                    comment={review.comentario}
+                    orderType={review.ocasiao ?? "Encomenda"}
+                  />
+                ))
+              }
+            </div>
+          </div>
+        )
+      }
+
+    </div>
+  </section>
+
+  <script>
+    import "@/scripts/avaliacoes.ts";
+  </script>
+</MainLayout>

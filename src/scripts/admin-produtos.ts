@@ -24,7 +24,7 @@ function criarCartao(produto: Produto): HTMLElement {
       <img
         src="${produto.imagem_url ?? ""}"
         alt="${produto.nome}"
-        onerror="this.classList.add('is-broken')"
+        onerror="this.onerror=null;this.classList.add('is-broken')"
       />
       <label class="admin-product__upload">
         <input type="file" accept="image/jpeg,image/png,image/webp" data-upload hidden />

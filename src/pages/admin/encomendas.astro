@@ -19,11 +19,28 @@ import MainLayout from "@/layouts/MainLayout.astro";
         <div class="admin-nav">
           <a href="/admin/encomendas" class="is-active">Encomendas</a>
           <a href="/admin/produtos">Produtos</a>
+          <a href="/admin/avaliacoes">Avaliações</a>
           <button type="button" class="button button--secondary" data-logout>
             Sair
           </button>
         </div>
       </header>
+
+      <div class="admin-publish">
+        <div>
+          <strong>Publicar alterações</strong>
+          <p>
+            As alterações que faz aqui só aparecem no site depois de publicar.
+            Demora cerca de 2 minutos.
+          </p>
+        </div>
+
+        <button type="button" class="button button--primary" data-publicar>
+          Publicar alterações
+        </button>
+      </div>
+
+      <p class="admin-publish__status" data-publicar-estado hidden></p>
 
       <div class="admin-filters" data-filters>
         <button type="button" class="is-active" data-filter="todos">Todas</button>
@@ -43,5 +60,7 @@ import MainLayout from "@/layouts/MainLayout.astro";
 
   <script>
     import "@/scripts/admin-encomendas.ts";
+    import "@/scripts/admin-produtos.ts";
+    import "@/scripts/admin-publicar.ts";
   </script>
 </MainLayout>

@@ -3,8 +3,8 @@ import MainLayout from "@/layouts/MainLayout.astro";
 ---
 
 <MainLayout
-  title="Produtos | Pali Cakes"
-  description="Gestão de produtos."
+  title="Avaliações | Pali Cakes"
+  description="Moderação de avaliações."
   noindex
 >
   <section class="admin-page">
@@ -13,13 +13,13 @@ import MainLayout from "@/layouts/MainLayout.astro";
       <header class="admin-page__header">
         <div>
           <span class="section-title__eyebrow">Área reservada</span>
-          <h1>Produtos</h1>
+          <h1>Avaliações</h1>
         </div>
 
         <div class="admin-nav">
           <a href="/admin/encomendas">Encomendas</a>
-          <a href="/admin/produtos" class="is-active">Produtos</a>
-          <a href="/admin/avaliacoes">Avaliações</a>
+          <a href="/admin/produtos">Produtos</a>
+          <a href="/admin/avaliacoes" class="is-active">Avaliações</a>
           <button type="button" class="button button--secondary" data-logout>
             Sair
           </button>
@@ -41,21 +41,25 @@ import MainLayout from "@/layouts/MainLayout.astro";
 
       <p class="admin-publish__status" data-publicar-estado hidden></p>
 
-      <p class="admin-hint">
-        As alterações ficam guardadas de imediato, mas o site público
-        só as mostra após a próxima publicação (cerca de 2 minutos).
-      </p>
+      <div class="admin-filters" data-filters>
+        <button type="button" class="is-active" data-filter="pendente">
+          Pendentes
+        </button>
+        <button type="button" data-filter="aprovada">Aprovadas</button>
+        <button type="button" data-filter="rejeitada">Rejeitadas</button>
+        <button type="button" data-filter="todos">Todas</button>
+      </div>
 
-      <div data-products-list>
-        <p class="admin-loading">A carregar produtos…</p>
+      <div data-reviews-list>
+        <p class="admin-loading">A carregar avaliações…</p>
       </div>
 
     </div>
   </section>
 
   <script>
+    import "@/scripts/admin-avaliacoes.ts";
     import "@/scripts/admin-produtos.ts";
-    import "@/scripts/admin-encomendas.ts";
     import "@/scripts/admin-publicar.ts";
   </script>
 </MainLayout>

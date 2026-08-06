@@ -1,29 +1,9 @@
 ---
 import ReviewCard from "../reviews/ReviewCard.astro";
+import { getAvaliacoesAprovadas } from "@/lib/reviews";
 
-const mockReviews = [
-  {
-    name: "Cliente Pali Cakes",
-    rating: 5,
-    comment:
-      "Exemplo de avaliação sobre o sabor, a apresentação e o cuidado em cada detalhe da encomenda.",
-    orderType: "Bolo personalizado"
-  },
-  {
-    name: "Cliente Pali Cakes",
-    rating: 5,
-    comment:
-      "Exemplo de avaliação sobre o atendimento, o cumprimento do prazo e a qualidade dos produtos.",
-    orderType: "Pack Festa"
-  },
-  {
-    name: "Cliente Pali Cakes",
-    rating: 5,
-    comment:
-      "Exemplo de avaliação sobre uma criação especial feita para um aniversário inesquecível.",
-    orderType: "Doces para celebração"
-  }
-];
+const avaliacoes = await getAvaliacoesAprovadas(3);
+const temAvaliacoes = avaliacoes.length > 0;
 ---
 
 <section class="reviews-preview">
@@ -42,47 +22,45 @@ const mockReviews = [
 
       <div class="reviews-preview__intro">
         <p>
-          Cada encomenda faz parte de uma história. Em breve,
-          poderá conhecer aqui as avaliações reais dos clientes
-          da Pali Cakes.
+          {
+            temAvaliacoes
+              ? "Cada encomenda faz parte de uma história. Conheça as experiências de quem já celebrou com a Pali Cakes."
+              : "Cada encomenda faz parte de uma história. Se já encomendou connosco, adorávamos conhecer a sua."
+          }
         </p>
-
-        <small>
-          Conteúdo demonstrativo para apresentação do website.
-        </small>
       </div>
     </div>
 
-    <div class="reviews-preview__grid">
-      {
-        mockReviews.map((review) => (
-          <ReviewCard
-            name={review.name}
-            rating={review.rating}
-            comment={review.comment}
-            orderType={review.orderType}
-          />
-        ))
-      }
-    </div>
+    {
+      temAvaliacoes && (
+        <div class="reviews-preview__grid">
+          {
+            avaliacoes.map((review) => (
+              <ReviewCard
+                name={review.nome}
+                rating={review.classificacao}
+                comment={review.comentario}
+                orderType={review.ocasiao ?? "Encomenda"}
+              />
+            ))
+          }
+        </div>
+      )
+    }
 
     <div class="reviews-preview__footer">
       <div>
         <strong>Já fez uma encomenda?</strong>
 
         <p>
-          Depois do lançamento, poderá partilhar a sua experiência
-          diretamente através do website.
+          Partilhe a sua experiência e ajude outras pessoas a
+          escolher a criação perfeita para a sua celebração.
         </p>
       </div>
 
-      <button
-        class="button button--secondary"
-        type="button"
-        disabled
-      >
-        Enviar avaliação em breve
-      </button>
+      <a href="/avaliacoes" class="button button--secondary">
+        Deixar avaliação
+      </a>
     </div>
   </div>
 </section>
