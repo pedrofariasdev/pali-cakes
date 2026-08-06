@@ -28,6 +28,11 @@ export function getCart(): CartItem[] {
   }
 }
 
+export function clearCart(): void {
+  localStorage.removeItem(CART_STORAGE_KEY);
+  updateCartCounters([]);
+}
+
 export function saveCart(cart: CartItem[]): void {
   localStorage.setItem(
     CART_STORAGE_KEY,

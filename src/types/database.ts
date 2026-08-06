@@ -65,9 +65,35 @@ export interface EncomendaItem {
   personalizacao: Record<string, unknown>;
 }
 
+export interface OrderItemPayload {
+  slug: string;
+  nome: string;
+  categoria: string;
+  quantidade: number;
+  preco: number | null;
+}
+
 // Estrutura que o Supabase espera para tipar as queries
 export interface Database {
   public: {
+    Functions: {
+      criar_encomenda: {
+        Args: {
+          p_cliente_nome: string;
+          p_cliente_telefone: string;
+          p_cliente_email: string | null;
+          p_metodo_entrega: string;
+          p_morada: string | null;
+          p_codigo_postal: string | null;
+          p_localidade: string | null;
+          p_data_evento: string | null;
+          p_tipo_celebracao: string | null;
+          p_observacoes: string | null;
+          p_itens: OrderItemPayload[];
+        };
+        Returns: string;
+      };
+    };
     Tables: {
       categorias: {
         Row: Categoria;

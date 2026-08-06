@@ -1,7 +1,6 @@
-import {
-  getCart,
-  type CartItem
-} from "./cart";
+
+import { criarEncomenda, type OrderItemInput } from "@/lib/orders";
+import { getCart, clearCart, type CartItem } from "./cart";
 
 const ORDER_DRAFT_KEY = "pali-cakes-order-draft";
 
@@ -209,9 +208,21 @@ function readTextValue(
     : "";
 }
 
-function handleCheckoutSubmit(
+
+function toOrderItems(cart: CartItem[]): OrderItemInput[] {
+  return cart.map((item) => ({
+    slug: item.productSlug,
+    nome: item.name,
+    categoria: item.categorySlug,
+    quantidade: item.quantity,
+    preco: item.price
+  }));
+}
+
+
+async function handleCheckoutSubmit(
   event: SubmitEvent
-): void {
+): Promise<void> {
   event.preventDefault();
 
   const form = event.currentTarget;
@@ -223,21 +234,16 @@ function handleCheckoutSubmit(
   const cart = getCart();
 
   const submitButton =
-    form.querySelector<HTMLButtonElement>(
-      "[data-checkout-submit]"
-    );
+    form.querySelector<HTMLButtonElement>("[data-checkout-submit]");
 
   const helper =
-    form.querySelector<HTMLElement>(
-      "[data-checkout-helper]"
-    );
+    form.querySelector<HTMLElement>("[data-checkout-helper]");
 
   if (cart.length === 0) {
     if (helper) {
       helper.textContent =
         "A encomenda está vazia. Adicione pelo menos um produto.";
     }
-
     return;
   }
 
@@ -247,106 +253,63 @@ function handleCheckoutSubmit(
 
   const formData = new FormData(form);
 
-  const fulfillmentValue =
-    readTextValue(
-      formData,
-      "fulfillmentType"
-    );
+  const fulfillmentValue = readTextValue(formData, "fulfillmentType");
+  const isDelivery = fulfillmentValue === "delivery";
 
-  const fulfillmentType:
-    | "pickup"
-    | "delivery" =
-      fulfillmentValue === "delivery"
-        ? "delivery"
-        : "pickup";
-
-  const draft: OrderDraft = {
-    id: createDraftId(),
-    createdAt: new Date().toISOString(),
-    status: "draft",
-
-    customer: {
-      name: readTextValue(
-        formData,
-        "customerName"
-      ),
-
-      email: readTextValue(
-        formData,
-        "customerEmail"
-      ),
-
-      phone: readTextValue(
-        formData,
-        "customerPhone"
-      )
-    },
-
-    event: {
-      date: readTextValue(
-        formData,
-        "eventDate"
-      ),
-
-      type: readTextValue(
-        formData,
-        "eventType"
-      ),
-
-      notes: readTextValue(
-        formData,
-        "notes"
-      )
-    },
-
-    fulfillment: {
-      type: fulfillmentType,
-
-      address:
-        fulfillmentType === "delivery"
-          ? readTextValue(
-              formData,
-              "deliveryAddress"
-            )
-          : "",
-
-      postalCode:
-        fulfillmentType === "delivery"
-          ? readTextValue(
-              formData,
-              "postalCode"
-            )
-          : "",
-
-      city:
-        fulfillmentType === "delivery"
-          ? readTextValue(
-              formData,
-              "city"
-            )
-          : ""
-    },
-
-    items: cart,
-    knownTotal: calculateKnownTotal(cart)
-  };
-
-  localStorage.setItem(
-    ORDER_DRAFT_KEY,
-    JSON.stringify(draft)
-  );
-
+  // Bloqueia envios duplicados enquanto aguarda resposta
   if (submitButton) {
-    submitButton.textContent =
-      "Pedido preparado ✓";
-
     submitButton.disabled = true;
+    submitButton.textContent = "A enviar…";
   }
 
   if (helper) {
-    helper.textContent =
-      "Os dados foram guardados com sucesso. No próximo passo ligaremos este pedido ao Supabase.";
+    helper.textContent = "A enviar a sua encomenda…";
   }
+
+  const resultado = await criarEncomenda({
+    clienteNome: readTextValue(formData, "customerName"),
+    clienteTelefone: readTextValue(formData, "customerPhone"),
+    clienteEmail: readTextValue(formData, "customerEmail"),
+    metodoEntrega: isDelivery ? "entrega" : "levantamento",
+    morada: isDelivery ? readTextValue(formData, "deliveryAddress") : "",
+    codigoPostal: isDelivery ? readTextValue(formData, "postalCode") : "",
+    localidade: isDelivery ? readTextValue(formData, "city") : "",
+    dataEvento: readTextValue(formData, "eventDate"),
+    tipoCelebracao: readTextValue(formData, "eventType"),
+    observacoes: readTextValue(formData, "notes"),
+    itens: toOrderItems(cart)
+  });
+
+  if (!resultado.ok) {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = "Enviar pedido de encomenda";
+    }
+
+    if (helper) {
+      helper.textContent = resultado.erro;
+    }
+
+    return;
+  }
+
+  clearCart();
+
+  if (submitButton) {
+    submitButton.textContent = "Encomenda enviada ✓";
+  }
+
+  if (helper) {
+    helper.innerHTML =
+      `A sua encomenda foi registada com a referência <strong>${resultado.referencia}</strong>. ` +
+      `A Pali Cakes entrará em contacto para confirmar os detalhes e o orçamento.`;
+  }
+
+  form
+    .querySelectorAll<HTMLElement>(".checkout-form__section, .checkout-consent")
+    .forEach((section) => {
+      section.hidden = true;
+    });
 }
 
 function initialiseCheckout(): void {
