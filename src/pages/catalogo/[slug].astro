@@ -4,29 +4,18 @@ import type { GetStaticPaths } from "astro";
 import MainLayout from "@/layouts/MainLayout.astro";
 import ProductCard from "@/components/products/ProductCard.astro";
 
-import {
-  categories,
-  type CatalogCategory
-} from "@/data/categories";
-
-import { products } from "@/data/products";
+import { getCategories, type CatalogCategory } from "@/lib/categories";
+import { getProductsByCategory } from "@/lib/products";
 
 
-export const getStaticPaths = (() => {
+export const getStaticPaths = (async () => {
+  const categories = await getCategories();
+
   return categories
-    .filter(
-      (category) =>
-        category.active &&
-        category.categorySlug !== "packs"
-    )
+    .filter((category) => category.categorySlug !== "packs")
     .map((category) => ({
-      params: {
-        slug: category.categorySlug
-      },
-
-      props: {
-        category
-      }
+      params: { slug: category.categorySlug },
+      props: { category }
     }));
 }) satisfies GetStaticPaths;
 
@@ -35,30 +24,18 @@ interface Props {
   category: CatalogCategory;
 }
 
-
 const { category } = Astro.props;
-
 const slug = category.categorySlug;
 
-
-const activeCategories = categories.filter(
-  (item) => item.active
-);
-
+const activeCategories = await getCategories();
 const visibleCategories = activeCategories.slice(0, 5);
-
 const hiddenCategories = activeCategories.slice(5);
 
 const activeCategoryIsHidden = hiddenCategories.some(
   (item) => item.categorySlug === slug
 );
 
-
-const categoryProducts = products.filter(
-  (product) =>
-    product.active &&
-    product.categorySlug === slug
-);
+const categoryProducts = await getProductsByCategory(slug);
 ---
 
 <MainLayout

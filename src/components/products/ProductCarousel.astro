@@ -1,15 +1,18 @@
 ---
 import ProductCard from "./ProductCard.astro";
-import { categories } from "../../data/categories";
+import { getCategories } from "@/lib/categories";
+
+const categories = await getCategories();
 
 const featuredCategories = categories.filter(
-  (category) => category.featured && category.active
+  (category) => category.featured
 );
 
 const carouselDuration = `${Math.max(
   featuredCategories.length * 8,
   40
 )}s`;
+---
 ---
 
 <section

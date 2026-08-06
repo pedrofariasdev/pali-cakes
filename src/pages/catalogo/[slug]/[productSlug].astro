@@ -3,28 +3,29 @@ import type { GetStaticPaths } from "astro";
 
 import MainLayout from "@/layouts/MainLayout.astro";
 
-import {
-  categories
-} from "@/data/categories";
-
-import {
-  products,
-  type Product
-} from "@/data/products";
+import { getCategories, type CatalogCategory } from "@/lib/categories";
+import { getProducts, type Product } from "@/lib/products";
 
 
+export const getStaticPaths = (async () => {
+  const [products, categories] = await Promise.all([
+    getProducts(),
+    getCategories()
+  ]);
 
-export const getStaticPaths = (() => {
   return products
-    .filter((product) => product.active)
+    .filter((product) => product.categorySlug !== "packs-festa")
     .map((product) => ({
       params: {
         slug: product.categorySlug,
         productSlug: product.slug
       },
-
       props: {
-        product
+        product,
+        category:
+          categories.find(
+            (c) => c.categorySlug === product.categorySlug
+          ) ?? null
       }
     }));
 }) satisfies GetStaticPaths;
@@ -32,16 +33,10 @@ export const getStaticPaths = (() => {
 
 interface Props {
   product: Product;
+  category: CatalogCategory | null;
 }
 
-
-const { product } = Astro.props;
-
-
-const category = categories.find(
-  (item) => item.categorySlug === product.categorySlug
-);
-
+const { product, category } = Astro.props;
 
 const formattedPrice =
   product.price !== null
@@ -50,7 +45,6 @@ const formattedPrice =
         currency: "EUR"
       }).format(product.price)
     : product.priceLabel;
-
 ---
 
 

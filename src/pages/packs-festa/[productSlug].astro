@@ -3,34 +3,17 @@ import type { GetStaticPaths } from "astro";
 
 import MainLayout from "@/layouts/MainLayout.astro";
 
-import {
-  products,
-  type Product
-} from "@/data/products";
+import { getProductsByCategory, type Product } from "@/lib/products";
 
 
-export const getStaticPaths = (() => {
-  return products
-    .filter(
-      (product) =>
-        product.active &&
-        product.categorySlug === "packs-festa"
-    )
-    .map((product) => ({
-      params: {
-        productSlug: product.slug
-      },
+export const getStaticPaths = (async () => {
+  const packs = await getProductsByCategory("packs-festa");
 
-      props: {
-        product
-      }
-    }));
+  return packs.map((product) => ({
+    params: { productSlug: product.slug },
+    props: { product }
+  }));
 }) satisfies GetStaticPaths;
-
-
-interface Props {
-  product: Product;
-}
 
 
 const { product } = Astro.props;

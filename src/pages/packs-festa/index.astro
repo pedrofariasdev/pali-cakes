@@ -2,13 +2,9 @@
 import MainLayout from "../../layouts/MainLayout.astro";
 import ProductCard from "../../components/products/ProductCard.astro";
 
-import { products } from "../../data/products";
+import { getProductsByCategory } from "@/lib/products";
 
-const packs = products.filter(
-  (product) =>
-    product.active &&
-    product.categorySlug === "packs-festa"
-);
+const packs = await getProductsByCategory("packs-festa");
 ---
 
 <MainLayout
