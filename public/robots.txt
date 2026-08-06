@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /carrinho
+Disallow: /finalizar-encomenda
+
+Sitemap: https://palicakes.pt/sitemap-index.xml

@@ -7,12 +7,22 @@ import "../styles/global.css";
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  noindex?: boolean;
 }
 
 const {
   title = "Pali Cakes | Bolos personalizados",
-  description = "Bolos e doces artesanais personalizados para momentos especiais."
+  description = "Bolos e doces artesanais personalizados para momentos especiais.",
+  image = "/images/og-pali-cakes.png",
+  noindex = false
 } = Astro.props;
+
+// URL absoluto desta página (necessário para og:url e canonical)
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// A imagem de partilha também tem de ser absoluta
+const socialImage = new URL(image, Astro.site);
 ---
 
 <!DOCTYPE html>
@@ -22,26 +32,57 @@ const {
 
   <meta charset="UTF-8" />
 
-  <meta 
-    name="viewport" 
+  <meta
+    name="viewport"
     content="width=device-width, initial-scale=1.0"
   />
 
   <title>{title}</title>
 
-  <meta 
-    name="description" 
-    content={description}
+  <meta name="description" content={description} />
+  <meta name="author" content="Pali Cakes" />
+
+  <link rel="canonical" href={canonicalURL} />
+
+  {noindex
+    ? <meta name="robots" content="noindex, nofollow" />
+    : <meta name="robots" content="index, follow, max-image-preview:large" />
+  }
+
+  <!-- Open Graph (WhatsApp, Facebook, Instagram) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Pali Cakes" />
+  <meta property="og:locale" content="pt_PT" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:image" content={socialImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta
+    property="og:image:alt"
+    content="Bolo personalizado criado pela Pali Cakes"
   />
 
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={socialImage} />
+
   <meta name="theme-color" content="#d7a2a8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+  <!-- iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Pali Cakes" />
 
   <link rel="icon" href="/favicon.ico" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link 
+  <link
     href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap"
     rel="stylesheet"
   >
@@ -60,8 +101,8 @@ const {
   <Footer />
 
   <script>
-  import "../scripts/cart.ts";
-</script>
+    import "../scripts/cart.ts";
+  </script>
 
 </body>
 
