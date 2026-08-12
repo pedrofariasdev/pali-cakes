@@ -8,7 +8,8 @@ export default defineConfig({
     sitemap({
       filter: (page) =>
         !page.includes("/carrinho") &&
-        !page.includes("/finalizar-encomenda")
+        !page.includes("/finalizar-encomenda") &&
+        !page.includes("/admin")
     })
   ],
   vite: {

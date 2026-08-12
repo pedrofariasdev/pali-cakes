@@ -209,6 +209,9 @@ function renderCheckoutSummary(): CartItem[] {
   return cart;
 }
 
+// Antecedência mínima divulgada na FAQ ("pelo menos uma semana").
+const DIAS_ANTECEDENCIA_MINIMA = 7;
+
 function configureMinimumDate(): void {
   const dateInput =
     document.querySelector<HTMLInputElement>(
@@ -219,11 +222,12 @@ function configureMinimumDate(): void {
     return;
   }
 
-  const today = new Date();
+  const dataMinima = new Date();
+  dataMinima.setDate(dataMinima.getDate() + DIAS_ANTECEDENCIA_MINIMA);
 
   const localDate = new Date(
-    today.getTime() -
-    today.getTimezoneOffset() * 60_000
+    dataMinima.getTime() -
+    dataMinima.getTimezoneOffset() * 60_000
   );
 
   dateInput.min =

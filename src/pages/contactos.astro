@@ -1,0 +1,73 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+
+// NOTA: dados de contacto ainda por confirmar com a Bruna.
+// Substituir os valores marcados com [preencher] assim que tivermos
+// o email, telefone/WhatsApp e Instagram reais da Pali Cakes.
+const EMAIL = "[preencher]";
+const TELEFONE = "[preencher]";
+const INSTAGRAM_HANDLE = "[preencher]";
+const INSTAGRAM_URL = "#";
+---
+
+<MainLayout
+  title="Contactos | Pali Cakes"
+  description="Fale com a Pali Cakes por email, telefone ou Instagram."
+>
+  <section class="faq-hero">
+    <div class="container">
+      <nav class="catalog-breadcrumb" aria-label="Navegação estrutural">
+        <a href="/">Início</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Contactos</span>
+      </nav>
+
+      <span class="section-title__eyebrow">Fale connosco</span>
+
+      <h1>Contactos</h1>
+
+      <p>
+        Tem uma ideia para a sua celebração ou alguma dúvida antes de
+        encomendar? Estamos aqui para ajudar.
+      </p>
+    </div>
+  </section>
+
+  <section class="faq-page">
+    <div class="container">
+      <div class="faq-group">
+        <div class="faq-notice">
+          <h2>Email</h2>
+          <p>
+            Escreva-nos para <strong>{EMAIL}</strong> com a ideia da sua
+            celebração — respondemos assim que possível.
+          </p>
+        </div>
+
+        <div class="faq-notice">
+          <h2>Telefone / WhatsApp</h2>
+          <p>
+            Prefere falar diretamente? Contacte-nos pelo <strong>{TELEFONE}</strong>.
+          </p>
+        </div>
+
+        <div class="faq-notice">
+          <h2>Instagram</h2>
+          <p>
+            Acompanhe os trabalhos da Pali Cakes em
+            {" "}<a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+              <strong>{INSTAGRAM_HANDLE}</strong>
+            </a>.
+          </p>
+        </div>
+      </div>
+
+      <div class="faq-cta">
+        <span class="section-title__eyebrow">Já sabe o que quer?</span>
+        <h2>Comece a sua encomenda</h2>
+        <p>Explore o catálogo e envie-nos os detalhes da sua celebração.</p>
+        <a href="/catalogo" class="button button--primary">Ver catálogo</a>
+      </div>
+    </div>
+  </section>
+</MainLayout>
