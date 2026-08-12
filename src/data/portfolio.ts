@@ -87,5 +87,55 @@ export const portfolioItems: PortfolioItem[] = [
     alt: "Conjunto personalizado de bolo e doces da Pali Cakes",
     featured: true,
     active: true
+  },
+
+  {
+    id: "bolo-hipopotamo",
+    title: "Bolo hipopótamo 3D",
+    category: "Bolos",
+    image: "/images/portfolio/bolo-hipopotamo.png",
+    alt: "Bolo esculpido em formato de hipopótamo produzido pela Pali Cakes",
+    featured: false,
+    active: true
+  },
+
+  {
+    id: "bolo-natal-tronco",
+    title: "Bolo de Natal tronco",
+    category: "Bolos",
+    image: "/images/portfolio/bolo-natal-tronco.png",
+    alt: "Bolo temático de Natal em formato de tronco produzido pela Pali Cakes",
+    featured: false,
+    active: true
+  },
+
+  {
+    id: "bolo-aniversario-rosa",
+    title: "Bolo de aniversário rosa e laços",
+    category: "Bolos",
+    image: "/images/portfolio/bolo-aniversario-rosa.png",
+    alt: "Bolo de aniversário decorado com laços e corações produzido pela Pali Cakes",
+    featured: false,
+    active: true
+  },
+
+  {
+    id: "bolo-tiktok",
+    title: "Bolo temático TikTok",
+    category: "Bolos",
+    image: "/images/portfolio/bolo-tiktok.png",
+    alt: "Bolo temático TikTok produzido pela Pali Cakes",
+    featured: false,
+    active: true
+  },
+
+  {
+    id: "bolo-stitch",
+    title: "Bolo temático com balões",
+    category: "Bolos",
+    image: "/images/portfolio/bolo-stitch.png",
+    alt: "Bolo temático com balões e personagem produzido pela Pali Cakes",
+    featured: false,
+    active: true
   }
 ];
