@@ -17,5 +17,17 @@ devem acompanhar o código da aplicação.
    possível consultar as tabelas de encomendas.
 8. Testar como administrador a listagem e moderação das avaliações e encomendas.
 
+## Autorização administrativa
+
+- O acesso administrativo exige `app_metadata.role = "admin"`; não usar
+  `user_metadata` para autorizações, porque o próprio utilizador pode alterá-lo.
+- Depois de atribuir ou retirar esta função, terminar sessão e entrar novamente
+  para o token JWT receber as claims atualizadas.
+- As funções `calcular_entrega`, `criar_avaliacao` e `criar_encomenda` são
+  endpoints públicos intencionais. Mantêm `SECURITY DEFINER` para disponibilizar
+  apenas essas operações sem conceder acesso direto às tabelas.
+- A proteção contra palavras-passe comprometidas deve ser ativada quando o
+  projeto estiver num plano Supabase Pro ou superior.
+
 As chaves, palavras-passe e tokens não devem ser guardados nesta pasta nem
 adicionados ao Git.

@@ -37,19 +37,29 @@ grant select on table public.encomenda_itens to authenticated;
 drop policy if exists "admin_read_orders" on public.encomendas;
 drop policy if exists "admin_update_order_status" on public.encomendas;
 drop policy if exists "admin_read_order_items" on public.encomenda_itens;
+drop policy if exists "admin le encomendas" on public.encomendas;
+drop policy if exists "admin le itens" on public.encomenda_itens;
+drop policy if exists "anon cria encomendas" on public.encomendas;
+drop policy if exists "anon cria itens" on public.encomenda_itens;
 
 create policy "admin_read_orders"
 on public.encomendas
 for select
 to authenticated
-using (true);
+using (
+  (select auth.jwt()) -> 'app_metadata' ->> 'role' = 'admin'
+);
 
 create policy "admin_update_order_status"
 on public.encomendas
 for update
 to authenticated
-using (true)
+using (
+  (select auth.jwt()) -> 'app_metadata' ->> 'role' = 'admin'
+)
 with check (
+  (select auth.jwt()) -> 'app_metadata' ->> 'role' = 'admin'
+  and
   estado in ('novo', 'confirmado', 'em_producao', 'pronto', 'entregue', 'cancelado')
 );
 
@@ -57,7 +67,9 @@ create policy "admin_read_order_items"
 on public.encomenda_itens
 for select
 to authenticated
-using (true);
+using (
+  (select auth.jwt()) -> 'app_metadata' ->> 'role' = 'admin'
+);
 
 notify pgrst, 'reload schema';
 

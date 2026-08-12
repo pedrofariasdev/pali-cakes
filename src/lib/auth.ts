@@ -9,12 +9,16 @@ export async function entrar(
   email: string,
   password: string
 ): Promise<AuthResult> {
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password
   });
 
-  if (error) {
+  if (error || data.user.app_metadata?.role !== "admin") {
+    if (data.session) {
+      await supabase.auth.signOut();
+    }
+
     // Mensagem genérica: não revela se o email existe
     return { ok: false, erro: "Credenciais inválidas." };
   }
@@ -40,7 +44,11 @@ export async function obterSessao(): Promise<Session | null> {
 export async function exigirSessao(): Promise<boolean> {
   const sessao = await obterSessao();
 
-  if (!sessao) {
+  if (!sessao || sessao.user.app_metadata?.role !== "admin") {
+    if (sessao) {
+      await supabase.auth.signOut();
+    }
+
     window.location.replace("/admin");
     return false;
   }
