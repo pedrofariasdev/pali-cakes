@@ -45,12 +45,28 @@ const formattedPrice =
         currency: "EUR"
       }).format(product.price)
     : product.priceLabel;
+
+const productSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: product.name,
+  description: product.description || `Criação artesanal ${product.name} da Pali Cakes.`,
+  image: new URL(product.image || "/images/og-pali-cakes.jpg", Astro.site).href,
+  sku: product.id,
+  category: category?.name ?? product.categorySlug,
+  brand: {
+    "@type": "Brand",
+    name: "Pali Cakes"
+  }
+};
 ---
 
 
 <MainLayout
   title={`${product.name} | Pali Cakes`}
-  description={product.description}
+  description={product.description || `Conheça ${product.name}, uma criação artesanal da Pali Cakes.`}
+  image={product.image || "/images/og-pali-cakes.jpg"}
+  schema={productSchema}
 >
 
   <section class="product-detail">
@@ -89,7 +105,7 @@ const formattedPrice =
             /
           </span>
 
-          <a href="/catalogo">
+          <a href="/catalogo/bolos-personalizados">
             Catálogo
           </a>
 

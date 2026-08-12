@@ -62,7 +62,9 @@ async function tratarSubmit(evento: SubmitEvent): Promise<void> {
   }
 
   form
-    .querySelectorAll<HTMLElement>(".reviews-form__grid, .reviews-form__rating, .form-field")
+    .querySelectorAll<HTMLElement>(
+      ".reviews-form__grid, .reviews-form__rating, .form-field, .reviews-consent"
+    )
     .forEach((bloco) => {
       bloco.hidden = true;
     });

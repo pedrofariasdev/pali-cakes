@@ -11,13 +11,15 @@ interface Props {
   description?: string;
   image?: string;
   noindex?: boolean;
+  schema?: Record<string, unknown>;
 }
 
 const {
   title = "Pali Cakes | Bolos personalizados",
   description = "Bolos e doces artesanais personalizados para momentos especiais.",
   image = "/images/og-pali-cakes.jpg",
-  noindex = false
+  noindex = false,
+  schema
 } = Astro.props;
 
 // URL absoluto desta página (necessário para og:url e canonical)
@@ -25,6 +27,36 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 // A imagem de partilha também tem de ser absoluta
 const socialImage = new URL(image, Astro.site);
+
+const organizationId = new URL("/#organization", Astro.site).href;
+const baseSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": organizationId,
+      name: "Pali Cakes",
+      url: new URL("/", Astro.site).href,
+      logo: {
+        "@type": "ImageObject",
+        url: new URL("/images/logos/logo-nav.png", Astro.site).href
+      },
+      email: "geral@palicakes.pt"
+    },
+    {
+      "@type": "WebSite",
+      "@id": new URL("/#website", Astro.site).href,
+      url: new URL("/", Astro.site).href,
+      name: "Pali Cakes",
+      inLanguage: "pt-PT",
+      publisher: { "@id": organizationId }
+    }
+  ]
+};
+
+const structuredData = schema ? [baseSchema, schema] : [baseSchema];
+const serializarSchema = (value: Record<string, unknown>) =>
+  JSON.stringify(value).replace(/</g, "\\u003c");
 ---
 
 <!DOCTYPE html>
@@ -71,12 +103,14 @@ const socialImage = new URL(image, Astro.site);
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={socialImage} />
+  <meta name="twitter:image:alt" content="Bolo personalizado criado pela Pali Cakes" />
 
-  <meta name="theme-color" content="#d7a2a8" />
+  <meta name="theme-color" content="#a85d6b" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
 
   <!-- iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Pali Cakes" />
 
   <link rel="icon" type="image/svg+xml" href="/images/favicon/favicon.svg" />
@@ -91,14 +125,24 @@ const socialImage = new URL(image, Astro.site);
     rel="stylesheet"
   >
 
+  {
+    structuredData.map((item) => (
+      <script is:inline type="application/ld+json" set:html={serializarSchema(item)} />
+    ))
+  }
+
 </head>
 
 
 <body>
 
+  <a class="skip-link" href="#conteudo-principal">
+    Saltar para o conteúdo
+  </a>
+
   <Navbar />
 
-  <main>
+  <main id="conteudo-principal" tabindex="-1">
     <slot />
   </main>
 

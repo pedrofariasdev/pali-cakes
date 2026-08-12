@@ -14,6 +14,11 @@ export interface Avaliacao {
   aprovada_em: string | null;
 }
 
+export type AvaliacaoPublica = Omit<Avaliacao, "email">;
+
+const COLUNAS_PUBLICAS_AVALIACAO =
+  "id,criado_em,nome,localidade,classificacao,comentario,produto_slug,ocasiao,estado,aprovada_em" as const;
+
 export interface NovaAvaliacao {
   nome: string;
   email: string;
@@ -31,10 +36,10 @@ export type ResultadoAvaliacao =
 /** Avaliações aprovadas — usado no build para a home. */
 export async function getAvaliacoesAprovadas(
   limite = 6
-): Promise<Avaliacao[]> {
+): Promise<AvaliacaoPublica[]> {
   const { data, error } = await supabase
     .from("avaliacoes")
-    .select("*")
+    .select(COLUNAS_PUBLICAS_AVALIACAO)
     .eq("estado", "aprovada")
     .order("aprovada_em", { ascending: false })
     .limit(limite);
@@ -44,7 +49,7 @@ export async function getAvaliacoesAprovadas(
     return [];
   }
 
-  return (data as Avaliacao[]) ?? [];
+  return (data as AvaliacaoPublica[]) ?? [];
 }
 
 export async function enviarAvaliacao(

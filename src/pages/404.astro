@@ -1,0 +1,27 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+---
+
+<MainLayout
+  title="Página não encontrada | Pali Cakes"
+  description="A página que procura não foi encontrada."
+  noindex
+>
+  <section class="catalog-page">
+    <div class="container">
+      <div class="catalog-empty">
+        <span aria-hidden="true">🧁</span>
+        <h1>Página não encontrada</h1>
+        <p>
+          O endereço pode estar incorreto ou a página pode ter sido alterada.
+        </p>
+        <div class="product-detail__actions">
+          <a href="/" class="button button--primary">Voltar ao início</a>
+          <a href="/catalogo/bolos-personalizados" class="button button--secondary">
+            Ver catálogo
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</MainLayout>

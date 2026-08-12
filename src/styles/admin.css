@@ -86,13 +86,13 @@
 }
 
 .admin-filters button:hover {
-  border-color: #d7a2a8;
+  border-color: var(--color-primary-dark);
 }
 
 .admin-filters button.is-active {
   color: #fff;
-  background: #d7a2a8;
-  border-color: #d7a2a8;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 /* Cartão de encomenda */
@@ -403,7 +403,7 @@
 }
 
 .admin-review__stars {
-  color: #d7a2a8;
+  color: var(--color-primary-dark);
   font-size: 1rem;
   letter-spacing: 0.1em;
 }

@@ -2146,7 +2146,6 @@ body.menu-is-open {
   background-color: var(--color-background);
   border: 1px solid rgba(215, 162, 168, 0.35);
   border-radius: 13px;
-  outline: none;
 
   color: var(--color-text);
   font: inherit;
@@ -2175,6 +2174,13 @@ body.menu-is-open {
   background-color: var(--color-surface);
   border-color: var(--color-primary);
   box-shadow: 0 0 0 4px rgba(215, 162, 168, 0.14);
+}
+
+.form-field input:focus-visible,
+.form-field select:focus-visible,
+.form-field textarea:focus-visible {
+  outline: 3px solid var(--color-primary-dark);
+  outline-offset: 2px;
 }
 
 /* Levantamento ou entrega */
@@ -3126,7 +3132,7 @@ body.menu-is-open {
 }
 
 .portfolio-modal__close:focus-visible {
-  outline: 3px solid rgba(215, 162, 168, 0.35);
+  outline: 3px solid var(--color-primary-dark);
   outline-offset: 3px;
 }
 
@@ -3207,6 +3213,32 @@ body.menu-is-open {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.reviews-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--color-text-light);
+  cursor: pointer;
+  font-size: 0.76rem;
+  line-height: 1.65;
+}
+
+.reviews-consent input {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--color-primary-dark);
+}
+
+.reviews-consent a,
+.checkout-consent a {
+  color: var(--color-primary-dark);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .reviews-form__grid {

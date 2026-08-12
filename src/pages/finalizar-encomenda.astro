@@ -5,6 +5,7 @@ import MainLayout from "../layouts/MainLayout.astro";
 <MainLayout
   title="Finalizar encomenda | Pali Cakes"
   description="Preencha os dados necessários para enviar a sua encomenda à Pali Cakes."
+  noindex
 >
   <section class="checkout-page">
     <div class="container">
@@ -37,6 +38,7 @@ import MainLayout from "../layouts/MainLayout.astro";
                 <h2>Dados de contacto</h2>
                 <p>Como a Pali Cakes poderá entrar em contacto consigo.</p>
               </div>
+
             </div>
 
             <div class="checkout-form__grid">
@@ -202,6 +204,14 @@ import MainLayout from "../layouts/MainLayout.astro";
                   />
                 </label>
               </div>
+
+              <p
+                class="checkout-delivery__result"
+                data-delivery-result
+                role="status"
+                aria-live="polite"
+                hidden
+              ></p>
             </div>
           </section>
 
@@ -214,7 +224,8 @@ import MainLayout from "../layouts/MainLayout.astro";
 
             <span>
               Confirmo que os dados estão corretos e autorizo a
-              Pali Cakes a contactar-me sobre esta encomenda.
+              Pali Cakes a contactar-me sobre esta encomenda. Declaro que li a
+              <a href="/privacidade">Política de Privacidade</a>.
             </span>
           </label>
 
@@ -230,6 +241,8 @@ import MainLayout from "../layouts/MainLayout.astro";
             <p
             class="checkout-form__helper"
             data-checkout-helper
+            role="status"
+            aria-live="polite"
             >
             Ao enviar, a Pali Cakes recebe o seu pedido e entra em contacto para confirmar os detalhes e o orçamento.
             </p>

@@ -3,7 +3,7 @@ import type { GetStaticPaths } from "astro";
 
 import MainLayout from "@/layouts/MainLayout.astro";
 
-import { getProductsByCategory, type Product } from "@/lib/products";
+import { getProductsByCategory } from "@/lib/products";
 
 
 export const getStaticPaths = (async () => {
@@ -26,11 +26,27 @@ const formattedPrice =
         currency: "EUR"
       }).format(product.price)
     : product.priceLabel;
+
+const productSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: product.name,
+  description: product.description || `Pack Festa ${product.name} da Pali Cakes.`,
+  image: new URL(product.image || "/images/og-pali-cakes.jpg", Astro.site).href,
+  sku: product.id,
+  category: "Packs Festa",
+  brand: {
+    "@type": "Brand",
+    name: "Pali Cakes"
+  }
+};
 ---
 
 <MainLayout
   title={`${product.name} | Pali Cakes`}
-  description={product.description}
+  description={product.description || `Conheça o ${product.name} da Pali Cakes.`}
+  image={product.image || "/images/og-pali-cakes.jpg"}
+  schema={productSchema}
 >
   <section class="product-detail">
     <div class="container product-detail__container">

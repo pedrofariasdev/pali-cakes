@@ -92,8 +92,9 @@ const avaliacoes = await getAvaliacoesAprovadas(12);
                       value={valor}
                       required
                     />
-                    <label for={`estrela-${valor}`} title={`${valor} estrelas`}>
-                      ★
+                    <label for={`estrela-${valor}`}>
+                      <span aria-hidden="true">★</span>
+                      <span class="sr-only">{valor} estrelas</span>
                     </label>
                   </>
                 ))
@@ -113,11 +114,26 @@ const avaliacoes = await getAvaliacoesAprovadas(12);
             ></textarea>
           </label>
 
+          <label class="reviews-consent">
+            <input type="checkbox" name="privacyConsent" required />
+            <span>
+              Autorizo a publicação do meu nome, localidade (se indicada),
+              classificação e comentário. O email não será publicado. Li a
+              <a href="/privacidade">Política de Privacidade</a>.
+            </span>
+          </label>
+
           <button type="submit" class="button button--primary" data-review-submit>
             Enviar avaliação
           </button>
 
-          <p class="reviews-form__status" data-review-status hidden></p>
+          <p
+            class="reviews-form__status"
+            data-review-status
+            role="status"
+            aria-live="polite"
+            hidden
+          ></p>
         </form>
       </div>
 

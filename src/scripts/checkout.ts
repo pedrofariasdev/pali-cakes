@@ -5,43 +5,16 @@ import { calcularEntrega } from "@/lib/delivery";
 
 
 let taxaEntregaActual: number | null = null;
-
-const ORDER_DRAFT_KEY = "pali-cakes-order-draft";
+let entregaVerificada = false;
+let pedidoEntregaActual = 0;
 
 const currencyFormatter = new Intl.NumberFormat("pt-PT", {
   style: "currency",
   currency: "EUR"
 });
 
-interface OrderDraft {
-  id: string;
-  createdAt: string;
-  status: "draft";
-
-  customer: {
-    name: string;
-    email: string;
-    phone: string;
-  };
-
-  event: {
-    date: string;
-    type: string;
-    notes: string;
-  };
-
-  fulfillment: {
-    type: "pickup" | "delivery";
-    address: string;
-    postalCode: string;
-    city: string;
-  };
-
-  items: CartItem[];
-  knownTotal: number;
-}
-
 async function actualizarEntrega(): Promise<void> {
+  const pedidoEntrega = ++pedidoEntregaActual;
   const opcao = document.querySelector<HTMLInputElement>(
     'input[name="fulfillmentType"]:checked'
   );
@@ -58,6 +31,7 @@ async function actualizarEntrega(): Promise<void> {
 
   if (!isDelivery) {
     taxaEntregaActual = null;
+    entregaVerificada = false;
     if (resultado) resultado.hidden = true;
     if (linha) linha.hidden = true;
     renderCheckoutSummary();
@@ -68,16 +42,24 @@ async function actualizarEntrega(): Promise<void> {
 
   if (cp.replace(/\D/g, "").length < 4) {
     taxaEntregaActual = null;
+    entregaVerificada = false;
     if (resultado) resultado.hidden = true;
     if (linha) linha.hidden = true;
     renderCheckoutSummary();
     return;
   }
 
+  entregaVerificada = false;
+  renderCheckoutSummary();
   const entrega = await calcularEntrega(cp);
+
+  if (pedidoEntrega !== pedidoEntregaActual) {
+    return;
+  }
 
   if (!entrega.encontrada) {
     taxaEntregaActual = null;
+    entregaVerificada = false;
 
     if (resultado) {
       resultado.textContent =
@@ -92,6 +74,7 @@ async function actualizarEntrega(): Promise<void> {
   }
 
   taxaEntregaActual = entrega.preco ?? null;
+  entregaVerificada = true;
 
   if (resultado) {
     resultado.textContent =
@@ -175,6 +158,10 @@ function renderCheckoutSummary(): CartItem[] {
   }
 
   const cart = getCart();
+  const isDelivery =
+    document.querySelector<HTMLInputElement>(
+      'input[name="fulfillmentType"]:checked'
+    )?.value === "delivery";
 
   itemsContainer.replaceChildren();
 
@@ -204,7 +191,7 @@ function renderCheckoutSummary(): CartItem[] {
     calculateKnownTotal(cart) + (taxaEntregaActual ?? 0)
   );
 
-  submitButton.disabled = false;
+  submitButton.disabled = isDelivery && !entregaVerificada;
 
   return cart;
 }
@@ -259,17 +246,6 @@ function updateDeliveryFields(): void {
     .forEach((input) => {
       input.required = isDelivery;
     });
-}
-
-function createDraftId(): string {
-  if (
-    typeof crypto !== "undefined" &&
-    typeof crypto.randomUUID === "function"
-  ) {
-    return crypto.randomUUID();
-  }
-
-  return `draft-${Date.now()}`;
 }
 
 function readTextValue(
@@ -331,6 +307,15 @@ async function handleCheckoutSubmit(
   const fulfillmentValue = readTextValue(formData, "fulfillmentType");
   const isDelivery = fulfillmentValue === "delivery";
 
+  if (isDelivery && !entregaVerificada) {
+    if (helper) {
+      helper.textContent =
+        "Confirme um código postal abrangido pela zona de entrega ou escolha levantamento.";
+    }
+    form.querySelector<HTMLInputElement>('input[name="postalCode"]')?.focus();
+    return;
+  }
+
   // Bloqueia envios duplicados enquanto aguarda resposta
   if (submitButton) {
     submitButton.disabled = true;
@@ -358,7 +343,7 @@ async function handleCheckoutSubmit(
   if (!resultado.ok) {
     if (submitButton) {
       submitButton.disabled = false;
-      submitButton.textContent = "Enviar pedido de encomenda";
+      submitButton.textContent = "Preparar pedido de encomenda";
     }
 
     if (helper) {
@@ -375,9 +360,9 @@ async function handleCheckoutSubmit(
   }
 
   if (helper) {
-    helper.innerHTML =
-      `A sua encomenda foi registada com a referência <strong>${resultado.referencia}</strong>. ` +
-      `A Pali Cakes entrará em contacto para confirmar os detalhes e o orçamento.`;
+    helper.textContent =
+      `A sua encomenda foi registada com a referência ${resultado.referencia}. ` +
+      "A Pali Cakes entrará em contacto para confirmar os detalhes e o orçamento.";
   }
 
   form
