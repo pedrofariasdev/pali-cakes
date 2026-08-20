@@ -272,7 +272,34 @@ h4 {
   margin-bottom: 1.75rem;
 }
 
+.contact-form-wrapper {
+  padding: 2.5rem;
+  margin: 3rem 0;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.contact-form-wrapper__intro {
+  max-width: 34rem;
+  margin-bottom: 2rem;
+}
+
+.contact-form-wrapper__intro h2 {
+  margin: 0.5rem 0 0.75rem;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 @media (max-width: 640px) {
+  .contact-form-wrapper {
+    padding: 1.75rem;
+  }
+
   .faq-item summary {
     padding: 1rem 1.15rem;
     gap: 1rem;

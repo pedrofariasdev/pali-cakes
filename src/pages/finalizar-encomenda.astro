@@ -97,7 +97,7 @@ import MainLayout from "../layouts/MainLayout.astro";
                   required
                 />
 
-                <small>Pedimos pelo menos uma semana de antecedência.</small>
+                <small>Pedimos pelo menos 30 dias de antecedência.</small>
               </label>
 
               <label class="form-field">
@@ -166,6 +166,23 @@ import MainLayout from "../layouts/MainLayout.astro";
                 </span>
               </label>
             </div>
+
+            <label class="form-field form-field--full">
+              <span data-schedule-label>Horário de recolha preferido</span>
+
+              <input
+                type="text"
+                name="horarioPreferido"
+                placeholder="Ex: ao final da manhã, por volta das 15h..."
+                data-schedule-input
+              />
+
+              <small data-schedule-helper>
+                Recolhas: seg a sex, 10h às 16h · sáb, dom e feriados,
+                10h às 12h. Vamos contactá-lo(a) para confirmar o horário
+                exacto.
+              </small>
+            </label>
 
             <div
               class="checkout-delivery"

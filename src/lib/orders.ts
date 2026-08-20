@@ -19,6 +19,7 @@ export interface OrderInput {
   dataEvento: string;
   tipoCelebracao: string;
   observacoes: string;
+  horarioPreferido: string;
   itens: OrderItemInput[];
 }
 
@@ -40,7 +41,8 @@ export async function criarEncomenda(
     p_data_evento: input.dataEvento || null,
     p_tipo_celebracao: input.tipoCelebracao || null,
     p_observacoes: input.observacoes || null,
-    p_itens: input.itens
+    p_itens: input.itens,
+    p_horario_preferido: input.horarioPreferido || null
   });
 
   if (error) {
@@ -51,5 +53,40 @@ export async function criarEncomenda(
     };
   }
 
-  return { ok: true, referencia: data as string };
+  const referencia = data as string;
+
+  // Aviso por email é "melhor esforço": a encomenda já está gravada,
+  // por isso uma falha aqui não deve impedir a confirmação ao cliente.
+  notificarEncomendaNova(referencia, input).catch((notificationError) => {
+    console.error("[notificarEncomendaNova]", notificationError);
+  });
+
+  return { ok: true, referencia };
+}
+
+async function notificarEncomendaNova(
+  referencia: string,
+  input: OrderInput
+): Promise<void> {
+  const { error } = await supabase.functions.invoke("order-notification", {
+    body: {
+      referencia,
+      clienteNome: input.clienteNome,
+      clienteTelefone: input.clienteTelefone,
+      clienteEmail: input.clienteEmail,
+      metodoEntrega: input.metodoEntrega,
+      morada: input.morada,
+      codigoPostal: input.codigoPostal,
+      localidade: input.localidade,
+      dataEvento: input.dataEvento,
+      tipoCelebracao: input.tipoCelebracao,
+      observacoes: input.observacoes,
+      horarioPreferido: input.horarioPreferido,
+      itens: input.itens
+    }
+  });
+
+  if (error) {
+    console.error("[notificarEncomendaNova]", error.message);
+  }
 }

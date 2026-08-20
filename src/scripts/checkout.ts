@@ -62,8 +62,9 @@ async function actualizarEntrega(): Promise<void> {
     entregaVerificada = false;
 
     if (resultado) {
-      resultado.textContent =
-        "Não efectuamos entregas nesta zona. Pode optar por levantamento ou contactar-nos.";
+      resultado.textContent = entrega.foraDoLimite
+        ? "Infelizmente não entregamos a partir de 45 km. Pode optar por levantamento ou combinar connosco um ponto de recolha mais próximo."
+        : "Não efectuamos entregas nesta zona. Pode optar por levantamento ou contactar-nos.";
       resultado.className = "checkout-delivery__result is-error";
       resultado.hidden = false;
     }
@@ -196,8 +197,8 @@ function renderCheckoutSummary(): CartItem[] {
   return cart;
 }
 
-// Antecedência mínima divulgada na FAQ ("pelo menos uma semana").
-const DIAS_ANTECEDENCIA_MINIMA = 7;
+// Antecedência mínima divulgada na FAQ ("pelo menos 30 dias").
+const DIAS_ANTECEDENCIA_MINIMA = 30;
 
 function configureMinimumDate(): void {
   const dateInput =
@@ -246,6 +247,35 @@ function updateDeliveryFields(): void {
     .forEach((input) => {
       input.required = isDelivery;
     });
+
+  updateScheduleField(isDelivery);
+}
+
+function updateScheduleField(isDelivery: boolean): void {
+  const label =
+    document.querySelector<HTMLElement>("[data-schedule-label]");
+
+  const input =
+    document.querySelector<HTMLInputElement>("[data-schedule-input]");
+
+  const helper =
+    document.querySelector<HTMLElement>("[data-schedule-helper]");
+
+  if (!label || !input || !helper) {
+    return;
+  }
+
+  if (isDelivery) {
+    label.textContent = "Horário de entrega preferido";
+    input.placeholder = "Ex: ao final da tarde, por volta das 18h...";
+    helper.textContent =
+      "O horário de entrega é sempre combinado consigo. Indique aqui a sua preferência e entraremos em contacto para confirmar.";
+  } else {
+    label.textContent = "Horário de recolha preferido";
+    input.placeholder = "Ex: ao final da manhã, por volta das 15h...";
+    helper.textContent =
+      "Recolhas: seg a sex, 10h às 16h · sáb, dom e feriados, 10h às 12h. Vamos contactá-lo(a) para confirmar o horário exacto.";
+  }
 }
 
 function readTextValue(
@@ -337,6 +367,7 @@ async function handleCheckoutSubmit(
     dataEvento: readTextValue(formData, "eventDate"),
     tipoCelebracao: readTextValue(formData, "eventType"),
     observacoes: readTextValue(formData, "notes"),
+    horarioPreferido: readTextValue(formData, "horarioPreferido"),
     itens: toOrderItems(cart)
   });
 

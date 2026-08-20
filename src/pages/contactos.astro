@@ -3,10 +3,14 @@ import MainLayout from "@/layouts/MainLayout.astro";
 
 // NOTA: dados de contacto ainda por confirmar com a Bruna.
 // Substituir os valores marcados com [preencher] assim que tivermos
-// o email, telefone/WhatsApp e Instagram reais da Pali Cakes.
-const EMAIL = "geral@palicakes.pt";
+// o telefone/WhatsApp, Facebook e TikTok reais da Pali Cakes.
 const INSTAGRAM_HANDLE = "@palicakes";
 const INSTAGRAM_URL = "https://www.instagram.com/palicakes/";
+// Links genéricos temporários — substituir pelos links oficiais assim que a Bruna os enviar.
+const FACEBOOK_HANDLE = "@palicakes";
+const FACEBOOK_URL = "https://www.facebook.com/palicakes";
+const TIKTOK_HANDLE = "@brunapaliotes";
+const TIKTOK_URL = "https://www.tiktok.com/@brunapaliotes";
 ---
 
 <MainLayout
@@ -36,13 +40,6 @@ const INSTAGRAM_URL = "https://www.instagram.com/palicakes/";
     <div class="container">
       <div class="faq-group">
         <div class="faq-notice">
-          <h2>Email</h2>
-          <p>
-            Escreva-nos para <strong>{EMAIL}</strong> com a ideia da sua
-            celebração — respondemos assim que possível.
-          </p>
-        </div>
-        <div class="faq-notice">
           <h2>Instagram</h2>
           <p>
             Acompanhe os trabalhos da Pali Cakes em
@@ -51,6 +48,74 @@ const INSTAGRAM_URL = "https://www.instagram.com/palicakes/";
             </a>.
           </p>
         </div>
+        <div class="faq-notice">
+          <h2>Facebook</h2>
+          <p>
+            Siga a Pali Cakes no Facebook em
+            {" "}<a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer">
+              <strong>{FACEBOOK_HANDLE}</strong>
+            </a>.
+          </p>
+        </div>
+        <div class="faq-notice">
+          <h2>TikTok</h2>
+          <p>
+            Veja os vídeos da Pali Cakes no TikTok em
+            {" "}<a href={TIKTOK_URL} target="_blank" rel="noopener noreferrer">
+              <strong>{TIKTOK_HANDLE}</strong>
+            </a>.
+          </p>
+        </div>
+      </div>
+
+      <div class="contact-form-wrapper">
+        <div class="contact-form-wrapper__intro">
+          <span class="section-title__eyebrow">Escreva-nos</span>
+          <h2>Envie a sua mensagem</h2>
+          <p>
+            Preencha o formulário com a sua dúvida ou ideia de celebração —
+            a Pali Cakes responde directamente para o seu email.
+          </p>
+        </div>
+
+        <form class="contact-form" data-contact-form>
+          <div class="checkout-form__grid">
+            <label class="form-field">
+              <span>Nome completo *</span>
+              <input type="text" name="name" autocomplete="name" required />
+            </label>
+
+            <label class="form-field">
+              <span>Email *</span>
+              <input type="email" name="email" autocomplete="email" required />
+            </label>
+
+            <label class="form-field form-field--full">
+              <span>Telefone</span>
+              <input type="tel" name="phone" autocomplete="tel" />
+            </label>
+
+            <label class="form-field form-field--full">
+              <span>Mensagem *</span>
+              <textarea name="message" rows="5" required></textarea>
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            class="button button--primary checkout-form__submit"
+            data-contact-submit
+          >
+            Enviar mensagem
+          </button>
+
+          <p
+            class="checkout-form__helper"
+            data-contact-helper
+            role="status"
+            aria-live="polite"
+          ></p>
+        </form>
       </div>
 
       <div class="faq-cta">
@@ -61,4 +126,8 @@ const INSTAGRAM_URL = "https://www.instagram.com/palicakes/";
       </div>
     </div>
   </section>
+
+  <script>
+    import "../scripts/contact-form.ts";
+  </script>
 </MainLayout>
