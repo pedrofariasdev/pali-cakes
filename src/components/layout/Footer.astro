@@ -1,3 +1,17 @@
+---
+// Instagram real (mesmo link usado na página de contactos).
+const INSTAGRAM_URL = "https://www.instagram.com/palicakes/";
+
+// Links genéricos temporários — substituir pelos links oficiais assim que a Bruna os enviar.
+const FACEBOOK_URL = "https://www.facebook.com/palicakes";
+const TIKTOK_URL = "https://www.tiktok.com/@brunapaliotes";
+
+// Horário de recolha confirmado pela Bruna. Entregas têm horário
+// combinado directamente com o cliente (ver formulário de encomenda).
+const HORARIO_RECOLHA =
+  "Seg a sex, 10h–16h · Sáb, dom e feriados, 10h–12h";
+---
+
 <footer class="footer">
 
   <div class="container footer__container">
@@ -11,7 +25,7 @@
       >
 
       <p>
-        Bolos e doces personalizados criados
+        Bolos personalizados criados
         artesanalmente para momentos especiais.
       </p>
 
@@ -85,6 +99,34 @@
 
       <a href="/contactos">
         Contacto
+      </a>
+
+      <p class="footer__hours">
+        <span>Horário de recolha</span>
+        {HORARIO_RECOLHA}
+      </p>
+
+    </div>
+
+
+
+
+    <div class="footer__links">
+
+      <h3>
+        Redes sociais
+      </h3>
+
+      <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
+        Instagram
+      </a>
+
+      <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer">
+        Facebook
+      </a>
+
+      <a href={TIKTOK_URL} target="_blank" rel="noopener noreferrer">
+        TikTok
       </a>
 
     </div>

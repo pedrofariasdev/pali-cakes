@@ -14,7 +14,11 @@ export interface ResultadoEntrega {
   encontrada: boolean;
   zona?: string;
   preco?: number;
+  foraDoLimite?: boolean;
 }
+
+/** Distância máxima de entrega, em km. Zonas a partir daqui são bloqueadas. */
+const DISTANCIA_MAXIMA_KM = 45;
 
 let cacheZonas: ZonaEntrega[] | null = null;
 
@@ -53,6 +57,10 @@ export async function calcularEntrega(
   const zona = zonas.find((z) => z.prefixos.includes(prefixo));
 
   if (!zona) return { encontrada: false };
+
+  if (zona.distancia_max >= DISTANCIA_MAXIMA_KM) {
+    return { encontrada: false, foraDoLimite: true };
+  }
 
   return {
     encontrada: true,

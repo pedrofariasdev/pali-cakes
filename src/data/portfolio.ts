@@ -70,16 +70,6 @@ export const portfolioItems: PortfolioItem[] = [
   },
 
   {
-    id: "doces-personalizados",
-    title: "Doces personalizados",
-    category: "Doces personalizados",
-    image: "/images/products/doces-personalizados.png",
-    alt: "Doces temáticos personalizados produzidos pela Pali Cakes",
-    featured: false,
-    active: true
-  },
-
-  {
     id: "bolos-e-doces",
     title: "Conjunto de bolo e doces",
     category: "Bolos e Doces",
