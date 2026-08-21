@@ -813,13 +813,14 @@
 }
 
 .button--ghost {
+  background-color: rgba(54, 36, 33, .4);
   border: 1px solid rgba(255, 250, 246, .55);
   color: #fff;
   backdrop-filter: blur(6px);
 }
 
 .button--ghost:hover {
-  background-color: rgba(255, 250, 246, .12);
+  background-color: rgba(54, 36, 33, .55);
   border-color: #fff;
 }
 
