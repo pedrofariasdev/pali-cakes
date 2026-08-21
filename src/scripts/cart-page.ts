@@ -9,6 +9,29 @@ const currencyFormatter = new Intl.NumberFormat("pt-PT", {
   currency: "EUR"
 });
 
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (character) => {
+    const entities: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    };
+
+    return entities[character] ?? character;
+  });
+}
+
+function getItemHref(item: CartItem): string {
+  const categorySlug = encodeURIComponent(item.categorySlug);
+  const productSlug = encodeURIComponent(item.productSlug);
+
+  return item.categorySlug === "packs-festa"
+    ? `/packs-festa/${productSlug}`
+    : `/catalogo/${categorySlug}/${productSlug}`;
+}
+
 function formatItemPrice(item: CartItem): string {
   if (item.price === null) {
     return item.priceLabel;
@@ -76,24 +99,26 @@ function renderCartPage(): void {
   emptyState.hidden = true;
 
   cartList.innerHTML = cart
-    .map(
-      (item) => `
+    .map((item) => {
+      const href = escapeHtml(getItemHref(item));
+      const id = escapeHtml(item.id);
+      const name = escapeHtml(item.name);
+      const image = escapeHtml(item.image);
+      const price = escapeHtml(formatItemPrice(item));
+
+      return `
         <article
           class="cart-item"
           data-cart-item
-          data-product-id="${item.id}"
+          data-product-id="${id}"
         >
           <a
-            href="${
-              item.categorySlug === "packs-festa"
-                ? `/packs-festa/${item.productSlug}`
-                : `/catalogo/${item.categorySlug}/${item.productSlug}`
-            }"
+            href="${href}"
             class="cart-item__image"
           >
             <img
-              src="${item.image}"
-              alt="${item.name}"
+              src="${image}"
+              alt="${name}"
             />
           </a>
 
@@ -105,18 +130,14 @@ function renderCartPage(): void {
 
               <h2>
                 <a
-                  href="${
-                    item.categorySlug === "packs-festa"
-                      ? `/packs-festa/${item.productSlug}`
-                      : `/catalogo/${item.categorySlug}/${item.productSlug}`
-                  }"
+                  href="${href}"
                 >
-                  ${item.name}
+                  ${name}
                 </a>
               </h2>
 
               <strong class="cart-item__price">
-                ${formatItemPrice(item)}
+                ${price}
               </strong>
             </div>
 
@@ -131,7 +152,7 @@ function renderCartPage(): void {
 
           <div
             class="cart-item__quantity"
-            aria-label="Quantidade de ${item.name}"
+            aria-label="Quantidade de ${name}"
           >
             <button
               type="button"
@@ -152,8 +173,8 @@ function renderCartPage(): void {
             </button>
           </div>
         </article>
-      `
-    )
+      `;
+    })
     .join("");
 
   const quantity = cart.reduce(

@@ -35,8 +35,11 @@ function toProduct(row: ProdutoRow): Product {
     categorySlug: row.categoria_slug,
     description: row.descricao ?? "",
     image: row.imagem_url ?? "",
-    price: row.preco,
-    priceLabel: row.preco_label,
+    price:
+      typeof row.preco === "number" && row.preco > 0
+        ? row.preco
+        : null,
+    priceLabel: row.preco_label?.trim() || "Sob consulta",
     active: row.ativo,
     featured: row.destaque
   };

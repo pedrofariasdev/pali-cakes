@@ -50,17 +50,34 @@ const avaliacoes = await getAvaliacoesAprovadas(12);
           <div class="reviews-form__grid">
             <label class="form-field">
               <span>O seu nome *</span>
-              <input type="text" name="nome" maxlength="80" required />
+              <input
+                type="text"
+                name="nome"
+                maxlength="80"
+                autocomplete="name"
+                required
+              />
             </label>
 
             <label class="form-field">
               <span>Localidade</span>
-              <input type="text" name="localidade" maxlength="80" placeholder="Amadora" />
+              <input
+                type="text"
+                name="localidade"
+                maxlength="80"
+                autocomplete="address-level2"
+                placeholder="Amadora"
+              />
             </label>
 
             <label class="form-field">
               <span>Email (não será publicado)</span>
-              <input type="email" name="email" maxlength="160" />
+              <input
+                type="email"
+                name="email"
+                maxlength="160"
+                autocomplete="email"
+              />
             </label>
 
             <label class="form-field">

@@ -1,58 +1,56 @@
 ---
-const heroImage = "/images/hero-cake.png";
+const heroImages = [
+  { src: "/images/hero/hero-bolo-flores.jpg", alt: "Bolo artesanal com flores em pasta produzido pela Pali Cakes" },
+  { src: "/images/hero/hero-chocolates.jpg", alt: "Chocolates artesanais Pali Cakes" },
+  { src: "/images/hero/hero-cupcakes.jpg", alt: "Cupcakes personalizados produzidos pela Pali Cakes" },
+  { src: "/images/hero/hero-bolo-frutos.jpg", alt: "Bolo com frutos vermelhos produzido pela Pali Cakes" }
+];
 ---
 
 <section class="hero">
+
+  <div class="hero__mosaic" aria-hidden="true">
+    {
+      heroImages.map((image) => (
+        <div class="hero__mosaic-cell">
+          <img
+            src={image.src}
+            alt=""
+            loading="eager"
+          />
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="hero__overlay" aria-hidden="true"></div>
+
+
   <div class="container hero__container">
 
     <div class="hero__content">
 
-      <span class="hero__eyebrow">
-        Pali Cakes
-      </span>
-
-      <h1>
-        Bolos artesanais
-        criados para
-        <span>momentos especiais</span>
+      <h1 class="sr-only">
+        Pali Cakes — Bolos artesanais personalizados
       </h1>
 
-      <p>
-        Bolos personalizados feitos à mão,
-        com criatividade, sabor e carinho
-        para tornar cada celebração inesquecível.
-      </p>
-
       <div class="hero__actions">
-        <a href="/catalogo/bolos-personalizados" class="button button--primary">
+        <a href="/catalogo/bolos-personalizados" class="button button--primary button--sm">
           Ver catálogo
         </a>
 
-        <a href="/packs-festa" class="button button--secondary">
+        <a href="/packs-festa" class="button button--ghost button--sm">
           Fazer encomenda
         </a>
       </div>
 
     </div>
 
-
-    <div class="hero__visual">
-
-      <div class="hero__image-wrapper">
-        <img 
-          src={heroImage}
-          alt="Bolo artesanal Pali Cakes"
-        />
-      </div>
-
-
-      <div class="hero__badge">
-        <span>100%</span>
-        <strong>Artesanal</strong>
-      </div>
-
-
-    </div>
-
   </div>
+
+  <div class="hero-cursor" data-hero-cursor hidden aria-hidden="true"></div>
 </section>
+
+<script>
+  import "../../scripts/hero-cursor.ts";
+</script>

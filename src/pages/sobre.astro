@@ -2,6 +2,7 @@
 import MainLayout from "../layouts/MainLayout.astro";
 
 const aboutImage = "/images/about/about-pali.JPG";
+const brunaImage = "/images/about/about-bruna.jpg";
 ---
 
 <MainLayout
@@ -73,36 +74,65 @@ const aboutImage = "/images/about/about-pali.JPG";
   </section>
 
 
-  <section class="about-story">
-    <div class="container about-story__container">
-      <div class="about-story__heading">
-        <span class="section-title__eyebrow">
-          A nossa essência
-        </span>
-
-        <h2>
-          Muito mais do que
-          <span>um bolo bonito</span>
-        </h2>
+  <section class="about-founder" id="fundadora">
+    <div class="container about-founder__container">
+      <div class="about-founder__image">
+        <img
+          src={brunaImage}
+          alt="Bruna Paliotes, fundadora da Pali Cakes"
+        />
       </div>
 
-      <div class="about-story__content">
-        <p class="about-story__lead">
-          Cada encomenda é uma oportunidade de transformar uma
-          ideia numa criação especial, pensada exclusivamente para
-          aquele momento.
+      <div class="about-founder__content">
+        <span class="section-title__eyebrow">
+          Quem está por trás
+        </span>
+
+        <h2>Bruna Paliotes</h2>
+
+        <p class="about-founder__lead">
+          A criatividade e o cuidado que definem a Pali Cakes
+          começam com a Bruna.
         </p>
 
         <p>
-          Desde a escolha dos sabores até à decoração final, todos
-          os detalhes são preparados com atenção, criatividade e
-          cuidado artesanal.
+          Olá, sou a Bruna Paliotes, fundadora da Pali Cakes.
         </p>
 
         <p>
-          O objetivo é que cada cliente receba algo que represente
-          verdadeiramente a sua celebração e que faça parte das
-          memórias daquele dia.
+          Tudo começou aos 14 anos, de forma inesperada. Sempre
+          tive gosto por artes visuais e trabalhos manuais e, ao
+          receber um bolo que ficou aquém do que esperava,
+          ocorreu-me a pergunta que mudou tudo: porque não fazer
+          eu própria?
+        </p>
+
+        <p>
+          Comecei por experimentar e aprender sozinha. Mas
+          depressa percebi que queria levar isto mais longe, e
+          decidi estudar na área. Licenciei-me em Produção
+          Alimentar e Restauração pela Escola Superior de
+          Hotelaria e Turismo do Estoril, tornei-me formadora
+          qualificada e Cake Designer certificada.
+        </p>
+
+        <p>
+          Continuo a frequentar workshops e formações, porque
+          acredito que aprender nunca é demais. E porque o
+          conhecimento só faz verdadeiro sentido quando também se
+          partilha.
+        </p>
+
+        <p>
+          Na Pali Cakes, cada bolo é pensado ao detalhe, dos
+          sabores ao design. Procuro que cada criação seja bonita,
+          tecnicamente cuidada e, acima de tudo, deliciosa.
+        </p>
+
+        <p>
+          É um prazer fazer parte dos momentos mais especiais de
+          cada cliente, transformando ideias e histórias em arte
+          que também se saboreia.
         </p>
       </div>
     </div>
@@ -161,6 +191,42 @@ const aboutImage = "/images/about/about-pali.JPG";
             a ideia do cliente e encontrar a melhor solução.
           </p>
         </article>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="about-story">
+    <div class="container about-story__container">
+      <div class="about-story__heading">
+        <span class="section-title__eyebrow">
+          A nossa essência
+        </span>
+
+        <h2>
+          Muito mais do que
+          <span>um bolo bonito</span>
+        </h2>
+      </div>
+
+      <div class="about-story__content">
+        <p class="about-story__lead">
+          Cada encomenda é uma oportunidade de transformar uma
+          ideia numa criação especial, pensada exclusivamente para
+          aquele momento.
+        </p>
+
+        <p>
+          Desde a escolha dos sabores até à decoração final, todos
+          os detalhes são preparados com atenção, criatividade e
+          cuidado artesanal.
+        </p>
+
+        <p>
+          O objetivo é que cada cliente receba algo que represente
+          verdadeiramente a sua celebração e que faça parte das
+          memórias daquele dia.
+        </p>
       </div>
     </div>
   </section>

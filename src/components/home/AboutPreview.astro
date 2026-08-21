@@ -1,51 +1,48 @@
 ---
-const aboutImage = "/images/about/about-pali.png";
+const brunaImage = "/images/about/about-pali.JPG";
 ---
 
 <section class="about-preview">
+  <div class="about-preview__photo" aria-hidden="true">
+    <img
+      src={brunaImage}
+      alt="Bruna Paliotes, fundadora da Pali Cakes"
+      loading="lazy"
+    />
+  </div>
+
+  <div class="about-preview__overlay" aria-hidden="true"></div>
+
   <div class="container about-preview__container">
-    <div class="about-preview__visual">
-      <div class="about-preview__image">
-        <img
-          src={aboutImage}
-          alt="Criação artesanal da Pali Cakes"
-          loading="lazy"
-        />
-      </div>
-
-      <span
-        class="about-preview__decoration"
-        aria-hidden="true"
-      ></span>
-    </div>
-
-    <div class="about-preview__content">
+    <div class="about-preview__heading">
       <span class="section-title__eyebrow">
-        Sobre a Pali Cakes
+        Quem está por trás
       </span>
 
       <h2>
-        Mais do que bolos,
-        <span>criamos memórias</span>
+        Sobre a
+        <span>Bruna</span>
       </h2>
 
       <div class="about-preview__line"></div>
+    </div>
 
+    <div class="about-preview__text">
       <p>
-        A Pali Cakes nasceu da paixão pela confeitaria e pelo desejo
-        de transformar cada celebração num momento ainda mais especial.
-      </p>
-
-      <p>
-        Cada criação é preparada artesanalmente, respeitando o estilo,
-        os sabores e todos os detalhes escolhidos para a ocasião.
+        Sou a Bruna, fundadora da Pali Cakes. Tudo começou aos 14
+        anos, quando recebi um bolo que não correspondeu às minhas
+        expectativas e pensei: e se fosse eu a fazê-los? O que era
+        curiosidade tornou-se paixão, e depois profissão. Hoje,
+        licenciada em Produção Alimentar e Restauração e Cake
+        Designer certificada, junto as duas coisas que sempre
+        fizeram parte de mim: a arte e a pastelaria.
       </p>
 
       <a
-        href="/sobre"
+        href="/sobre#fundadora"
         class="about-preview__link"
       >
-        Saiba mais sobre a Pali Cakes
+        Saber mais sobre a Bruna
         <span aria-hidden="true">→</span>
       </a>
     </div>
