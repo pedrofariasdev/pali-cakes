@@ -4,6 +4,7 @@ import path from "path";
 
 export default defineConfig({
   site: "https://palicakes.pt",
+
   integrations: [
     sitemap({
       filter: (page) =>
@@ -12,6 +13,7 @@ export default defineConfig({
         !page.includes("/admin")
     })
   ],
+
   vite: {
     resolve: {
       alias: {
