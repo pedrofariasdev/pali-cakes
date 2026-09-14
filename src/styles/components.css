@@ -179,7 +179,7 @@
 
   align-items: center;
 
-  min-height: 80px;
+  min-height: 100px;
 }
 
 
@@ -363,7 +363,7 @@
   align-items: center;
   gap: 5px;
 
-  font-size: 1.4rem !important;
+  font-size: 1.9rem !important;
 
 }
 
@@ -372,8 +372,8 @@
 
   display: grid;
 
-  width: 21px;
-  height: 21px;
+  width: 31px;
+  height: 31px;
 
   place-items: center;
 
@@ -383,7 +383,7 @@
 
   color: white;
 
-  font-size: .72rem;
+  font-size: 1.05rem;
 
 }
 
@@ -1653,9 +1653,21 @@ body.menu-is-open {
 }
 
 .product-detail__breadcrumb {
+  display: flex;         /* Faltava essa linha! */
   justify-content: flex-start;
+  align-items: center;   /* Ajuda a manter as palavras e as barras alinhadas no meio */
   margin-bottom: 38px;
+  gap: 12px;             /* Aqui você controla o espaço. Aumente ou diminua conforme necessário */
 }
+
+.catalog-breadcrumb {
+  display: flex;         /* Faltava essa linha! */
+  justify-content: flex-start;
+  align-items: center;   /* Ajuda a manter as palavras e as barras alinhadas no meio */
+  margin-bottom: 38px;
+  gap: 12px;             /* Aqui você controla o espaço. Aumente ou diminua conforme necessário */
+}
+
 
 .product-detail__content h1 {
   margin-top: 12px;
@@ -1664,6 +1676,7 @@ body.menu-is-open {
   letter-spacing: -0.045em;
   line-height: 1.03;
 }
+
 
 .product-detail__description {
   margin-top: 25px;
@@ -2638,8 +2651,11 @@ body.menu-is-open {
 }
 
 .about-hero__breadcrumb {
+  display: flex;         /* Faltava essa linha! */
   justify-content: flex-start;
-  margin-bottom: 35px;
+  align-items: center;   /* Ajuda a manter as palavras e as barras alinhadas no meio */
+  margin-bottom: 38px;
+  gap: 12px;             /* Aqui você controla o espaço. Aumente ou diminua conforme necessário */
 }
 
 .about-hero h1 {
@@ -2974,8 +2990,11 @@ body.menu-is-open {
 }
 
 .portfolio-hero .catalog-breadcrumb {
-  justify-content: center;
-  margin-bottom: 32px;
+  display: flex;         /* Faltava essa linha! */
+  justify-content: flex-start;
+  align-items: center;   /* Ajuda a manter as palavras e as barras alinhadas no meio */
+  margin-bottom: 38px;
+  gap: 12px;             /* Aqui você controla o espaço. Aumente ou diminua conforme necessário */
 }
 
 .portfolio-hero h1 {
