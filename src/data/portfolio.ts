@@ -280,11 +280,11 @@ export const portfolioItems: PortfolioItem[] = [
     active: true
   },
   {
-    id: "miniaturas-morangos-chocolate",
-    title: "Morangos cobertos de chocolate",
+    id: "miniaturas-morangos",
+    title: "Morango do Amor",
     category: "Miniaturas",
-    image: "/images/portfolio/miniaturas-morangos-chocolate.jpg",
-    alt: "Morangos frescos cobertos com chocolate produzidos pela Pali Cakes",
+    image: "/images/portfolio/morango-do-amor.jpg",
+    alt: "Morango do amor produzidos pela Pali Cakes",
     featured: false,
     active: true
   },

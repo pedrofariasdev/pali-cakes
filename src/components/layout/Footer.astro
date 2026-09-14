@@ -1,145 +1,305 @@
 ---
-// Redes sociais reais, confirmadas pela Bruna.
+/*
+  Footer.astro — Pali Cakes
+  Design: Boutique
+*/
+
+// ============================================================
+// Redes sociais
+// ============================================================
+
 const INSTAGRAM_URL = "https://www.instagram.com/palicakes/";
 const FACEBOOK_URL = "https://www.facebook.com/Palicakes/";
 const TIKTOK_URL = "https://www.tiktok.com/@brunapaliotes";
 
-// Horário de recolha confirmado pela Bruna. Entregas têm horário
-// combinado directamente com o cliente (ver formulário de encomenda).
-const HORARIO_RECOLHA =
-  "Seg a sex, 10h–16h · Sáb, dom e feriados, 10h–12h";
+// ============================================================
+// Horário de recolha
+// ============================================================
+
+const HORARIO_RECOLHA = [
+  {
+    dias: "Seg–Sex",
+    horas: "10h–16h",
+  },
+  {
+    dias: "Sáb, Dom e feriados",
+    horas: "10h–12h",
+  },
+];
+
+// ============================================================
+// Navegação
+// ============================================================
+
+const NAVEGACAO = [
+  {
+    label: "Sobre",
+    href: "/sobre",
+  },
+  {
+    label: "Catálogo",
+    href: "/catalogo/bolos-personalizados",
+  },
+  {
+    label: "Packs",
+    href: "/packs-festa",
+  },
+  {
+    label: "Portfólio",
+    href: "/portfolio",
+  },
+];
+
+// ============================================================
+// Ajuda
+// ============================================================
+
+const AJUDA = [
+  {
+    label: "FAQ",
+    href: "/faq",
+  },
+  {
+    label: "Contactos",
+    href: "/contactos",
+  },
+  {
+    label: "Minha encomenda",
+    href: "/carrinho",
+  },
+  {
+    label: "Privacidade",
+    href: "/privacidade",
+  },
+];
+
+const ANO = new Date().getFullYear();
 ---
+
+<!-- ============================================================
+     Fontes
+============================================================= -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link
+  rel="preconnect"
+  href="https://fonts.gstatic.com"
+  crossorigin
+/>
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,500&family=Jost:wght@300;400;500;600&display=swap"
+  rel="stylesheet"
+/>
+
+<!-- ============================================================
+     Footer
+============================================================= -->
 
 <footer class="footer">
 
-  <div class="container footer__container">
 
+  <!-- ==========================================================
+       Conteúdo principal
+  =========================================================== -->
+
+  <div class="footer__container">
+
+    <!-- ========================================================
+         Marca
+    ========================================================= -->
 
     <div class="footer__brand">
 
-      <img
-        src="/images/logos/logo-footer.png"
-        alt="Pali Cakes"
+      <a
+        class="footer__logo-link"
+        href="/"
+        aria-label="Pali Cakes — Página inicial"
       >
+        <img
+          src="/images/logos/logo-footer.png"
+          alt="Pali Cakes by Bruna Paliotes"
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
 
       <p>
-        Bolos personalizados criados
-        artesanalmente para momentos especiais.
+        Bolos personalizados criados artesanalmente
+        para momentos especiais.
       </p>
 
+      <!-- Redes sociais -->
+
+      <div class="footer__social">
+
+        <a
+          href={INSTAGRAM_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect
+              x="2.5"
+              y="2.5"
+              width="19"
+              height="19"
+              rx="5"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+            />
+            <circle
+              cx="12"
+              cy="12"
+              r="4.2"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+            />
+            <circle
+              cx="17.4"
+              cy="6.6"
+              r="1.2"
+              fill="currentColor"
+            />
+          </svg>
+        </a>
+
+        <a
+          href={FACEBOOK_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Facebook"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M13.6 21v-8h2.6l.4-3h-3V8c0-.9.3-1.5 1.6-1.5h1.5V3.7c-.3 0-1.3-.1-2.4-.1-2.4 0-4 1.4-4 4.1v2.3H7.7v3h2.6v8z"
+            />
+          </svg>
+        </a>
+
+        <a
+          href={TIKTOK_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="TikTok"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M16.6 3c.3 2 1.5 3.4 3.4 3.6v2.6c-1.1.1-2.2-.2-3.4-.9v6c0 3.6-2.6 5.7-5.6 5.4-2.8-.3-4.5-2.6-4.2-5.3.3-2.4 2.3-4 4.7-3.8V13c-.4-.1-.8-.1-1.2 0-1 .3-1.5 1.1-1.4 2.1.2 1 1.1 1.7 2.2 1.5 1-.2 1.6-1 1.6-2.1V3z"
+            />
+          </svg>
+        </a>
+
+      </div>
+
     </div>
 
+    <!-- ========================================================
+         Navegação
+    ========================================================= -->
 
+    <nav
+      class="footer__column"
+      aria-label="Navegação do rodapé"
+    >
 
-    <div class="footer__links">
-
-      <h3>
-        Navegação
+      <h3 class="footer__heading">
+        Explorar
       </h3>
 
-      <a href="/sobre">
-        Sobre
-      </a>
+      <ul class="footer__links">
+        {NAVEGACAO.map((item) => (
+          <li>
+            <a href={item.href}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
 
-      <a href="/catalogo/bolos-personalizados">
-        Catálogo
-      </a>
+    </nav>
 
-      <a href="/packs-festa">
-        Packs
-      </a>
+    <!-- ========================================================
+         Ajuda
+    ========================================================= -->
 
-      <a href="/portfolio">
-        Portfólio
-      </a>
+    <nav
+      class="footer__column"
+      aria-label="Ajuda e informações"
+    >
 
-    </div>
-
-
-
-
-    <div class="footer__links">
-
-      <h3>
+      <h3 class="footer__heading">
         Ajuda
       </h3>
 
-      <a href="/faq">
-        FAQ
-      </a>
+      <ul class="footer__links">
+        {AJUDA.map((item) => (
+          <li>
+            <a href={item.href}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
 
-      <a href="/contactos">
-        Contactos
-      </a>
+    </nav>
 
-      <a href="/carrinho">
-        Minha encomenda
-      </a>
+    <!-- ========================================================
+         Horário
+    ========================================================= -->
 
-      <a href="/privacidade">
-        Privacidade
-      </a>
+    <div class="footer__column footer__hours">
 
-    </div>
-
-
-
-
-    <div class="footer__contact">
-
-      <h3>
-        Contacto
+      <h3 class="footer__heading">
+        Horário de recolha
       </h3>
 
-      <p>
-        Tem alguma dúvida?
+      <p class="footer__description">
+        Levante a sua encomenda no horário indicado.
       </p>
 
-      <a href="/contactos">
-        Contacto
-      </a>
+      <ul class="footer__schedule">
+        {HORARIO_RECOLHA.map((horario) => (
+          <li>
+            <span>{horario.dias}</span>
+            <strong>{horario.horas}</strong>
+          </li>
+        ))}
+      </ul>
 
-      <p class="footer__hours">
-        <span>Horário de recolha</span>
-        {HORARIO_RECOLHA}
+      <p class="footer__note">
+        As entregas têm horário combinado
+        diretamente com o cliente.
       </p>
 
     </div>
-
-
-
-
-    <div class="footer__links">
-
-      <h3>
-        Redes sociais
-      </h3>
-
-      <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
-        Instagram
-      </a>
-
-      <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer">
-        Facebook
-      </a>
-
-      <a href={TIKTOK_URL} target="_blank" rel="noopener noreferrer">
-        TikTok
-      </a>
-
-    </div>
-
 
   </div>
 
+  <!-- ==========================================================
+       Rodapé inferior
+  =========================================================== -->
 
   <div class="footer__bottom">
+    <div class="footer__wrap footer__bottom-inner">
 
-    <p>
-      © {new Date().getFullYear()} Pali Cakes.
-      Todos os direitos reservados.
-    </p>
+      <p class="footer__copyright">
+        © {ANO} Pali Cakes by Bruna Paliotes.
+        Todos os direitos reservados.
+      </p>
 
+      <p class="footer__made">
+        Feito com carinho <span aria-hidden="true">♡</span>
+      </p>
+
+    </div>
   </div>
 
 </footer>
+
+

@@ -15,11 +15,14 @@
   --color-text-light: #806b67;
 
 
+    --footer-border: rgba(64, 51, 46, 0.14);
+
+
   /* =====================
      TIPOGRAFIA
   ====================== */
 
-  --font-heading: "Playfair Display", serif;
+  --font-heading: "Noto Serif", medium, serif;
   --font-body: "Montserrat", sans-serif;
 
 
