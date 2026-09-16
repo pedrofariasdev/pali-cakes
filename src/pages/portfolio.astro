@@ -70,41 +70,59 @@ const portfolioCategories = [
         data-portfolio-grid
       >
         {
-          activePortfolioItems.map((item, index) => (
-            <article
-              class:list={[
-                "portfolio-item",
-                {
-                  "portfolio-item--featured":
-                    item.featured && index < 3
-                }
-              ]}
-              data-portfolio-item
-              data-category={item.category}
-            >
-                <button
-                type="button"
-                class="portfolio-item__button"
-                data-portfolio-open
-                data-image={item.image}
-                data-title={item.title}
-                data-category={item.category}
-                data-alt={item.alt}
-                >
-                <img
-                  src={item.image}
-                  alt={item.alt}
-                  loading="lazy"
-                />
+          activePortfolioItems.map((item, index) => {
+            const previousCategory =
+              index > 0 ? activePortfolioItems[index - 1].category : null;
+            const isFirstOfCategory = item.category !== previousCategory;
 
-                <span class="portfolio-item__overlay">
-                  <span>{item.category}</span>
-                  <strong>{item.title}</strong>
-                  <small>Ver criação</small>
-                </span>
-              </button>
-            </article>
-          ))
+            return (
+              <>
+                {index > 0 && isFirstOfCategory && (
+                  <div
+                    class="portfolio-divider"
+                    data-portfolio-divider
+                    aria-hidden="true"
+                  >
+                    <span>{item.category}</span>
+                  </div>
+                )}
+
+                <article
+                  class:list={[
+                    "portfolio-item",
+                    {
+                      "portfolio-item--featured":
+                        item.featured && index < 3
+                    }
+                  ]}
+                  data-portfolio-item
+                  data-category={item.category}
+                >
+                    <button
+                    type="button"
+                    class="portfolio-item__button"
+                    data-portfolio-open
+                    data-image={item.image}
+                    data-title={item.title}
+                    data-category={item.category}
+                    data-alt={item.alt}
+                    >
+                    <img
+                      src={item.image}
+                      alt={item.alt}
+                      loading="lazy"
+                    />
+
+                    <span class="portfolio-item__overlay">
+                      <span>{item.category}</span>
+                      <strong>{item.title}</strong>
+                      <small>Ver criação</small>
+                    </span>
+                  </button>
+                </article>
+              </>
+            );
+          })
         }
       </div>
 

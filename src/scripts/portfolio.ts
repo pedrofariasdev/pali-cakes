@@ -9,6 +9,11 @@ function initialisePortfolio(): void {
       "[data-portfolio-item]"
     );
 
+  const portfolioDividers =
+    document.querySelectorAll<HTMLElement>(
+      "[data-portfolio-divider]"
+    );
+
   const modal =
     document.querySelector<HTMLDialogElement>(
       "[data-portfolio-modal]"
@@ -46,6 +51,12 @@ function initialisePortfolio(): void {
 
       item.hidden = !shouldShow;
     });
+
+    // Os separadores de categoria só fazem sentido a mostrar tudo;
+    // com um filtro específico só há uma categoria visível.
+    portfolioDividers.forEach((divider) => {
+      divider.hidden = selectedCategory !== "Todos";
+    });
   }
 
   filterButtons.forEach((button) => {
@@ -72,6 +83,59 @@ function initialisePortfolio(): void {
       filterPortfolio(selectedCategory);
     });
   });
+
+  // Barra fixa: enquanto se percorre a grelha (com "Todos" seleccionado
+  // ou não), destaca automaticamente o botão da categoria que está a
+  // passar logo abaixo da barra.
+  const filterBar =
+    document.querySelector<HTMLElement>(".portfolio-filters");
+
+  if (filterBar && filterBar.dataset.scrollspyBound !== "true") {
+    filterBar.dataset.scrollspyBound = "true";
+
+    let aAguardarFrame = false;
+
+    const actualizarCategoriaVisivel = (): void => {
+      aAguardarFrame = false;
+
+      const limite = filterBar.getBoundingClientRect().bottom + 4;
+      let categoriaActual: string | null = null;
+
+      portfolioItems.forEach((item) => {
+        if (item.hidden) {
+          return;
+        }
+
+        if (item.getBoundingClientRect().top <= limite) {
+          categoriaActual = item.dataset.category ?? categoriaActual;
+        }
+      });
+
+      const alvo = categoriaActual ?? "Todos";
+
+      filterButtons.forEach((button) => {
+        button.classList.toggle(
+          "is-active",
+          button.dataset.portfolioFilter === alvo
+        );
+      });
+    };
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (aAguardarFrame) {
+          return;
+        }
+
+        aAguardarFrame = true;
+        window.requestAnimationFrame(actualizarCategoriaVisivel);
+      },
+      { passive: true }
+    );
+
+    actualizarCategoriaVisivel();
+  }
 
   function closeModal(): void {
     if (!modal?.open) {

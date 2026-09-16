@@ -3166,6 +3166,10 @@ body.menu-is-open {
 ========================= */
 
 .portfolio-filters {
+  position: sticky;
+  top: 130px;
+  z-index: 40;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3179,6 +3183,7 @@ body.menu-is-open {
   background-color: var(--color-background);
   border: 1px solid rgba(215, 162, 168, 0.3);
   border-radius: 999px;
+  box-shadow: 0 10px 25px rgba(96, 72, 68, 0.06);
 }
 
 .portfolio-filters button {
@@ -3247,6 +3252,34 @@ body.menu-is-open {
 }
 
 .portfolio-item[hidden] {
+  display: none;
+}
+
+.portfolio-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  grid-column: 1 / -1;
+  margin-top: 6px;
+
+  color: var(--color-primary-dark);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.portfolio-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+
+  background-color: rgba(215, 162, 168, 0.35);
+}
+
+.portfolio-divider[hidden] {
   display: none;
 }
 
