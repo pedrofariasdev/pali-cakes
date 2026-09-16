@@ -12,7 +12,7 @@ insert into public.produtos (
   slug, nome, descricao, categoria_slug, imagem_url, imagens,
   preco, preco_label, destaque, ativo, ordem, opcoes
 )
-values (
+select
   'pack-50-pessoas',
   'Pack 50 Pessoas',
   'Uma seleção completa de bolo, doces e detalhes personalizados para uma celebração ainda maior.',
@@ -25,8 +25,9 @@ values (
   true,
   5,
   '{}'::jsonb
-)
-on conflict (slug) do nothing;
+where not exists (
+  select 1 from public.produtos where slug = 'pack-50-pessoas'
+);
 
 notify pgrst, 'reload schema';
 

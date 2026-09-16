@@ -215,7 +215,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "sobremesa-bolo-formigueiro",
     title: "Bolo Piscina Cenoura",
-    category: "Bolos",
+    category: "Sobremesas",
     image: "/images/portfolio/sobremesa-bolo-formigueiro.jpg",
     alt: "Bolo artesanal coberto com chocolate granulado produzido pela Pali Cakes",
     featured: false,
