@@ -1,0 +1,78 @@
+---
+import MainLayout from "@/layouts/MainLayout.astro";
+---
+
+<MainLayout
+  title="Conta | Pali Cakes"
+  description="Definições da conta de administração."
+  noindex
+>
+  <section class="admin-page">
+    <div class="container">
+
+      <header class="admin-page__header">
+        <div>
+          <span class="section-title__eyebrow">Área reservada</span>
+          <h1>Conta</h1>
+        </div>
+
+        <div class="admin-nav">
+          <a href="/admin/encomendas">Encomendas</a>
+          <a href="/admin/produtos">Produtos</a>
+          <a href="/admin/avaliacoes">Avaliações</a>
+          <a href="/admin/conta" class="is-active">Conta</a>
+          <button type="button" class="button button--secondary" data-logout>
+            Sair
+          </button>
+        </div>
+      </header>
+
+      <div class="admin-account">
+        <h2>Mudar palavra-passe</h2>
+        <p>
+          Defina uma nova palavra-passe para entrar na área reservada.
+          Depois de guardar, use-a no próximo acesso.
+        </p>
+
+        <form data-password-form>
+          <label class="form-field">
+            <span>Nova palavra-passe</span>
+            <input
+              type="password"
+              name="password"
+              autocomplete="new-password"
+              minlength="8"
+              required
+            />
+          </label>
+
+          <label class="form-field">
+            <span>Confirmar nova palavra-passe</span>
+            <input
+              type="password"
+              name="passwordConfirm"
+              autocomplete="new-password"
+              minlength="8"
+              required
+            />
+          </label>
+
+          <button
+            type="submit"
+            class="button button--primary"
+            data-password-submit
+          >
+            Guardar nova palavra-passe
+          </button>
+
+          <p class="admin-account__status" data-password-status hidden></p>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    import "@/scripts/admin-conta.ts";
+  </script>
+</MainLayout>

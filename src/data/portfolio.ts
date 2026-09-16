@@ -13,7 +13,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-flores-drip",
     title: "Bolo com flores em pasta e drip dourado",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-flores-drip.jpg",
     alt: "Bolo branco com flores em pasta de açúcar coral e drip dourado produzido pela Pali Cakes",
     featured: true,
@@ -22,7 +22,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-suculentas",
     title: "Bolo temático com suculentas",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-suculentas.jpg",
     alt: "Bolo verde decorado com suculentas comestíveis e efeito de terra produzido pela Pali Cakes",
     featured: true,
@@ -31,7 +31,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-humor-aniversario",
     title: "Bolo coração com mensagem divertida",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-humor-aniversario.jpg",
     alt: "Bolo em formato de coração com mensagem de aniversário bem-humorada produzido pela Pali Cakes",
     featured: false,
@@ -40,7 +40,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-finalistas-rosetas",
     title: "Bolo de finalistas com rosetas",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-finalistas-rosetas.jpg",
     alt: "Bolo branco texturado com rosetas de chantilly e topo de finalista produzido pela Pali Cakes",
     featured: true,
@@ -49,7 +49,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-textura-flores-brancas",
     title: "Bolo minimalista com flores naturais",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-textura-flores-brancas.jpg",
     alt: "Bolo branco texturado com coroa de flores naturais produzido pela Pali Cakes",
     featured: false,
@@ -58,7 +58,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-finalistas-frase",
     title: "Bolo de finalistas com frase divertida",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-finalistas-frase.jpg",
     alt: "Bolo branco elegante com mensagem de finalistas e flores secas produzido pela Pali Cakes",
     featured: false,
@@ -67,7 +67,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-azulejos",
     title: "Bolo pintado à mão em estilo azulejo",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-azulejos.jpg",
     alt: "Bolo branco pintado à mão com padrão floral azul inspirado em azulejos portugueses produzido pela Pali Cakes",
     featured: true,
@@ -76,7 +76,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-noivado-aliancas",
     title: "Bolo de noivado com alianças douradas",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-noivado-aliancas.jpg",
     alt: "Bolo elegante com desenho de alianças douradas e pérolas produzido pela Pali Cakes",
     featured: false,
@@ -85,7 +85,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-floral-vintage-geode",
     title: "Bolo vintage com topo em efeito geode",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-floral-vintage-geode.jpg",
     alt: "Bolo com padrão floral vintage, borda dourada e topo brilhante em efeito geode produzido pela Pali Cakes",
     featured: false,
@@ -94,7 +94,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-kintsugi-aniversario",
     title: "Bolo cinzento com efeito kintsugi",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-kintsugi-aniversario.jpg",
     alt: "Bolo cinzento com linhas douradas em efeito kintsugi e topo dourado de aniversário produzido pela Pali Cakes",
     featured: false,
@@ -103,7 +103,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-50-fabulous",
     title: "Bolo com flores e frutos vermelhos",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-50-fabulous.jpg",
     alt: "Bolo branco decorado com flores amarelas e frutos vermelhos frescos produzido pela Pali Cakes",
     featured: true,
@@ -112,7 +112,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-40-anos-frutos",
     title: "Bolo com frutos vermelhos e chocolate",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-40-anos-frutos.jpg",
     alt: "Bolo branco com drip de chocolate e coroa de frutos vermelhos frescos produzido pela Pali Cakes",
     featured: false,
@@ -121,7 +121,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-metalico-borboletas",
     title: "Bolo metalizado com borboletas",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-metalico-borboletas.jpg",
     alt: "Bolo em degradê metalizado rosa e vermelho com borboletas produzido pela Pali Cakes",
     featured: false,
@@ -130,7 +130,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-camisa-verde",
     title: "Bolo escultural em formato de camisa",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-camisa-verde.jpg",
     alt: "Bolo esculpido em formato de camisa verde com botões produzido pela Pali Cakes",
     featured: false,
@@ -139,7 +139,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-chocolate-frutos-vermelhos",
     title: "Bolo de chocolate com frutos vermelhos",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-chocolate-frutos-vermelhos.jpg",
     alt: "Bolo de chocolate coberto com frutos vermelhos frescos e hortelã produzido pela Pali Cakes",
     featured: true,
@@ -148,7 +148,7 @@ export const portfolioItems: PortfolioItem[] = [
   {
     id: "bolo-unicornio",
     title: "Bolo de unicórnio",
-    category: "Bolos",
+    category: "Bolos Personalizados",
     image: "/images/portfolio/bolo-unicornio.jpg",
     alt: "Bolo temático de unicórnio com corno dourado e rosetas cor-de-rosa produzido pela Pali Cakes",
     featured: false,
@@ -214,8 +214,8 @@ export const portfolioItems: PortfolioItem[] = [
   },
   {
     id: "sobremesa-bolo-formigueiro",
-    title: "Bolo com cobertura de chocolate crocante",
-    category: "Sobremesas",
+    title: "Bolo Piscina Cenoura",
+    category: "Bolos",
     image: "/images/portfolio/sobremesa-bolo-formigueiro.jpg",
     alt: "Bolo artesanal coberto com chocolate granulado produzido pela Pali Cakes",
     featured: false,
@@ -225,10 +225,10 @@ export const portfolioItems: PortfolioItem[] = [
   // Chocolates
   {
     id: "chocolates-caixa-marca",
-    title: "Caixa de chocolates Pali Cakes",
+    title: "Chocolates Pali Cakes",
     category: "Chocolates",
     image: "/images/portfolio/chocolates-caixa-marca.jpg",
-    alt: "Caixa de chocolates artesanais com a marca Pali Cakes",
+    alt: "Chocolates artesanais com a marca Pali Cakes",
     featured: true,
     active: true
   },
@@ -253,20 +253,20 @@ export const portfolioItems: PortfolioItem[] = [
 
   // Miniaturas
   {
-    id: "miniaturas-caixa-trufas",
-    title: "Caixa de trufas e brigadeiros",
+    id: "miniaturas-brigadeiros-gurmet",
+    title: "Brigadeiros gurmets",
     category: "Miniaturas",
     image: "/images/portfolio/miniaturas-caixa-trufas.jpg",
-    alt: "Caixa sortida de trufas e brigadeiros artesanais produzida pela Pali Cakes",
+    alt: "Brigadeiros gurmets artesanais produzidos pela Pali Cakes",
     featured: true,
     active: true
   },
   {
-    id: "miniaturas-mesa-doces",
-    title: "Mesa de doces sortidos",
+    id: "miniaturas-brigadeiros-personalizados",
+    title: "Brigadeiros personalizados",
     category: "Miniaturas",
-    image: "/images/portfolio/miniaturas-mesa-doces.jpg",
-    alt: "Mesa de doces sortidos para festa produzida pela Pali Cakes",
+    image: "/images/portfolio/doces-festa-real.jpg",
+    alt: "Brigadeiros personalizados produzidos pela Pali Cakes",
     featured: false,
     active: true
   },
@@ -289,20 +289,20 @@ export const portfolioItems: PortfolioItem[] = [
     active: true
   },
   {
-    id: "miniaturas-brigadeiro-rolo",
-    title: "Brigadeiros gourmet",
+    id: "miniaturas-coxinha-morango",
+    title: "Coxinhas de morango",
     category: "Miniaturas",
     image: "/images/portfolio/miniaturas-brigadeiro-rolo.jpg",
-    alt: "Brigadeiros gourmet decorados produzidos pela Pali Cakes",
+    alt: "Coxinhas de morango produzidas pela Pali Cakes",
     featured: false,
     active: true
   },
   {
     id: "miniaturas-macro-detalhe",
-    title: "Detalhe de doces sortidos",
+    title: "Mini churros",
     category: "Miniaturas",
     image: "/images/portfolio/miniaturas-macro-detalhe.jpg",
-    alt: "Vista de detalhe de miniaturas doces produzidas pela Pali Cakes",
+    alt: "Mini churros produzidas pela Pali Cakes",
     featured: false,
     active: true
   },

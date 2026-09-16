@@ -26,6 +26,27 @@ export async function entrar(
   return { ok: true };
 }
 
+/**
+ * Muda a palavra-passe do utilizador com sessão activa.
+ * O Supabase não pede a palavra-passe actual: basta ter sessão válida.
+ */
+export async function alterarPassword(
+  novaPassword: string
+): Promise<AuthResult> {
+  const { error } = await supabase.auth.updateUser({
+    password: novaPassword
+  });
+
+  if (error) {
+    return {
+      ok: false,
+      erro: "Não foi possível alterar a palavra-passe. Tente novamente."
+    };
+  }
+
+  return { ok: true };
+}
+
 export async function sair(): Promise<void> {
   await supabase.auth.signOut();
   window.location.href = "/admin";

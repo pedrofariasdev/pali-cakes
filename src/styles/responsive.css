@@ -967,3 +967,21 @@
     margin-top: 32px;
   }
 }
+
+@media (max-width: 760px) {
+  .packs-cta {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+
+    padding: 2rem 1.5rem;
+  }
+
+  .packs-cta__content p {
+    max-width: none;
+  }
+
+  .packs-cta .button {
+    width: 100%;
+  }
+}
