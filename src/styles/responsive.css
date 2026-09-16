@@ -479,6 +479,8 @@
   }
 
   .portfolio-filters button {
+    flex: none;
+
     padding: 9px 14px;
     font-size: 0.68rem;
   }

@@ -34,8 +34,10 @@ const slug = category.categorySlug;
 const activeCategories = categoriasVisiveisNaNavegacao(
   await getCategories()
 );
-const visibleCategories = activeCategories.slice(0, 5);
-const hiddenCategories = activeCategories.slice(5);
+// Com "doces" e "packs" já ocultas da navegação, as categorias que sobram
+// cabem todas na barra — por isso só escondemos a partir da 8ª.
+const visibleCategories = activeCategories.slice(0, 8);
+const hiddenCategories = activeCategories.slice(8);
 
 const activeCategoryIsHidden = hiddenCategories.some(
   (item) => item.categorySlug === slug
