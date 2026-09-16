@@ -1,11 +1,13 @@
 ---
-import { getCategories } from "@/lib/categories";
+import { getCategories, categoriasVisiveisNaNavegacao } from "@/lib/categories";
 
 const categories = await getCategories();
 
-const catalogCategories = categories.filter(
-  (category) => category.categorySlug !== "packs"
-);
+const catalogCategories = categoriasVisiveisNaNavegacao(categories);
+
+const pathname = Astro.url.pathname;
+const isActive = (href: string) => pathname.startsWith(href);
+const isCatalogActive = pathname.startsWith("/catalogo");
 ---
 
 <nav
@@ -16,10 +18,10 @@ const catalogCategories = categories.filter(
   inert
 >
   <div class="mobile-menu__content">
-    <a href="/sobre">Sobre</a>
+    <a href="/sobre" class:list={{ "is-active": isActive("/sobre") }}>Sobre</a>
 
     <details class="mobile-menu__catalog">
-      <summary>
+      <summary class:list={{ "is-active": isCatalogActive }}>
         Catálogo
         <span aria-hidden="true">+</span>
       </summary>
@@ -35,10 +37,10 @@ const catalogCategories = categories.filter(
       </div>
     </details>
 
-    <a href="/packs-festa">Packs Festa</a>
-    <a href="/portfolio">Portfólio</a>
-    <a href="/contactos">Contactos</a>
-    <a href="/faq">FAQ</a>
+    <a href="/packs-festa" class:list={{ "is-active": isActive("/packs-festa") }}>Packs Festa</a>
+    <a href="/portfolio" class:list={{ "is-active": isActive("/portfolio") }}>Portfólio</a>
+    <a href="/contactos" class:list={{ "is-active": isActive("/contactos") }}>Contactos</a>
+    <a href="/faq" class:list={{ "is-active": isActive("/faq") }}>FAQ</a>
 
     <a href="/carrinho" class="mobile-menu__cart">
       Minha encomenda

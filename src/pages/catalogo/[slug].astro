@@ -4,7 +4,11 @@ import type { GetStaticPaths } from "astro";
 import MainLayout from "@/layouts/MainLayout.astro";
 import ProductCard from "@/components/products/ProductCard.astro";
 
-import { getCategories, type CatalogCategory } from "@/lib/categories";
+import {
+  getCategories,
+  categoriasVisiveisNaNavegacao,
+  type CatalogCategory
+} from "@/lib/categories";
 import { getProductsByCategory } from "@/lib/products";
 
 
@@ -27,7 +31,9 @@ interface Props {
 const { category } = Astro.props;
 const slug = category.categorySlug;
 
-const activeCategories = await getCategories();
+const activeCategories = categoriasVisiveisNaNavegacao(
+  await getCategories()
+);
 const visibleCategories = activeCategories.slice(0, 5);
 const hiddenCategories = activeCategories.slice(5);
 

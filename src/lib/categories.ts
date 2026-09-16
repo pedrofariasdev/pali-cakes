@@ -60,6 +60,22 @@ export async function getCategories(): Promise<CatalogCategory[]> {
   return (data as CategoriaRow[]).map(toCategory);
 }
 
+/**
+ * Categorias que continuam a existir/funcionar mas que a Bruna pediu para
+ * deixarem de aparecer na navegação (menu, dropdown, abas do catálogo).
+ */
+const CATEGORIAS_OCULTAS_DA_NAVEGACAO = ["packs", "doces"];
+
+/** Categorias a mostrar em menus/navegação (exclui as ocultas acima). */
+export function categoriasVisiveisNaNavegacao(
+  categorias: CatalogCategory[]
+): CatalogCategory[] {
+  return categorias.filter(
+    (categoria) =>
+      !CATEGORIAS_OCULTAS_DA_NAVEGACAO.includes(categoria.categorySlug)
+  );
+}
+
 export async function getCategoryBySlug(
   slug: string
 ): Promise<CatalogCategory | null> {

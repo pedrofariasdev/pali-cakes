@@ -1,12 +1,15 @@
 ---
 import MobileMenu from "./MobileMenu.astro";
-import { getCategories } from "@/lib/categories";
+import { getCategories, categoriasVisiveisNaNavegacao } from "@/lib/categories";
 
 const categories = await getCategories();
 
-const catalogCategories = categories.filter(
-  (category) => category.categorySlug !== "packs"
-);
+const catalogCategories = categoriasVisiveisNaNavegacao(categories);
+
+const pathname = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === "/" ? pathname === "/" : pathname.startsWith(href);
+const isCatalogActive = pathname.startsWith("/catalogo");
 ---
 
 <header class="navbar">
@@ -16,12 +19,21 @@ const catalogCategories = categories.filter(
       class="navbar__menu navbar__menu--left"
       aria-label="Navegação principal esquerda"
     >
-      <a href="/sobre">
+      <a
+        href="/sobre"
+        class:list={{ "is-active": isActive("/sobre") }}
+        aria-current={isActive("/sobre") ? "page" : undefined}
+      >
         Sobre
       </a>
 
       <div class="navbar__dropdown">
-        <button type="button" aria-haspopup="true">
+        <button
+          type="button"
+          aria-haspopup="true"
+          class:list={{ "is-active": isCatalogActive }}
+          aria-current={isCatalogActive ? "page" : undefined}
+        >
           Catálogo
           <span aria-hidden="true">⌄</span>
         </button>
@@ -37,7 +49,11 @@ const catalogCategories = categories.filter(
         </div>
       </div>
 
-      <a href="/packs-festa">
+      <a
+        href="/packs-festa"
+        class:list={{ "is-active": isActive("/packs-festa") }}
+        aria-current={isActive("/packs-festa") ? "page" : undefined}
+      >
         Packs Festa
       </a>
     </nav>
@@ -57,15 +73,27 @@ const catalogCategories = categories.filter(
       class="navbar__menu navbar__menu--right"
       aria-label="Navegação principal direita"
     >
-      <a href="/portfolio">
+      <a
+        href="/portfolio"
+        class:list={{ "is-active": isActive("/portfolio") }}
+        aria-current={isActive("/portfolio") ? "page" : undefined}
+      >
         Portfólio
       </a>
 
-      <a href="/contactos">
+      <a
+        href="/contactos"
+        class:list={{ "is-active": isActive("/contactos") }}
+        aria-current={isActive("/contactos") ? "page" : undefined}
+      >
         Contactos
       </a>
 
-      <a href="/faq">
+      <a
+        href="/faq"
+        class:list={{ "is-active": isActive("/faq") }}
+        aria-current={isActive("/faq") ? "page" : undefined}
+      >
         FAQ
       </a>
       <a
