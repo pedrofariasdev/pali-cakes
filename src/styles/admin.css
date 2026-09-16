@@ -359,6 +359,124 @@
   }
 }
 
+.button--small {
+  min-height: auto;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.8rem;
+}
+
+.admin-product__flavors {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  padding: 1rem;
+
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+}
+
+.admin-product__flavors-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.admin-product__flavors-label small {
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.65;
+}
+
+.admin-flavor-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.admin-flavor-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-flavor-row__image {
+  position: relative;
+
+  width: 56px;
+  height: 56px;
+
+  overflow: hidden;
+
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 10px;
+}
+
+.admin-flavor-row__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-flavor-row__image img.is-broken {
+  opacity: 0.15;
+}
+
+.admin-flavor-row__upload {
+  position: absolute;
+  inset: auto 0 0 0;
+
+  padding: 0.2rem;
+
+  font-size: 0.6rem;
+  text-align: center;
+  color: #fff;
+
+  background: rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+}
+
+.admin-flavor-row__upload:hover {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.admin-flavor-row__nome {
+  padding: 0.6rem 0.85rem;
+
+  font-family: inherit;
+  font-size: 0.875rem;
+
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+}
+
+.admin-flavor-row__remove {
+  width: 32px;
+  height: 32px;
+
+  font-size: 0.9rem;
+  color: #b3261e;
+
+  background: none;
+  border: 1px solid rgba(179, 38, 30, 0.3);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.admin-flavor-row__remove:hover {
+  background: #fdecea;
+}
+
+@media (max-width: 480px) {
+  .admin-flavor-row {
+    grid-template-columns: 44px 1fr auto;
+  }
+}
+
 /* =========================
    ADMIN — AVALIAÇÕES
 ========================= */

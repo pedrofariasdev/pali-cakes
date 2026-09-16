@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { Produto, Categoria } from "@/types/database";
+import type { Produto, Categoria, OpcoesProduto } from "@/types/database";
 
 const BUCKET = "produtos";
 
@@ -42,6 +42,7 @@ export interface ProdutoEdicao {
   destaque: boolean;
   ativo: boolean;
   ordem: number;
+  opcoes: OpcoesProduto;
 }
 
 export async function actualizarProduto(

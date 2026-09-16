@@ -129,6 +129,15 @@ function createSummaryItem(item: CartItem): HTMLElement {
 
   content.append(name, details);
 
+  if (item.flavor) {
+    const flavor = document.createElement("span");
+
+    flavor.textContent = `Sabor: ${item.flavor}`;
+    flavor.className = "checkout-summary__flavor";
+
+    content.append(flavor);
+  }
+
   article.append(image, content);
 
   return article;
@@ -296,7 +305,8 @@ function toOrderItems(cart: CartItem[]): OrderItemInput[] {
     nome: item.name,
     categoria: item.categorySlug,
     quantidade: item.quantity,
-    preco: item.price
+    preco: item.price,
+    personalizacao: item.flavor ? { sabor: item.flavor } : undefined
   }));
 }
 

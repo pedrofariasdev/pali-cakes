@@ -15,7 +15,9 @@
   --color-text-light: #806b67;
 
 
-    --footer-border: rgba(64, 51, 46, 0.14);
+    --footer-border: rgba(255, 250, 246, 0.25);
+    --footer-text: rgba(255, 250, 246, 0.85);
+    --footer-accent: var(--color-primary);
 
 
   /* =====================

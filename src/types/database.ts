@@ -8,6 +8,18 @@ export type EstadoEncomenda =
 
 export type MetodoEntrega = "levantamento" | "entrega";
 
+/** Uma opção de sabor de um produto, com a sua própria foto. */
+export interface VarianteSabor {
+  nome: string;
+  imagem: string;
+}
+
+/** Formato usado dentro da coluna jsonb `produtos.opcoes`. */
+export interface OpcoesProduto {
+  sabores?: VarianteSabor[];
+  [chave: string]: unknown;
+}
+
 export interface Categoria {
   id: string;
   slug: string;
@@ -37,7 +49,7 @@ export interface Produto {
   destaque: boolean;
   ativo: boolean;
   ordem: number;
-  opcoes: Record<string, unknown>;
+  opcoes: OpcoesProduto;
   criado_em: string;
   atualizado_em: string;
 }
@@ -59,6 +71,11 @@ export interface Encomenda {
   total_estimado: number | null;
 }
 
+export interface Personalizacao {
+  sabor?: string;
+  [chave: string]: unknown;
+}
+
 export interface EncomendaItem {
   id: string;
   encomenda_id: string;
@@ -67,7 +84,7 @@ export interface EncomendaItem {
   categoria: string | null;
   quantidade: number;
   preco_unitario: number | null;
-  personalizacao: Record<string, unknown>;
+  personalizacao: Personalizacao;
 }
 
 export interface OrderItemPayload {
@@ -76,6 +93,7 @@ export interface OrderItemPayload {
   categoria: string;
   quantidade: number;
   preco: number | null;
+  personalizacao?: Personalizacao;
 }
 
 export interface Encomenda {

@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import type { Personalizacao } from "@/types/database";
 
 export interface OrderItemInput {
   slug: string;
@@ -6,6 +7,7 @@ export interface OrderItemInput {
   categoria: string;
   quantidade: number;
   preco: number | null;
+  personalizacao?: Personalizacao;
 }
 
 export interface OrderInput {

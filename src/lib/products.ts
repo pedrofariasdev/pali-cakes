@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import type { VarianteSabor } from "@/types/database";
 
 export interface Product {
   id: string;
@@ -11,6 +12,8 @@ export interface Product {
   priceLabel: string;
   active: boolean;
   featured: boolean;
+  /** Opções de sabor, cada uma com a sua própria foto. Vazio quando o produto não tem variantes. */
+  flavors: VarianteSabor[];
 }
 
 interface ProdutoRow {
@@ -25,6 +28,24 @@ interface ProdutoRow {
   destaque: boolean;
   ativo: boolean;
   ordem: number;
+  opcoes: { sabores?: VarianteSabor[] } | null;
+}
+
+function toFlavors(opcoes: ProdutoRow["opcoes"]): VarianteSabor[] {
+  const sabores = opcoes?.sabores;
+
+  if (!Array.isArray(sabores)) {
+    return [];
+  }
+
+  return sabores.filter(
+    (item): item is VarianteSabor =>
+      !!item &&
+      typeof item.nome === "string" &&
+      item.nome.trim() !== "" &&
+      typeof item.imagem === "string" &&
+      item.imagem.trim() !== ""
+  );
 }
 
 function toProduct(row: ProdutoRow): Product {
@@ -41,7 +62,8 @@ function toProduct(row: ProdutoRow): Product {
         : null,
     priceLabel: row.preco_label?.trim() || "Sob consulta",
     active: row.ativo,
-    featured: row.destaque
+    featured: row.destaque,
+    flavors: toFlavors(row.opcoes)
   };
 }
 

@@ -105,6 +105,9 @@ function renderCartPage(): void {
       const name = escapeHtml(item.name);
       const image = escapeHtml(item.image);
       const price = escapeHtml(formatItemPrice(item));
+      const eyebrow = item.flavor
+        ? `Sabor: ${escapeHtml(item.flavor)}`
+        : "Produto selecionado";
 
       return `
         <article
@@ -125,7 +128,7 @@ function renderCartPage(): void {
           <div class="cart-item__content">
             <div>
               <span class="cart-item__eyebrow">
-                Produto selecionado
+                ${eyebrow}
               </span>
 
               <h2>

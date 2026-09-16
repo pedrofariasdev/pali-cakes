@@ -38,6 +38,10 @@ interface Props {
 
 const { product, category } = Astro.props;
 
+const hasFlavors = product.flavors.length > 0;
+const defaultFlavor = hasFlavors ? product.flavors[0] : null;
+const displayImage = defaultFlavor?.imagem || product.image;
+
 const formattedPrice =
   product.price !== null
     ? new Intl.NumberFormat("pt-PT", {
@@ -79,8 +83,9 @@ const productSchema = {
         <div class="product-detail__image">
 
           <img
-            src={product.image}
+            src={displayImage}
             alt={product.name}
+            data-product-image-display
           />
 
         </div>
@@ -90,36 +95,6 @@ const productSchema = {
 
 
       <div class="product-detail__content">
-
-
-        <nav
-          class="catalog-breadcrumb product-detail__breadcrumb"
-          aria-label="Navegação estrutural"
-        >
-
-          <a href="/">
-            Início
-          </a>
-
-          <span aria-hidden="true">
-            /
-          </span>
-
-          <a href="/catalogo/bolos-personalizados">
-            Catálogo
-          </a>
-
-          <span aria-hidden="true">
-            /
-          </span>
-
-          <a href={`/catalogo/${product.categorySlug}`}>
-            {category?.name ?? product.categorySlug}
-          </a>
-
-        </nav>
-
-
 
         <span class="section-title__eyebrow">
           {category?.name ?? "Pali Cakes"}
@@ -153,6 +128,41 @@ const productSchema = {
 
 
 
+        {hasFlavors && (
+          <div class="product-detail__flavors">
+
+            <span class="product-detail__flavors-label">
+              Escolha o sabor
+            </span>
+
+            <div
+              class="product-detail__flavor-options"
+              role="radiogroup"
+              aria-label="Sabor"
+              data-flavor-group
+            >
+              {product.flavors.map((flavor, index) => (
+                <button
+                  type="button"
+                  class:list={[
+                    "product-detail__flavor-option",
+                    { "is-selected": index === 0 }
+                  ]}
+                  data-flavor-option
+                  data-flavor-name={flavor.nome}
+                  data-flavor-image={flavor.imagem}
+                  aria-pressed={index === 0 ? "true" : "false"}
+                >
+                  {flavor.nome}
+                </button>
+              ))}
+            </div>
+
+          </div>
+        )}
+
+
+
         <div class="product-detail__notice">
 
           <span aria-hidden="true">
@@ -177,11 +187,12 @@ const productSchema = {
             data-add-to-cart
             data-product-id={product.id}
             data-product-name={product.name}
-            data-product-image={product.image}
+            data-product-image={displayImage}
             data-product-price={product.price ?? ""}
             data-product-price-label={product.priceLabel}
             data-category-slug={product.categorySlug}
             data-product-slug={product.slug}
+            data-product-flavor={defaultFlavor?.nome ?? ""}
           >
             Adicionar à encomenda
           </button>
@@ -213,6 +224,11 @@ const productSchema = {
 
 
   </section>
+
+
+  <script>
+    import "@/scripts/product-flavors.ts";
+  </script>
 
 
 </MainLayout>

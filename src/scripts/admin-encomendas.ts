@@ -105,7 +105,13 @@ function criarCartao(encomenda: EncomendaComItens): HTMLElement {
   listaItens.className = "admin-order__items";
   encomenda.itens.forEach((item) => {
     const linha = document.createElement("li");
-    linha.textContent = `${item.quantidade} × ${item.produto_nome}`;
+    const sabor =
+      typeof item.personalizacao?.sabor === "string"
+        ? item.personalizacao.sabor.trim()
+        : "";
+    linha.textContent = sabor
+      ? `${item.quantidade} × ${item.produto_nome} — Sabor: ${sabor}`
+      : `${item.quantidade} × ${item.produto_nome}`;
     listaItens.append(linha);
   });
   corpo.append(cliente, listaItens);

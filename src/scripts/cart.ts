@@ -7,6 +7,8 @@ export interface CartItem {
   quantity: number;
   categorySlug: string;
   productSlug: string;
+  /** Sabor escolhido, quando o produto tem variantes. */
+  flavor: string | null;
 }
 
 type NewCartItem = Omit<CartItem, "quantity">;
@@ -62,6 +64,11 @@ function normaliseCartItem(value: unknown): CartItem | null {
       ? value.priceLabel.trim().slice(0, 120)
       : "Sob consulta";
 
+  const flavor =
+    typeof value.flavor === "string" && value.flavor.trim()
+      ? value.flavor.trim().slice(0, 80)
+      : null;
+
   return {
     id: id.slice(0, 160),
     name: name.slice(0, 200),
@@ -70,7 +77,8 @@ function normaliseCartItem(value: unknown): CartItem | null {
     priceLabel,
     quantity,
     categorySlug: categorySlug.slice(0, 160),
-    productSlug: productSlug.slice(0, 160)
+    productSlug: productSlug.slice(0, 160),
+    flavor
   };
 }
 
@@ -117,6 +125,25 @@ export function saveCart(cart: CartItem[]): void {
   );
 
   updateCartCounters(cart);
+}
+
+function slugifyFlavor(flavor: string): string {
+  const COMBINING_MARKS = new RegExp("[\\u0300-\\u036f]", "g");
+
+  return flavor
+    .normalize("NFD")
+    .replace(COMBINING_MARKS, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+export function buildCartItemId(productId: string, flavor: string | null): string {
+  if (!flavor) {
+    return productId;
+  }
+
+  return `${productId}--${slugifyFlavor(flavor)}`;
 }
 
 export function addToCart(item: NewCartItem): void {
@@ -187,7 +214,8 @@ function bindAddToCartButtons(): void {
           productPrice,
           productPriceLabel,
           categorySlug,
-          productSlug
+          productSlug,
+          productFlavor
         } = button.dataset;
 
         if (
@@ -209,8 +237,13 @@ function bindAddToCartButtons(): void {
             ? Number(productPrice)
             : null;
 
+        const flavor =
+          productFlavor && productFlavor.trim() !== ""
+            ? productFlavor.trim()
+            : null;
+
         addToCart({
-          id: productId,
+          id: buildCartItemId(productId, flavor),
           name: productName,
           image: productImage,
           price:
@@ -220,7 +253,8 @@ function bindAddToCartButtons(): void {
           priceLabel:
             productPriceLabel || "Sob consulta",
           categorySlug,
-          productSlug
+          productSlug,
+          flavor
         });
 
         const originalText = button.textContent;

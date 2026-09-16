@@ -5,7 +5,7 @@ import {
   actualizarProduto,
   carregarImagem
 } from "@/lib/admin-products";
-import type { Produto, Categoria } from "@/types/database";
+import type { Produto, Categoria, VarianteSabor } from "@/types/database";
 
 let produtos: Produto[] = [];
 let categorias: Categoria[] = [];
@@ -81,6 +81,19 @@ function criarCartao(produto: Produto): HTMLElement {
         </label>
       </div>
 
+      <div class="admin-product__flavors">
+        <span class="admin-product__flavors-label">
+          Sabores / variantes
+          <small>Se este produto tiver sabores à escolha, adicione aqui um nome e uma foto para cada um.</small>
+        </span>
+
+        <div class="admin-flavor-rows" data-flavor-rows></div>
+
+        <button type="button" class="button button--secondary button--small" data-add-flavor>
+          + Adicionar sabor
+        </button>
+      </div>
+
       <div class="admin-product__actions">
         <button type="button" class="button button--primary" data-guardar>
           Guardar
@@ -91,6 +104,39 @@ function criarCartao(produto: Produto): HTMLElement {
   `;
 
   return artigo;
+}
+
+function criarLinhaSabor(sabor: VarianteSabor, indice: number): string {
+  const semFoto = !sabor.imagem.trim();
+
+  return `
+    <div class="admin-flavor-row" data-flavor-row data-indice="${indice}">
+      <div class="admin-flavor-row__image">
+        <img
+          src="${sabor.imagem}"
+          alt=""
+          class="${semFoto ? "is-broken" : ""}"
+          onerror="this.onerror=null;this.classList.add('is-broken')"
+        />
+        <label class="admin-flavor-row__upload">
+          <input type="file" accept="image/jpeg,image/png,image/webp" data-flavor-upload hidden />
+          <span>Foto</span>
+        </label>
+      </div>
+
+      <input
+        type="text"
+        class="admin-flavor-row__nome"
+        data-flavor-nome
+        value="${sabor.nome}"
+        placeholder="Nome do sabor (ex: Ninho)"
+      />
+
+      <button type="button" class="admin-flavor-row__remove" data-remove-flavor aria-label="Remover sabor">
+        ✕
+      </button>
+    </div>
+  `;
 }
 
 function ligarEventos(artigo: HTMLElement, produto: Produto): void {
@@ -104,6 +150,76 @@ function ligarEventos(artigo: HTMLElement, produto: Produto): void {
       window.setTimeout(() => { status.textContent = ""; }, 3000);
     }
   };
+
+  // Estado local dos sabores/variantes, editado antes de "Guardar".
+  const sabores: VarianteSabor[] = (produto.opcoes?.sabores ?? []).map(
+    (sabor) => ({ ...sabor })
+  );
+
+  const linhasContainer = artigo.querySelector<HTMLElement>("[data-flavor-rows]");
+
+  const renderizarSabores = (): void => {
+    if (!linhasContainer) return;
+
+    linhasContainer.innerHTML = sabores
+      .map((sabor, indice) => criarLinhaSabor(sabor, indice))
+      .join("");
+
+    linhasContainer.querySelectorAll<HTMLElement>("[data-flavor-row]").forEach((linha) => {
+      const indice = Number(linha.dataset.indice);
+
+      linha.querySelector<HTMLInputElement>("[data-flavor-nome]")?.addEventListener(
+        "input",
+        (evento) => {
+          sabores[indice].nome = (evento.target as HTMLInputElement).value;
+        }
+      );
+
+      linha.querySelector<HTMLButtonElement>("[data-remove-flavor]")?.addEventListener(
+        "click",
+        () => {
+          sabores.splice(indice, 1);
+          renderizarSabores();
+        }
+      );
+
+      linha.querySelector<HTMLInputElement>("[data-flavor-upload]")?.addEventListener(
+        "change",
+        async (evento) => {
+          const input = evento.target as HTMLInputElement;
+          const ficheiro = input.files?.[0];
+          if (!ficheiro) return;
+
+          if (ficheiro.size > 5 * 1024 * 1024) {
+            mostrar("A imagem excede 5 MB.", true);
+            input.value = "";
+            return;
+          }
+
+          mostrar("A carregar foto do sabor…");
+
+          const url = await carregarImagem(ficheiro, `${produto.slug}-sabor`);
+
+          if (!url) {
+            mostrar("Não foi possível carregar a foto.", true);
+            input.value = "";
+            return;
+          }
+
+          sabores[indice].imagem = url;
+          mostrar("Foto carregada. Não esqueça de Guardar.");
+          renderizarSabores();
+        }
+      );
+    });
+  };
+
+  renderizarSabores();
+
+  artigo.querySelector("[data-add-flavor]")?.addEventListener("click", () => {
+    sabores.push({ nome: "", imagem: "" });
+    renderizarSabores();
+  });
 
   // Guardar alterações
   artigo.querySelector("[data-guardar]")?.addEventListener("click", async () => {
@@ -125,6 +241,23 @@ function ligarEventos(artigo: HTMLElement, produto: Produto): void {
         campos[campo] = elemento.value.trim();
       }
     });
+
+    const saborIncompleto = sabores.some(
+      (sabor) =>
+        (sabor.nome.trim() !== "" && sabor.imagem.trim() === "") ||
+        (sabor.nome.trim() === "" && sabor.imagem.trim() !== "")
+    );
+
+    if (saborIncompleto) {
+      mostrar("Cada sabor precisa de nome e foto. Complete ou remova o sabor incompleto.", true);
+      return;
+    }
+
+    campos.opcoes = {
+      sabores: sabores
+        .map((sabor) => ({ nome: sabor.nome.trim(), imagem: sabor.imagem.trim() }))
+        .filter((sabor) => sabor.nome !== "" && sabor.imagem !== "")
+    };
 
     mostrar("A guardar…");
 
