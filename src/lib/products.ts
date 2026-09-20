@@ -38,14 +38,16 @@ function toFlavors(opcoes: ProdutoRow["opcoes"]): VarianteSabor[] {
     return [];
   }
 
-  return sabores.filter(
-    (item): item is VarianteSabor =>
-      !!item &&
-      typeof item.nome === "string" &&
-      item.nome.trim() !== "" &&
-      typeof item.imagem === "string" &&
-      item.imagem.trim() !== ""
-  );
+  // A foto é opcional: um sabor só precisa de nome para aparecer no site.
+  return sabores
+    .filter(
+      (item): item is VarianteSabor =>
+        !!item && typeof item.nome === "string" && item.nome.trim() !== ""
+    )
+    .map((item) => ({
+      nome: item.nome,
+      imagem: typeof item.imagem === "string" ? item.imagem : ""
+    }));
 }
 
 function toProduct(row: ProdutoRow): Product {

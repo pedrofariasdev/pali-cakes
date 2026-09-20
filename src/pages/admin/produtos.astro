@@ -48,6 +48,14 @@ import MainLayout from "@/layouts/MainLayout.astro";
       </p>
 
       <div class="admin-list-actions">
+        <input
+          type="search"
+          class="admin-search"
+          data-produto-pesquisa
+          placeholder="Pesquisar por nome ou categoria…"
+          aria-label="Pesquisar produtos"
+        />
+
         <button type="button" class="button button--primary" data-novo-produto>
           + Novo produto
         </button>

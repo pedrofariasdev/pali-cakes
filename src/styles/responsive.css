@@ -123,6 +123,20 @@
     height: 480px;
   }
 
+  .product-detail__image-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
+
+  .product-detail__image-arrow--prev {
+    left: 14px;
+  }
+
+  .product-detail__image-arrow--next {
+    right: 14px;
+  }
+
   .product-detail__content h1 {
     font-size: clamp(2.7rem, 14vw, 4rem);
   }

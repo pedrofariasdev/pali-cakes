@@ -39,6 +39,7 @@ interface Props {
 const { product, category } = Astro.props;
 
 const hasFlavors = product.flavors.length > 0;
+const canBrowseFlavors = product.flavors.length > 1;
 const defaultFlavor = hasFlavors ? product.flavors[0] : null;
 const displayImage = defaultFlavor?.imagem || product.image;
 
@@ -87,6 +88,28 @@ const productSchema = {
             alt={product.name}
             data-product-image-display
           />
+
+          {canBrowseFlavors && (
+            <>
+              <button
+                type="button"
+                class="product-detail__image-arrow product-detail__image-arrow--prev"
+                data-flavor-prev
+                aria-label="Sabor anterior"
+              >
+                ‹
+              </button>
+
+              <button
+                type="button"
+                class="product-detail__image-arrow product-detail__image-arrow--next"
+                data-flavor-next
+                aria-label="Sabor seguinte"
+              >
+                ›
+              </button>
+            </>
+          )}
 
         </div>
 

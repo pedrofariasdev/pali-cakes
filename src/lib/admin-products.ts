@@ -86,6 +86,18 @@ export async function criarProduto(
   return data as Produto;
 }
 
+/** Elimina um produto de forma permanente. */
+export async function eliminarProduto(id: string): Promise<boolean> {
+  const { error } = await supabase.from("produtos").delete().eq("id", id);
+
+  if (error) {
+    console.error("[eliminarProduto]", error.message);
+    return false;
+  }
+
+  return true;
+}
+
 /**
  * Carrega uma imagem para o Storage e devolve o URL público.
  * O nome do ficheiro inclui timestamp para evitar cache antiga.

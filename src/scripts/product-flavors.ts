@@ -58,6 +58,39 @@ function bindFlavorSelectors(): void {
           selectFlavor(option, options, productImage, addToCartButton);
         });
       });
+
+      // Setas sobre a foto: avançam/recuam entre os sabores, tal como
+      // clicar directamente num dos botões com o nome do sabor.
+      const imageWrapper = productImage?.closest(
+        ".product-detail__image"
+      );
+      const prevButton = imageWrapper?.querySelector<HTMLButtonElement>(
+        "[data-flavor-prev]"
+      );
+      const nextButton = imageWrapper?.querySelector<HTMLButtonElement>(
+        "[data-flavor-next]"
+      );
+
+      if (options.length > 1 && (prevButton || nextButton)) {
+        const irPara = (deslocamento: number): void => {
+          const indiceActual = options.findIndex((option) =>
+            option.classList.contains("is-selected")
+          );
+          const base = indiceActual === -1 ? 0 : indiceActual;
+          const proximoIndice =
+            (base + deslocamento + options.length) % options.length;
+
+          selectFlavor(
+            options[proximoIndice],
+            options,
+            productImage,
+            addToCartButton
+          );
+        };
+
+        prevButton?.addEventListener("click", () => irPara(-1));
+        nextButton?.addEventListener("click", () => irPara(1));
+      }
     });
 }
 

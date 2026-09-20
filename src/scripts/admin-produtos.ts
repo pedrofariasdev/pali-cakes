@@ -4,6 +4,7 @@ import {
   listarCategoriasAdmin,
   actualizarProduto,
   criarProduto,
+  eliminarProduto,
   carregarImagem
 } from "@/lib/admin-products";
 import type { Produto, Categoria, VarianteSabor } from "@/types/database";
@@ -24,6 +25,13 @@ function slugify(texto: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
+}
+
+/** Minúsculas e sem acentos, para pesquisa/comparação insensível a maiúsculas e acentos. */
+function normalizar(texto: string): string {
+  const MARCAS_COMBINADAS = new RegExp("[\\u0300-\\u036f]", "g");
+
+  return texto.normalize("NFD").replace(MARCAS_COMBINADAS, "").toLowerCase();
 }
 
 function produtoVazio(): Produto {
@@ -50,7 +58,13 @@ function criarCartao(produto: Produto, isNovo = false): HTMLElement {
   const artigo = document.createElement("article");
   artigo.className = `admin-product${produto.ativo ? "" : " is-inactive"}${isNovo ? " is-novo" : ""}`;
   artigo.dataset.id = produto.id;
-  if (isNovo) artigo.dataset.novo = "true";
+  if (isNovo) {
+    artigo.dataset.novo = "true";
+  } else {
+    artigo.dataset.pesquisa = normalizar(
+      `${produto.nome} ${nomeCategoria(produto.categoria_slug)}`
+    );
+  }
 
   const categoriaCampo = isNovo
     ? `
@@ -163,7 +177,7 @@ function criarCartao(produto: Produto, isNovo = false): HTMLElement {
         ${
           isNovo
             ? `<button type="button" class="button button--secondary" data-cancelar-novo>Cancelar</button>`
-            : ""
+            : `<button type="button" class="admin-product__delete" data-eliminar>Eliminar produto</button>`
         }
         <span class="admin-product__status" data-status></span>
       </div>
@@ -321,6 +335,21 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
     artigo.remove();
   });
 
+  artigo.querySelector("[data-eliminar]")?.addEventListener("click", async () => {
+    const confirmado = window.confirm(
+      `Eliminar definitivamente "${produto.nome}"? Esta ação não pode ser desfeita.`
+    );
+    if (!confirmado) return;
+
+    mostrar("A eliminar…");
+
+    const sucesso = await eliminarProduto(produto.id);
+
+    mostrar(sucesso ? "Eliminado ✓" : "Não foi possível eliminar.", !sucesso);
+
+    if (sucesso) await carregar();
+  });
+
   // Guardar alterações
   artigo.querySelector("[data-guardar]")?.addEventListener("click", async () => {
     const campos: Record<string, unknown> = {};
@@ -343,21 +372,20 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
       }
     });
 
+    // A foto é opcional; só é preciso o nome do sabor.
     const saborIncompleto = sabores.some(
-      (sabor) =>
-        (sabor.nome.trim() !== "" && sabor.imagem.trim() === "") ||
-        (sabor.nome.trim() === "" && sabor.imagem.trim() !== "")
+      (sabor) => sabor.nome.trim() === "" && sabor.imagem.trim() !== ""
     );
 
     if (saborIncompleto) {
-      mostrar("Cada sabor precisa de nome e foto. Complete ou remova o sabor incompleto.", true);
+      mostrar("Há um sabor com foto mas sem nome. Adicione o nome ou remova a foto.", true);
       return;
     }
 
     campos.opcoes = {
       sabores: sabores
         .map((sabor) => ({ nome: sabor.nome.trim(), imagem: sabor.imagem.trim() }))
-        .filter((sabor) => sabor.nome !== "" && sabor.imagem !== "")
+        .filter((sabor) => sabor.nome !== "")
     };
 
     if (isNovo) {
@@ -463,6 +491,37 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
   );
 }
 
+function filtrarProdutos(termo: string): void {
+  const lista = document.querySelector<HTMLElement>("[data-products-list]");
+  if (!lista) return;
+
+  const termoNormalizado = normalizar(termo.trim());
+  const cartoes = lista.querySelectorAll<HTMLElement>(".admin-product:not([data-novo])");
+
+  let visiveis = 0;
+
+  cartoes.forEach((cartao) => {
+    const corresponde =
+      !termoNormalizado || (cartao.dataset.pesquisa ?? "").includes(termoNormalizado);
+    cartao.hidden = !corresponde;
+    if (corresponde) visiveis += 1;
+  });
+
+  let semResultados = lista.querySelector<HTMLElement>("[data-sem-resultados]");
+
+  if (visiveis === 0 && termoNormalizado && cartoes.length > 0) {
+    if (!semResultados) {
+      semResultados = document.createElement("p");
+      semResultados.className = "admin-loading";
+      semResultados.dataset.semResultados = "true";
+      semResultados.textContent = "Nenhum produto encontrado.";
+      lista.append(semResultados);
+    }
+  } else {
+    semResultados?.remove();
+  }
+}
+
 function renderizar(): void {
   const lista = document.querySelector<HTMLElement>("[data-products-list]");
   if (!lista) return;
@@ -482,6 +541,11 @@ function renderizar(): void {
     lista.append(artigo);
     ligarEventos(artigo, produto);
   });
+
+  const campoPesquisa = document.querySelector<HTMLInputElement>("[data-produto-pesquisa]");
+  if (campoPesquisa?.value.trim()) {
+    filtrarProdutos(campoPesquisa.value);
+  }
 }
 
 async function carregar(): Promise<void> {
@@ -525,6 +589,9 @@ async function iniciar(): Promise<void> {
 
   document.querySelector("[data-logout]")?.addEventListener("click", sair);
   document.querySelector("[data-novo-produto]")?.addEventListener("click", adicionarRascunho);
+
+  const campoPesquisa = document.querySelector<HTMLInputElement>("[data-produto-pesquisa]");
+  campoPesquisa?.addEventListener("input", () => filtrarProdutos(campoPesquisa.value));
 
   await carregar();
 }
