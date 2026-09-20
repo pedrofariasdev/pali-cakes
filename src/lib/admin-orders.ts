@@ -35,3 +35,31 @@ export async function actualizarEstado(
 
   return true;
 }
+
+const REFERENCE_BUCKET = "encomendas-referencias";
+
+/**
+ * Gera links temporários (1 hora) para as fotos de referência que o
+ * cliente enviou no checkout — o bucket é privado, por isso o admin
+ * precisa de um URL assinado para as poder ver.
+ */
+export async function obterUrlsAssinadas(
+  caminhos: string[]
+): Promise<string[]> {
+  if (caminhos.length === 0) {
+    return [];
+  }
+
+  const { data, error } = await supabase.storage
+    .from(REFERENCE_BUCKET)
+    .createSignedUrls(caminhos, 3600);
+
+  if (error) {
+    console.error("[obterUrlsAssinadas]", error.message);
+    return [];
+  }
+
+  return data
+    .map((item) => item.signedUrl)
+    .filter((url): url is string => typeof url === "string" && url !== "");
+}

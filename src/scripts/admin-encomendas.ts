@@ -2,6 +2,7 @@ import { exigirSessao, sair } from "@/lib/auth";
 import {
   listarEncomendas,
   actualizarEstado,
+  obterUrlsAssinadas,
   type EncomendaComItens
 } from "@/lib/admin-orders";
 import type { EstadoEncomenda } from "@/types/database";
@@ -123,6 +124,46 @@ function criarCartao(encomenda: EncomendaComItens): HTMLElement {
     observacoes.className = "admin-order__notes";
     observacoes.textContent = encomenda.observacoes;
     artigo.append(observacoes);
+  }
+
+  if (encomenda.imagens_referencia && encomenda.imagens_referencia.length > 0) {
+    const referencias = document.createElement("div");
+    referencias.className = "admin-order__references";
+
+    const rotulo = document.createElement("strong");
+    rotulo.textContent = "Fotos de referência";
+    referencias.append(rotulo);
+
+    const galeria = document.createElement("div");
+    galeria.className = "admin-order__references-gallery";
+    galeria.textContent = "A carregar…";
+    referencias.append(galeria);
+
+    artigo.append(referencias);
+
+    obterUrlsAssinadas(encomenda.imagens_referencia).then((urls) => {
+      galeria.replaceChildren();
+
+      if (urls.length === 0) {
+        galeria.textContent = "Não foi possível carregar as fotos.";
+        return;
+      }
+
+      urls.forEach((url) => {
+        const link = document.createElement("a");
+        link.href = url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+
+        const imagem = document.createElement("img");
+        imagem.src = url;
+        imagem.alt = "Foto de referência enviada pelo cliente";
+        imagem.loading = "lazy";
+
+        link.append(imagem);
+        galeria.append(link);
+      });
+    });
   }
 
   const rodape = document.createElement("footer");

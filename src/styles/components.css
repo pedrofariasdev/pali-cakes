@@ -2634,6 +2634,122 @@ body.menu-is-open {
   border-radius: 16px;
 }
 
+/* Fotos de referência/inspiração no checkout */
+
+.checkout-references {
+  gap: 12px;
+}
+
+.checkout-references > span {
+  color: var(--color-text);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.checkout-references > small {
+  margin-top: -6px;
+
+  color: var(--color-text-light);
+  font-size: 0.72rem;
+  line-height: 1.6;
+}
+
+.checkout-references__upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+
+  padding: 12px 20px;
+
+  background-color: var(--color-background);
+  border: 1px dashed rgba(215, 162, 168, 0.5);
+  border-radius: 13px;
+  cursor: pointer;
+
+  color: var(--color-primary-dark);
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  transition:
+    border-color var(--transition),
+    background-color var(--transition);
+}
+
+.checkout-references__upload:hover {
+  background-color: var(--color-soft);
+  border-color: var(--color-primary);
+}
+
+.checkout-references__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.checkout-references__list:empty {
+  display: none;
+}
+
+.checkout-references__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 10px 8px 14px;
+
+  background-color: var(--color-soft);
+  border-radius: 999px;
+
+  color: var(--color-text);
+  font-size: 0.72rem;
+  max-width: 220px;
+}
+
+.checkout-references__chip > span:first-child {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.checkout-references__chip button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  padding: 0;
+
+  background-color: rgba(215, 162, 168, 0.35);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+
+  color: var(--color-text);
+  font-size: 0.85rem;
+  line-height: 1;
+
+  transition: background-color var(--transition);
+}
+
+.checkout-references__chip button:hover {
+  background-color: var(--color-primary-dark);
+  color: var(--color-surface);
+}
+
+.checkout-references__status {
+  margin: 0;
+
+  color: var(--color-text-light);
+  font-size: 0.7rem;
+}
+
+.checkout-references__status.is-error {
+  color: #b3413f;
+}
+
 /* Consentimento */
 
 .checkout-consent {

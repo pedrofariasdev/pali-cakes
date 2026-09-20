@@ -69,6 +69,7 @@ export interface Encomenda {
   data_evento: string | null;
   observacoes: string | null;
   total_estimado: number | null;
+  imagens_referencia: string[];
 }
 
 export interface Personalizacao {
@@ -131,6 +132,8 @@ export interface Database {
           p_tipo_celebracao: string | null;
           p_observacoes: string | null;
           p_itens: OrderItemPayload[];
+          p_horario_preferido?: string | null;
+          p_imagens_referencia?: string[];
         };
         Returns: string;
       };

@@ -1,5 +1,9 @@
 
-import { criarEncomenda, type OrderItemInput } from "@/lib/orders";
+import {
+  criarEncomenda,
+  carregarImagemReferencia,
+  type OrderItemInput
+} from "@/lib/orders";
 import { getCart, clearCart, type CartItem } from "./cart";
 import { calcularEntrega } from "@/lib/delivery";
 
@@ -7,6 +11,25 @@ import { calcularEntrega } from "@/lib/delivery";
 let taxaEntregaActual: number | null = null;
 let entregaVerificada = false;
 let pedidoEntregaActual = 0;
+
+// Categorias em que faz sentido pedir uma foto de referência/inspiração
+// (bento cakes, bolos personalizados, cupcakes e miniaturas — cookies,
+// cake pops e futuramente cake sicles entram todos em "miniaturas").
+const CATEGORIAS_COM_REFERENCIA = [
+  "bolos-personalizados",
+  "bento-cakes",
+  "cupcakes",
+  "miniaturas"
+];
+
+const MAX_IMAGENS_REFERENCIA = 4;
+
+interface ReferenciaEnviada {
+  caminho: string;
+  nome: string;
+}
+
+let imagensReferencia: ReferenciaEnviada[] = [];
 
 const currencyFormatter = new Intl.NumberFormat("pt-PT", {
   style: "currency",
@@ -173,6 +196,8 @@ function renderCheckoutSummary(): CartItem[] {
       'input[name="fulfillmentType"]:checked'
     )?.value === "delivery";
 
+  actualizarVisibilidadeReferencias(cart);
+
   itemsContainer.replaceChildren();
 
   if (cart.length === 0) {
@@ -204,6 +229,94 @@ function renderCheckoutSummary(): CartItem[] {
   submitButton.disabled = isDelivery && !entregaVerificada;
 
   return cart;
+}
+
+function actualizarVisibilidadeReferencias(cart: CartItem[]): void {
+  const campo = document.querySelector<HTMLElement>("[data-references-field]");
+  if (!campo) return;
+
+  const relevante = cart.some((item) =>
+    CATEGORIAS_COM_REFERENCIA.includes(item.categorySlug)
+  );
+
+  campo.hidden = !relevante;
+}
+
+function mostrarEstadoReferencia(texto: string, erro: boolean): void {
+  const status = document.querySelector<HTMLElement>("[data-reference-status]");
+  if (!status) return;
+
+  status.hidden = texto === "";
+  status.textContent = texto;
+  status.classList.toggle("is-error", erro);
+}
+
+function renderizarReferencias(): void {
+  const lista = document.querySelector<HTMLElement>("[data-reference-list]");
+  if (!lista) return;
+
+  lista.replaceChildren();
+
+  imagensReferencia.forEach((referencia, indice) => {
+    const chip = document.createElement("span");
+    chip.className = "checkout-references__chip";
+
+    const nome = document.createElement("span");
+    nome.textContent = referencia.nome;
+
+    const remover = document.createElement("button");
+    remover.type = "button";
+    remover.setAttribute("aria-label", `Remover ${referencia.nome}`);
+    remover.textContent = "×";
+    remover.addEventListener("click", () => {
+      imagensReferencia.splice(indice, 1);
+      renderizarReferencias();
+    });
+
+    chip.append(nome, remover);
+    lista.append(chip);
+  });
+}
+
+async function handleReferenceFiles(files: FileList): Promise<void> {
+  const restantes = MAX_IMAGENS_REFERENCIA - imagensReferencia.length;
+
+  if (restantes <= 0) {
+    mostrarEstadoReferencia(
+      `Pode enviar no máximo ${MAX_IMAGENS_REFERENCIA} fotos.`,
+      true
+    );
+    return;
+  }
+
+  const ficheiros = Array.from(files).slice(0, restantes);
+
+  for (const ficheiro of ficheiros) {
+    if (ficheiro.size > 5 * 1024 * 1024) {
+      mostrarEstadoReferencia(
+        `"${ficheiro.name}" excede 5 MB e não foi enviada.`,
+        true
+      );
+      continue;
+    }
+
+    mostrarEstadoReferencia(`A enviar ${ficheiro.name}…`, false);
+
+    const caminho = await carregarImagemReferencia(ficheiro);
+
+    if (!caminho) {
+      mostrarEstadoReferencia(
+        `Não foi possível enviar "${ficheiro.name}".`,
+        true
+      );
+      continue;
+    }
+
+    imagensReferencia.push({ caminho, nome: ficheiro.name });
+    renderizarReferencias();
+  }
+
+  mostrarEstadoReferencia("", false);
 }
 
 // Antecedência mínima divulgada na FAQ ("pelo menos 30 dias").
@@ -378,7 +491,8 @@ async function handleCheckoutSubmit(
     tipoCelebracao: readTextValue(formData, "eventType"),
     observacoes: readTextValue(formData, "notes"),
     horarioPreferido: readTextValue(formData, "horarioPreferido"),
-    itens: toOrderItems(cart)
+    itens: toOrderItems(cart),
+    imagensReferencia: imagensReferencia.map((item) => item.caminho)
   });
 
   if (!resultado.ok) {
@@ -395,6 +509,8 @@ async function handleCheckoutSubmit(
   }
 
   clearCart();
+  imagensReferencia = [];
+  renderizarReferencias();
 
   if (submitButton) {
     submitButton.textContent = "Encomenda enviada ✓";
@@ -441,6 +557,22 @@ function initialiseCheckout(): void {
   document
     .querySelector<HTMLInputElement>('input[name="postalCode"]')
     ?.addEventListener("input", actualizarEntrega);
+
+  const referenceInput = document.querySelector<HTMLInputElement>(
+    "[data-reference-input]"
+  );
+
+  if (referenceInput && referenceInput.dataset.referenceBound !== "true") {
+    referenceInput.dataset.referenceBound = "true";
+
+    referenceInput.addEventListener("change", () => {
+      if (referenceInput.files && referenceInput.files.length > 0) {
+        void handleReferenceFiles(referenceInput.files).then(() => {
+          referenceInput.value = "";
+        });
+      }
+    });
+  }
 
   if (form.dataset.checkoutBound !== "true") {
     form.dataset.checkoutBound = "true";

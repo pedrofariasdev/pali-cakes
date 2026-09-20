@@ -23,11 +23,43 @@ export interface OrderInput {
   observacoes: string;
   horarioPreferido: string;
   itens: OrderItemInput[];
+  /** Caminhos (no bucket privado "encomendas-referencias") das fotos de referência enviadas pelo cliente. */
+  imagensReferencia?: string[];
 }
 
 export type OrderResult =
   | { ok: true; referencia: string }
   | { ok: false; erro: string };
+
+const REFERENCE_BUCKET = "encomendas-referencias";
+
+/**
+ * Carrega uma foto de referência/inspiração enviada pelo cliente no checkout.
+ * O bucket é privado — devolve apenas o caminho do ficheiro (não um URL),
+ * que fica guardado na encomenda para o admin ver mais tarde com um link
+ * temporário.
+ */
+export async function carregarImagemReferencia(
+  ficheiro: File
+): Promise<string | null> {
+  const extensao = ficheiro.name.split(".").pop()?.toLowerCase() ?? "jpg";
+  const sufixo = Math.random().toString(36).slice(2, 8);
+  const caminho = `ref-${Date.now()}-${sufixo}.${extensao}`;
+
+  const { error } = await supabase.storage
+    .from(REFERENCE_BUCKET)
+    .upload(caminho, ficheiro, {
+      cacheControl: "3600",
+      upsert: false
+    });
+
+  if (error) {
+    console.error("[carregarImagemReferencia]", error.message);
+    return null;
+  }
+
+  return caminho;
+}
 
 export async function criarEncomenda(
   input: OrderInput
@@ -44,7 +76,8 @@ export async function criarEncomenda(
     p_tipo_celebracao: input.tipoCelebracao || null,
     p_observacoes: input.observacoes || null,
     p_itens: input.itens,
-    p_horario_preferido: input.horarioPreferido || null
+    p_horario_preferido: input.horarioPreferido || null,
+    p_imagens_referencia: input.imagensReferencia ?? []
   });
 
   if (error) {

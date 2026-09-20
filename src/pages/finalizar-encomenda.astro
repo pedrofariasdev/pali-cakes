@@ -123,6 +123,42 @@ import MainLayout from "../layouts/MainLayout.astro";
                   placeholder="Tema, cores, sabores, quantidade de pessoas e outros detalhes importantes."
                 ></textarea>
               </label>
+
+              <div
+                class="form-field form-field--full checkout-references"
+                data-references-field
+                hidden
+              >
+                <span>Fotos de referência (opcional)</span>
+
+                <small>
+                  Tem uma foto de inspiração? Envie aqui para ajudar
+                  a Pali Cakes a perceber o que imagina antes de entrar
+                  em contacto consigo.
+                </small>
+
+                <label class="checkout-references__upload">
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    multiple
+                    data-reference-input
+                    hidden
+                  />
+                  <span>+ Escolher fotos</span>
+                </label>
+
+                <div
+                  class="checkout-references__list"
+                  data-reference-list
+                ></div>
+
+                <p
+                  class="checkout-references__status"
+                  data-reference-status
+                  hidden
+                ></p>
+              </div>
             </div>
           </section>
 
