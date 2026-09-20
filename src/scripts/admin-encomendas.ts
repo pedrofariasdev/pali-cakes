@@ -111,7 +111,7 @@ function criarCartao(encomenda: EncomendaComItens): HTMLElement {
         ? item.personalizacao.sabor.trim()
         : "";
     linha.textContent = sabor
-      ? `${item.quantidade} × ${item.produto_nome} — Sabor: ${sabor}`
+      ? `${item.quantidade} × ${item.produto_nome} — ${sabor}`
       : `${item.quantidade} × ${item.produto_nome}`;
     listaItens.append(linha);
   });

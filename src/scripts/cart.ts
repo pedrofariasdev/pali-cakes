@@ -66,7 +66,7 @@ function normaliseCartItem(value: unknown): CartItem | null {
 
   const flavor =
     typeof value.flavor === "string" && value.flavor.trim()
-      ? value.flavor.trim().slice(0, 80)
+      ? value.flavor.trim().slice(0, 200)
       : null;
 
   return {

@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { VarianteSabor } from "@/types/database";
+import type { VarianteSabor, GrupoVariante } from "@/types/database";
 
 export interface Product {
   id: string;
@@ -14,6 +14,8 @@ export interface Product {
   featured: boolean;
   /** Opções de sabor, cada uma com a sua própria foto. Vazio quando o produto não tem variantes. */
   flavors: VarianteSabor[];
+  /** Grupos de variantes sem foto (ex: massa, cobertura, recheio). Vazio quando não se aplica. */
+  variantGroups: GrupoVariante[];
 }
 
 interface ProdutoRow {
@@ -28,7 +30,7 @@ interface ProdutoRow {
   destaque: boolean;
   ativo: boolean;
   ordem: number;
-  opcoes: { sabores?: VarianteSabor[] } | null;
+  opcoes: { sabores?: VarianteSabor[]; grupos_variantes?: GrupoVariante[] } | null;
 }
 
 function toFlavors(opcoes: ProdutoRow["opcoes"]): VarianteSabor[] {
@@ -50,6 +52,35 @@ function toFlavors(opcoes: ProdutoRow["opcoes"]): VarianteSabor[] {
     }));
 }
 
+function toVariantGroups(opcoes: ProdutoRow["opcoes"]): GrupoVariante[] {
+  const grupos = opcoes?.grupos_variantes;
+
+  if (!Array.isArray(grupos)) {
+    return [];
+  }
+
+  return grupos
+    .filter(
+      (grupo): grupo is GrupoVariante =>
+        !!grupo &&
+        typeof grupo.nome === "string" &&
+        grupo.nome.trim() !== "" &&
+        Array.isArray(grupo.opcoes) &&
+        grupo.opcoes.some(
+          (opcao) => typeof opcao === "string" && opcao.trim() !== ""
+        )
+    )
+    .map((grupo) => ({
+      nome: grupo.nome,
+      opcoes: grupo.opcoes
+        .filter(
+          (opcao): opcao is string =>
+            typeof opcao === "string" && opcao.trim() !== ""
+        )
+        .map((opcao) => opcao.trim())
+    }));
+}
+
 function toProduct(row: ProdutoRow): Product {
   return {
     id: row.slug,
@@ -65,7 +96,8 @@ function toProduct(row: ProdutoRow): Product {
     priceLabel: row.preco_label?.trim() || "Sob consulta",
     active: row.ativo,
     featured: row.destaque,
-    flavors: toFlavors(row.opcoes)
+    flavors: toFlavors(row.opcoes),
+    variantGroups: toVariantGroups(row.opcoes)
   };
 }
 

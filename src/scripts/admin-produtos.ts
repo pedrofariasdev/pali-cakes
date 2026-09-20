@@ -7,7 +7,7 @@ import {
   eliminarProduto,
   carregarImagem
 } from "@/lib/admin-products";
-import type { Produto, Categoria, VarianteSabor } from "@/types/database";
+import type { Produto, Categoria, VarianteSabor, GrupoVariante } from "@/types/database";
 
 let produtos: Produto[] = [];
 let categorias: Categoria[] = [];
@@ -170,6 +170,19 @@ function criarCartao(produto: Produto, isNovo = false): HTMLElement {
         </button>
       </div>
 
+      <div class="admin-product__flavors">
+        <span class="admin-product__flavors-label">
+          Variantes adicionais (grupos)
+          <small>Para produtos com várias escolhas, como massa, cobertura ou recheio. A foto do produto não muda com estas variantes.</small>
+        </span>
+
+        <div class="admin-flavor-rows" data-group-rows></div>
+
+        <button type="button" class="button button--secondary button--small" data-add-group>
+          + Adicionar grupo de variantes
+        </button>
+      </div>
+
       <div class="admin-product__actions">
         <button type="button" class="button button--primary" data-guardar>
           ${isNovo ? "Criar produto" : "Guardar"}
@@ -214,6 +227,38 @@ function criarLinhaSabor(sabor: VarianteSabor, indice: number): string {
       />
 
       <button type="button" class="admin-flavor-row__remove" data-remove-flavor aria-label="Remover sabor">
+        ✕
+      </button>
+    </div>
+  `;
+}
+
+interface GrupoVarianteEdicao {
+  nome: string;
+  /** Texto em edição, com as opções separadas por vírgula. */
+  opcoesTexto: string;
+}
+
+function criarLinhaGrupo(grupo: GrupoVarianteEdicao, indice: number): string {
+  return `
+    <div class="admin-flavor-row admin-flavor-row--group" data-group-row data-indice="${indice}">
+      <input
+        type="text"
+        class="admin-flavor-row__nome"
+        data-group-nome
+        value="${grupo.nome}"
+        placeholder="Nome do grupo (ex: Tipo de massa)"
+      />
+
+      <input
+        type="text"
+        class="admin-flavor-row__nome"
+        data-group-opcoes
+        value="${grupo.opcoesTexto}"
+        placeholder="Opções separadas por vírgula (ex: Chocolate, Baunilha, Red Velvet)"
+      />
+
+      <button type="button" class="admin-flavor-row__remove" data-remove-group aria-label="Remover grupo">
         ✕
       </button>
     </div>
@@ -327,6 +372,54 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
     renderizarSabores();
   });
 
+  // Estado local dos grupos de variantes (massa, cobertura, recheio, etc.).
+  const grupos: GrupoVarianteEdicao[] = (produto.opcoes?.grupos_variantes ?? []).map(
+    (grupo) => ({ nome: grupo.nome, opcoesTexto: grupo.opcoes.join(", ") })
+  );
+
+  const gruposContainer = artigo.querySelector<HTMLElement>("[data-group-rows]");
+
+  const renderizarGrupos = (): void => {
+    if (!gruposContainer) return;
+
+    gruposContainer.innerHTML = grupos
+      .map((grupo, indice) => criarLinhaGrupo(grupo, indice))
+      .join("");
+
+    gruposContainer.querySelectorAll<HTMLElement>("[data-group-row]").forEach((linha) => {
+      const indice = Number(linha.dataset.indice);
+
+      linha.querySelector<HTMLInputElement>("[data-group-nome]")?.addEventListener(
+        "input",
+        (evento) => {
+          grupos[indice].nome = (evento.target as HTMLInputElement).value;
+        }
+      );
+
+      linha.querySelector<HTMLInputElement>("[data-group-opcoes]")?.addEventListener(
+        "input",
+        (evento) => {
+          grupos[indice].opcoesTexto = (evento.target as HTMLInputElement).value;
+        }
+      );
+
+      linha.querySelector<HTMLButtonElement>("[data-remove-group]")?.addEventListener(
+        "click",
+        () => {
+          grupos.splice(indice, 1);
+          renderizarGrupos();
+        }
+      );
+    });
+  };
+
+  renderizarGrupos();
+
+  artigo.querySelector("[data-add-group]")?.addEventListener("click", () => {
+    grupos.push({ nome: "", opcoesTexto: "" });
+    renderizarGrupos();
+  });
+
   // Imagem principal: em produtos novos ainda não há id, por isso a foto
   // fica em memória e só é gravada quando se clica em "Criar produto".
   let imagemUrl = produto.imagem_url ?? "";
@@ -382,10 +475,30 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
       return;
     }
 
+    // Um grupo só é válido com nome e pelo menos uma opção.
+    const grupoIncompleto = grupos.some((grupo) => {
+      const nome = grupo.nome.trim();
+      const opcoes = grupo.opcoesTexto.split(",").map((o) => o.trim()).filter(Boolean);
+      return (nome !== "" && opcoes.length === 0) || (nome === "" && opcoes.length > 0);
+    });
+
+    if (grupoIncompleto) {
+      mostrar("Há um grupo de variantes com nome mas sem opções (ou o contrário). Complete ou remova-o.", true);
+      return;
+    }
+
+    const gruposVariantes: GrupoVariante[] = grupos
+      .map((grupo) => ({
+        nome: grupo.nome.trim(),
+        opcoes: grupo.opcoesTexto.split(",").map((o) => o.trim()).filter(Boolean)
+      }))
+      .filter((grupo) => grupo.nome !== "" && grupo.opcoes.length > 0);
+
     campos.opcoes = {
       sabores: sabores
         .map((sabor) => ({ nome: sabor.nome.trim(), imagem: sabor.imagem.trim() }))
-        .filter((sabor) => sabor.nome !== "")
+        .filter((sabor) => sabor.nome !== ""),
+      grupos_variantes: gruposVariantes
     };
 
     if (isNovo) {
@@ -427,7 +540,7 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
         destaque: Boolean(campos.destaque),
         ativo: Boolean(campos.ativo),
         ordem: (campos.ordem as number | null) ?? 0,
-        opcoes: campos.opcoes as { sabores?: VarianteSabor[] }
+        opcoes: campos.opcoes as { sabores?: VarianteSabor[]; grupos_variantes?: GrupoVariante[] }
       });
 
       mostrar(novo ? "Produto criado ✓" : "Não foi possível criar o produto.", !novo);

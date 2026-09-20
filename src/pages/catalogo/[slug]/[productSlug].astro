@@ -42,6 +42,7 @@ const hasFlavors = product.flavors.length > 0;
 const canBrowseFlavors = product.flavors.length > 1;
 const defaultFlavor = hasFlavors ? product.flavors[0] : null;
 const displayImage = defaultFlavor?.imagem || product.image;
+const hasVariantGroups = product.variantGroups.length > 0;
 
 const formattedPrice =
   product.price !== null
@@ -186,6 +187,44 @@ const productSchema = {
 
 
 
+        {hasVariantGroups && (
+          <div class="product-detail__variant-groups" data-variant-groups>
+            {product.variantGroups.map((grupo) => (
+              <div class="product-detail__flavors">
+                <span class="product-detail__flavors-label">
+                  {grupo.nome}
+                </span>
+
+                <div
+                  class="product-detail__flavor-options"
+                  role="radiogroup"
+                  aria-label={grupo.nome}
+                  data-variant-group
+                  data-group-name={grupo.nome}
+                >
+                  {grupo.opcoes.map((opcao) => (
+                    <button
+                      type="button"
+                      class="product-detail__flavor-option"
+                      data-variant-option
+                      data-option-value={opcao}
+                      aria-pressed="false"
+                    >
+                      {opcao}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            <p class="product-detail__helper" data-variant-groups-hint>
+              Escolha uma opção em cada grupo para poder adicionar à encomenda.
+            </p>
+          </div>
+        )}
+
+
+
         <div class="product-detail__notice">
 
           <span aria-hidden="true">
@@ -215,7 +254,8 @@ const productSchema = {
             data-product-price-label={product.priceLabel}
             data-category-slug={product.categorySlug}
             data-product-slug={product.slug}
-            data-product-flavor={defaultFlavor?.nome ?? ""}
+            data-product-flavor={defaultFlavor ? `Sabor: ${defaultFlavor.nome}` : ""}
+            disabled={hasVariantGroups}
           >
             Adicionar à encomenda
           </button>
@@ -251,6 +291,7 @@ const productSchema = {
 
   <script>
     import "@/scripts/product-flavors.ts";
+    import "@/scripts/product-variant-groups.ts";
   </script>
 
 

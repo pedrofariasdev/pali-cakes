@@ -574,9 +574,17 @@
   background: #fdecea;
 }
 
+.admin-flavor-row--group {
+  grid-template-columns: 1fr 1.6fr auto;
+}
+
 @media (max-width: 480px) {
   .admin-flavor-row {
     grid-template-columns: 44px 1fr auto;
+  }
+
+  .admin-flavor-row--group {
+    grid-template-columns: 1fr;
   }
 }
 

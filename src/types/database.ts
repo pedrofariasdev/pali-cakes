@@ -14,9 +14,20 @@ export interface VarianteSabor {
   imagem: string;
 }
 
+/**
+ * Um grupo de variantes com várias opções (ex: "Tipo de massa" com
+ * Chocolate/Baunilha/Red Velvet). Ao contrário do sabor, não tem foto —
+ * a imagem do produto não muda consoante a escolha.
+ */
+export interface GrupoVariante {
+  nome: string;
+  opcoes: string[];
+}
+
 /** Formato usado dentro da coluna jsonb `produtos.opcoes`. */
 export interface OpcoesProduto {
   sabores?: VarianteSabor[];
+  grupos_variantes?: GrupoVariante[];
   [chave: string]: unknown;
 }
 

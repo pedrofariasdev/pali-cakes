@@ -23,7 +23,9 @@ function selectFlavor(
   }
 
   if (addToCartButton) {
-    addToCartButton.dataset.productFlavor = flavorName;
+    addToCartButton.dataset.productFlavor = flavorName
+      ? `Sabor: ${flavorName}`
+      : "";
 
     if (flavorImage) {
       addToCartButton.dataset.productImage = flavorImage;

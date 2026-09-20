@@ -155,7 +155,7 @@ function createSummaryItem(item: CartItem): HTMLElement {
   if (item.flavor) {
     const flavor = document.createElement("span");
 
-    flavor.textContent = `Sabor: ${item.flavor}`;
+    flavor.textContent = item.flavor;
     flavor.className = "checkout-summary__flavor";
 
     content.append(flavor);
