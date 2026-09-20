@@ -3,6 +3,7 @@ import {
   listarProdutosAdmin,
   listarCategoriasAdmin,
   actualizarProduto,
+  criarProduto,
   carregarImagem
 } from "@/lib/admin-products";
 import type { Produto, Categoria, VarianteSabor } from "@/types/database";
@@ -14,10 +15,69 @@ function nomeCategoria(slug: string): string {
   return categorias.find((c) => c.slug === slug)?.nome ?? slug;
 }
 
-function criarCartao(produto: Produto): HTMLElement {
+function slugify(texto: string): string {
+  const MARCAS_COMBINADAS = new RegExp("[\\u0300-\\u036f]", "g");
+
+  return texto
+    .normalize("NFD")
+    .replace(MARCAS_COMBINADAS, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function produtoVazio(): Produto {
+  return {
+    id: "",
+    slug: "",
+    nome: "",
+    descricao: "",
+    categoria_slug: categorias[0]?.slug ?? "",
+    imagem_url: "",
+    imagens: [],
+    preco: null,
+    preco_label: "Sob consulta",
+    destaque: false,
+    ativo: true,
+    ordem: 0,
+    opcoes: {},
+    criado_em: "",
+    atualizado_em: ""
+  };
+}
+
+function criarCartao(produto: Produto, isNovo = false): HTMLElement {
   const artigo = document.createElement("article");
-  artigo.className = `admin-product${produto.ativo ? "" : " is-inactive"}`;
+  artigo.className = `admin-product${produto.ativo ? "" : " is-inactive"}${isNovo ? " is-novo" : ""}`;
   artigo.dataset.id = produto.id;
+  if (isNovo) artigo.dataset.novo = "true";
+
+  const categoriaCampo = isNovo
+    ? `
+      <label class="form-field">
+        <span>Categoria</span>
+        <select data-campo="categoria_slug">
+          ${categorias
+            .map(
+              (categoria) =>
+                `<option value="${categoria.slug}" ${
+                  categoria.slug === produto.categoria_slug ? "selected" : ""
+                }>${categoria.nome}</option>`
+            )
+            .join("")}
+        </select>
+      </label>
+    `
+    : `<span class="admin-product__category">${nomeCategoria(produto.categoria_slug)}</span>`;
+
+  const slugCampo = isNovo
+    ? `
+      <label class="form-field">
+        <span>Slug (URL)</span>
+        <input type="text" data-campo="slug" value="${produto.slug}" placeholder="gerado automaticamente a partir do nome" />
+      </label>
+    `
+    : "";
 
   artigo.innerHTML = `
     <div class="admin-product__image">
@@ -33,12 +93,14 @@ function criarCartao(produto: Produto): HTMLElement {
     </div>
 
     <div class="admin-product__fields">
-      <span class="admin-product__category">${nomeCategoria(produto.categoria_slug)}</span>
+      ${categoriaCampo}
 
       <label class="form-field">
         <span>Nome</span>
         <input type="text" data-campo="nome" value="${produto.nome}" />
       </label>
+
+      ${slugCampo}
 
       <label class="form-field">
         <span>Descrição</span>
@@ -96,8 +158,13 @@ function criarCartao(produto: Produto): HTMLElement {
 
       <div class="admin-product__actions">
         <button type="button" class="button button--primary" data-guardar>
-          Guardar
+          ${isNovo ? "Criar produto" : "Guardar"}
         </button>
+        ${
+          isNovo
+            ? `<button type="button" class="button button--secondary" data-cancelar-novo>Cancelar</button>`
+            : ""
+        }
         <span class="admin-product__status" data-status></span>
       </div>
     </div>
@@ -139,7 +206,7 @@ function criarLinhaSabor(sabor: VarianteSabor, indice: number): string {
   `;
 }
 
-function ligarEventos(artigo: HTMLElement, produto: Produto): void {
+function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): void {
   const status = artigo.querySelector<HTMLElement>("[data-status]");
 
   const mostrar = (texto: string, erro = false): void => {
@@ -150,6 +217,30 @@ function ligarEventos(artigo: HTMLElement, produto: Produto): void {
       window.setTimeout(() => { status.textContent = ""; }, 3000);
     }
   };
+
+  // Só existe em cartões de produto novo.
+  const campoNome = artigo.querySelector<HTMLInputElement>('[data-campo="nome"]');
+  const campoSlug = artigo.querySelector<HTMLInputElement>('[data-campo="slug"]');
+
+  const obterSlugActual = (): string => {
+    const valorSlug = campoSlug?.value.trim();
+    if (valorSlug) return slugify(valorSlug);
+    return slugify(campoNome?.value.trim() ?? "");
+  };
+
+  if (isNovo && campoNome && campoSlug) {
+    let slugEditadoManualmente = false;
+
+    campoSlug.addEventListener("input", () => {
+      slugEditadoManualmente = campoSlug.value.trim() !== "";
+    });
+
+    campoNome.addEventListener("input", () => {
+      if (!slugEditadoManualmente) {
+        campoSlug.value = slugify(campoNome.value);
+      }
+    });
+  }
 
   // Estado local dos sabores/variantes, editado antes de "Guardar".
   const sabores: VarianteSabor[] = (produto.opcoes?.sabores ?? []).map(
@@ -198,7 +289,8 @@ function ligarEventos(artigo: HTMLElement, produto: Produto): void {
 
           mostrar("A carregar foto do sabor…");
 
-          const url = await carregarImagem(ficheiro, `${produto.slug}-sabor`);
+          const slugBase = isNovo ? obterSlugActual() || "novo-produto" : produto.slug;
+          const url = await carregarImagem(ficheiro, `${slugBase}-sabor`);
 
           if (!url) {
             mostrar("Não foi possível carregar a foto.", true);
@@ -221,6 +313,14 @@ function ligarEventos(artigo: HTMLElement, produto: Produto): void {
     renderizarSabores();
   });
 
+  // Imagem principal: em produtos novos ainda não há id, por isso a foto
+  // fica em memória e só é gravada quando se clica em "Criar produto".
+  let imagemUrl = produto.imagem_url ?? "";
+
+  artigo.querySelector("[data-cancelar-novo]")?.addEventListener("click", () => {
+    artigo.remove();
+  });
+
   // Guardar alterações
   artigo.querySelector("[data-guardar]")?.addEventListener("click", async () => {
     const campos: Record<string, unknown> = {};
@@ -235,6 +335,7 @@ function ligarEventos(artigo: HTMLElement, produto: Produto): void {
         const valor = elemento.value.trim();
         campos[campo] = valor === "" ? null : Number(valor);
       } else if (
+        elemento instanceof HTMLSelectElement ||
         elemento instanceof HTMLInputElement ||
         elemento instanceof HTMLTextAreaElement
       ) {
@@ -258,6 +359,54 @@ function ligarEventos(artigo: HTMLElement, produto: Produto): void {
         .map((sabor) => ({ nome: sabor.nome.trim(), imagem: sabor.imagem.trim() }))
         .filter((sabor) => sabor.nome !== "" && sabor.imagem !== "")
     };
+
+    if (isNovo) {
+      const nome = String(campos.nome ?? "").trim();
+      const categoriaSlug = String(campos.categoria_slug ?? "").trim();
+      const slug = obterSlugActual();
+
+      if (!nome) {
+        mostrar("Indique o nome do produto.", true);
+        return;
+      }
+
+      if (!categoriaSlug) {
+        mostrar("Escolha uma categoria.", true);
+        return;
+      }
+
+      if (!slug) {
+        mostrar("Indique um slug (ou preencha o nome para o gerar).", true);
+        return;
+      }
+
+      if (produtos.some((existente) => existente.slug === slug)) {
+        mostrar("Já existe um produto com este slug. Escolha outro.", true);
+        return;
+      }
+
+      mostrar("A criar…");
+
+      const novo = await criarProduto({
+        nome,
+        categoria_slug: categoriaSlug,
+        slug,
+        descricao: String(campos.descricao ?? ""),
+        preco: (campos.preco as number | null) ?? null,
+        preco_label: String(campos.preco_label ?? "Sob consulta"),
+        imagem_url: imagemUrl,
+        imagens: [],
+        destaque: Boolean(campos.destaque),
+        ativo: Boolean(campos.ativo),
+        ordem: (campos.ordem as number | null) ?? 0,
+        opcoes: campos.opcoes as { sabores?: VarianteSabor[] }
+      });
+
+      mostrar(novo ? "Produto criado ✓" : "Não foi possível criar o produto.", !novo);
+
+      if (novo) await carregar();
+      return;
+    }
 
     mostrar("A guardar…");
 
@@ -284,11 +433,24 @@ function ligarEventos(artigo: HTMLElement, produto: Produto): void {
 
       mostrar("A carregar imagem…");
 
-      const url = await carregarImagem(ficheiro, produto.slug);
+      const slugBase = isNovo ? obterSlugActual() || "novo-produto" : produto.slug;
+      const url = await carregarImagem(ficheiro, slugBase);
 
       if (!url) {
         mostrar("Não foi possível carregar a imagem.", true);
         input.value = "";
+        return;
+      }
+
+      const imagemElemento = artigo.querySelector<HTMLImageElement>(".admin-product__image img");
+      if (imagemElemento) {
+        imagemElemento.classList.remove("is-broken");
+        imagemElemento.src = url;
+      }
+
+      if (isNovo) {
+        imagemUrl = url;
+        mostrar("Foto carregada. Não esqueça de criar o produto.");
         return;
       }
 
@@ -331,6 +493,29 @@ async function carregar(): Promise<void> {
   renderizar();
 }
 
+function adicionarRascunho(): void {
+  const lista = document.querySelector<HTMLElement>("[data-products-list]");
+  if (!lista) return;
+
+  // Só um rascunho de cada vez.
+  const rascunhoExistente = lista.querySelector<HTMLElement>('[data-novo="true"]');
+  if (rascunhoExistente) {
+    rascunhoExistente.scrollIntoView({ behavior: "smooth", block: "start" });
+    rascunhoExistente.querySelector<HTMLInputElement>('[data-campo="nome"]')?.focus();
+    return;
+  }
+
+  lista.querySelector(".admin-loading")?.remove();
+
+  const rascunho = produtoVazio();
+  const artigo = criarCartao(rascunho, true);
+  lista.prepend(artigo);
+  ligarEventos(artigo, rascunho, true);
+
+  artigo.scrollIntoView({ behavior: "smooth", block: "start" });
+  artigo.querySelector<HTMLInputElement>('[data-campo="nome"]')?.focus();
+}
+
 async function iniciar(): Promise<void> {
   const lista = document.querySelector("[data-products-list]");
   if (!lista) return;
@@ -339,6 +524,7 @@ async function iniciar(): Promise<void> {
   if (!autorizado) return;
 
   document.querySelector("[data-logout]")?.addEventListener("click", sair);
+  document.querySelector("[data-novo-produto]")?.addEventListener("click", adicionarRascunho);
 
   await carregar();
 }

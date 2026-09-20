@@ -262,6 +262,17 @@
   opacity: 0.55;
 }
 
+.admin-product.is-novo {
+  border: 2px dashed rgba(215, 162, 168, 0.55);
+  box-shadow: none;
+}
+
+.admin-list-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.25rem;
+}
+
 .admin-product__image {
   position: relative;
   aspect-ratio: 1;

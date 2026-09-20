@@ -62,6 +62,30 @@ export async function actualizarProduto(
   return true;
 }
 
+export interface ProdutoNovo extends ProdutoEdicao {
+  slug: string;
+  categoria_slug: string;
+  imagens: string[];
+}
+
+/** Cria um novo produto. Devolve a linha criada (com o id gerado) ou null em caso de erro. */
+export async function criarProduto(
+  campos: ProdutoNovo
+): Promise<Produto | null> {
+  const { data, error } = await supabase
+    .from("produtos")
+    .insert(campos)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("[criarProduto]", error.message);
+    return null;
+  }
+
+  return data as Produto;
+}
+
 /**
  * Carrega uma imagem para o Storage e devolve o URL público.
  * O nome do ficheiro inclui timestamp para evitar cache antiga.
