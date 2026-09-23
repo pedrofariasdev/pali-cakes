@@ -2080,6 +2080,18 @@ body.menu-is-open {
 }
 
 /* =========================
+   INTRO PACKS FESTA
+========================= */
+
+.packs-intro__lead {
+  margin: 14px 0 8px;
+
+  color: var(--color-primary-dark);
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+}
+
+/* =========================
    CTA PACK PERSONALIZADO
 ========================= */
 
