@@ -175,7 +175,7 @@ import MainLayout from "../layouts/MainLayout.astro";
                 />
 
                 <small data-coupon-status>
-                  O desconto (6%) é aplicado no orçamento final.
+                  Com um cupão válido, os 6% de desconto são aplicados ao total.
                 </small>
               </label>
             </div>
@@ -338,6 +338,15 @@ import MainLayout from "../layouts/MainLayout.astro";
             <span>Entrega</span>
             <strong data-delivery-fee>—</strong>
           </div>
+
+          <div class="checkout-summary__delivery checkout-summary__discount" data-discount-line hidden>
+            <span data-discount-label>Cupão</span>
+            <strong data-discount-value>—</strong>
+          </div>
+
+          <p class="checkout-summary__discount-note" data-discount-note hidden>
+            Nos produtos sob consulta, o desconto é aplicado no orçamento final.
+          </p>
 
           <div class="checkout-summary__footer">
             <span>Total conhecido</span>

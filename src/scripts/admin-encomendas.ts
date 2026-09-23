@@ -27,6 +27,11 @@ const dataCurtaFormatter = new Intl.DateTimeFormat("pt-PT", {
   dateStyle: "long"
 });
 
+const moedaFormatter = new Intl.NumberFormat("pt-PT", {
+  style: "currency",
+  currency: "EUR"
+});
+
 let todasEncomendas: EncomendaComItens[] = [];
 let cuponsPorCodigo = new Map<string, CupaoAvaliacao>();
 let filtroActivo = "todos";
@@ -41,6 +46,20 @@ function criarLinhaCupao(encomenda: EncomendaComItens): HTMLElement | null {
   const rotulo = document.createElement("strong");
   rotulo.textContent = `Cupão: ${encomenda.cupao}`;
   linha.append(rotulo);
+
+  if (encomenda.desconto_percentagem) {
+    const partes = [`−${Number(encomenda.desconto_percentagem)}%`];
+
+    if (encomenda.desconto_valor) {
+      partes.push(`−${moedaFormatter.format(Number(encomenda.desconto_valor))} já descontados`);
+    }
+
+    if (encomenda.total_estimado) {
+      partes.push(`total estimado ${moedaFormatter.format(Number(encomenda.total_estimado))}`);
+    }
+
+    linha.append(document.createTextNode(` (${partes.join(" · ")})`));
+  }
 
   const origem = cuponsPorCodigo.get(encomenda.cupao);
   if (origem) {

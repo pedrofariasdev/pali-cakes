@@ -4,6 +4,7 @@ import {
   carregarImagemReferencia,
   validarCupao,
   normalizarCupao,
+  DESCONTO_CUPAO_PERCENTAGEM,
   type OrderItemInput
 } from "@/lib/orders";
 import { getCart, clearCart, type CartItem } from "./cart";
@@ -224,8 +225,13 @@ function renderCheckoutSummary(): CartItem[] {
     );
   });
 
+  const subtotalProdutos = calculateKnownTotal(cart);
+  const desconto = calcularDescontoCupao(subtotalProdutos);
+
+  actualizarLinhaDesconto(desconto, cart);
+
   totalElement.textContent = currencyFormatter.format(
-    calculateKnownTotal(cart) + (taxaEntregaActual ?? 0)
+    subtotalProdutos - desconto + (taxaEntregaActual ?? 0)
   );
 
   submitButton.disabled = isDelivery && !entregaVerificada;
@@ -327,9 +333,39 @@ async function handleReferenceFiles(files: FileList): Promise<void> {
 
 type EstadoCupao = "vazio" | "valido" | "invalido" | "indisponivel";
 
-const MENSAGEM_CUPAO_PADRAO = "O desconto (6%) é aplicado no orçamento final.";
+const MENSAGEM_CUPAO_PADRAO =
+  `Com um cupão válido, os ${DESCONTO_CUPAO_PERCENTAGEM}% de desconto são aplicados ao total.`;
 
 let estadoCupao: EstadoCupao = "vazio";
+/** Código do cupão já confirmado como válido (o desconto só entra com ele). */
+let cupaoAplicado: string | null = null;
+
+/** Desconto sobre os produtos com preço conhecido (não inclui a entrega). */
+function calcularDescontoCupao(subtotalProdutos: number): number {
+  if (!cupaoAplicado || subtotalProdutos <= 0) return 0;
+  return Math.round(subtotalProdutos * DESCONTO_CUPAO_PERCENTAGEM) / 100;
+}
+
+function actualizarLinhaDesconto(desconto: number, cart: CartItem[]): void {
+  const linha = document.querySelector<HTMLElement>("[data-discount-line]");
+  const rotulo = document.querySelector<HTMLElement>("[data-discount-label]");
+  const valor = document.querySelector<HTMLElement>("[data-discount-value]");
+  const nota = document.querySelector<HTMLElement>("[data-discount-note]");
+  if (!linha || !rotulo || !valor) return;
+
+  const temSobConsulta = cart.some((item) => item.price === null);
+
+  linha.hidden = !cupaoAplicado;
+
+  if (nota) {
+    nota.hidden = !cupaoAplicado || !temSobConsulta;
+  }
+
+  if (!cupaoAplicado) return;
+
+  rotulo.textContent = `Cupão ${cupaoAplicado} (−${DESCONTO_CUPAO_PERCENTAGEM}%)`;
+  valor.textContent = desconto > 0 ? `−${currencyFormatter.format(desconto)}` : "no orçamento";
+}
 let pedidoCupaoActual = 0;
 let temporizadorCupao: number | undefined;
 
@@ -349,13 +385,31 @@ async function verificarCupao(): Promise<EstadoCupao> {
 
   if (!codigo) {
     estadoCupao = "vazio";
+    cupaoAplicado = null;
+    renderCheckoutSummary();
     mostrarEstadoCupao(MENSAGEM_CUPAO_PADRAO, "");
+    return estadoCupao;
+  }
+
+  const email =
+    document
+      .querySelector<HTMLInputElement>('input[name="customerEmail"]')
+      ?.value.trim() ?? "";
+
+  if (!email) {
+    estadoCupao = "invalido";
+    cupaoAplicado = null;
+    renderCheckoutSummary();
+    mostrarEstadoCupao(
+      "Preencha primeiro o seu email (o mesmo que usou na avaliação) para validar o cupão.",
+      "is-error"
+    );
     return estadoCupao;
   }
 
   mostrarEstadoCupao("A verificar o cupão…", "");
 
-  const resultado = await validarCupao(codigo);
+  const resultado = await validarCupao(codigo, email);
 
   // Ignora respostas de verificações antigas (o cliente continuou a escrever).
   if (pedido !== pedidoCupaoActual) {
@@ -364,23 +418,28 @@ async function verificarCupao(): Promise<EstadoCupao> {
 
   if (resultado === true) {
     estadoCupao = "valido";
+    cupaoAplicado = codigo;
     mostrarEstadoCupao(
-      `Cupão ${codigo} válido ✓ 6% de desconto, aplicado no orçamento final.`,
+      `Cupão ${codigo} aplicado ✓ ${DESCONTO_CUPAO_PERCENTAGEM}% de desconto.`,
       "is-success"
     );
   } else if (resultado === false) {
     estadoCupao = "invalido";
+    cupaoAplicado = null;
     mostrarEstadoCupao(
-      "Este cupão não existe ou já expirou. Confirme o código ou deixe o campo vazio.",
+      "Cupão não válido: confirme o código e use o mesmo email da avaliação. Cada cupão só pode ser usado uma vez e dura 1 ano.",
       "is-error"
     );
   } else {
     estadoCupao = "indisponivel";
+    cupaoAplicado = null;
     mostrarEstadoCupao(
       "Não foi possível verificar o cupão agora. Será confirmado ao enviar a encomenda.",
       ""
     );
   }
+
+  renderCheckoutSummary();
 
   return estadoCupao;
 }
@@ -393,6 +452,12 @@ function ligarCampoCupao(): void {
 
   input.addEventListener("input", () => {
     estadoCupao = "vazio";
+
+    if (cupaoAplicado) {
+      cupaoAplicado = null;
+      renderCheckoutSummary();
+    }
+
     window.clearTimeout(temporizadorCupao);
     temporizadorCupao = window.setTimeout(() => {
       void verificarCupao();
@@ -403,6 +468,16 @@ function ligarCampoCupao(): void {
     window.clearTimeout(temporizadorCupao);
     void verificarCupao();
   });
+
+  // O cupão está ligado ao email: se o email mudar, volta a verificar.
+  document
+    .querySelector<HTMLInputElement>('input[name="customerEmail"]')
+    ?.addEventListener("change", () => {
+      if (input.value.trim()) {
+        window.clearTimeout(temporizadorCupao);
+        void verificarCupao();
+      }
+    });
 }
 
 // Antecedência mínima divulgada na FAQ ("pelo menos 30 dias").
@@ -563,7 +638,7 @@ async function handleCheckoutSubmit(
     if ((await verificarCupao()) === "invalido") {
       if (helper) {
         helper.textContent =
-          "O cupão indicado não é válido. Confirme o código ou deixe o campo vazio.";
+          "O cupão não é válido para este email ou já foi utilizado. Confirme ou deixe o campo vazio.";
       }
       form.querySelector<HTMLInputElement>("[data-coupon-input]")?.focus();
       return;

@@ -77,7 +77,7 @@ async function tratarSubmit(evento: SubmitEvent): Promise<void> {
 
       const nota = document.createElement("small");
       nota.textContent =
-        "Guarde este código: é válido durante 1 ano. Basta escrevê-lo no campo \"Cupão de desconto\" ao finalizar a sua próxima encomenda.";
+        "Guarde este código: é válido para uma encomenda, durante 1 ano. Ao finalizar a encomenda, escreva-o no campo \"Cupão de desconto\" e use o mesmo email desta avaliação.";
 
       cupao.append(titulo, codigo, nota);
       estado.append(cupao);

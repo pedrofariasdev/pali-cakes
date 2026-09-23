@@ -29,18 +29,30 @@ export interface OrderInput {
   cupao?: string;
 }
 
+/**
+ * Desconto dos cupões das avaliações. Tem de coincidir com o valor em
+ * public.definicoes_lancamento.cupao_desconto_percentagem (é o servidor que
+ * grava o desconto final na encomenda).
+ */
+export const DESCONTO_CUPAO_PERCENTAGEM = 6;
+
 /** Normaliza o código escrito pelo cliente (espaços e minúsculas). */
 export function normalizarCupao(codigo: string): string {
   return codigo.replace(/\s+/g, "").toUpperCase();
 }
 
 /**
- * Confirma se o cupão existe. Devolve null se não foi possível verificar
- * (ex.: falha de rede), para o checkout não bloquear o cliente por isso.
+ * Confirma se o cupão pode ser usado por este email (existe, pertence à
+ * avaliação feita com este email, está no prazo e ainda não foi usado).
+ * Devolve null se não foi possível verificar (ex.: falha de rede).
  */
-export async function validarCupao(codigo: string): Promise<boolean | null> {
+export async function validarCupao(
+  codigo: string,
+  email: string
+): Promise<boolean | null> {
   const { data, error } = await (supabase.rpc as any)("validar_cupao", {
-    p_cupao: normalizarCupao(codigo)
+    p_cupao: normalizarCupao(codigo),
+    p_email: email.trim()
   });
 
   if (error) {
@@ -108,10 +120,13 @@ export async function criarEncomenda(
   if (error) {
     console.error("[criarEncomenda]", error.message);
 
-    if (error.message.includes("Cupão inválido")) {
+    if (
+      error.message.includes("Cupão inválido") ||
+      error.message.includes("encomendas_cupao_uso_unico")
+    ) {
       return {
         ok: false,
-        erro: "O cupão indicado não é válido. Confirme o código ou deixe o campo vazio."
+        erro: "O cupão não é válido para este email ou já foi utilizado. Confirme o código e o email usado na avaliação, ou deixe o campo vazio."
       };
     }
 

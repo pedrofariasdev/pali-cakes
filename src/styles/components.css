@@ -2832,6 +2832,17 @@ body.menu-is-open {
   font-weight: 600;
 }
 
+.checkout-summary__discount strong {
+  color: #3f7a4a;
+}
+
+.checkout-summary__discount-note {
+  margin-top: 6px;
+
+  color: var(--color-text-light);
+  font-size: 0.7rem;
+}
+
 /* Consentimento */
 
 .checkout-consent {

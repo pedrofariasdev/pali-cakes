@@ -82,6 +82,8 @@ export interface Encomenda {
   total_estimado: number | null;
   imagens_referencia: string[];
   cupao: string | null;
+  desconto_percentagem: number | null;
+  desconto_valor: number | null;
 }
 
 export interface Personalizacao {

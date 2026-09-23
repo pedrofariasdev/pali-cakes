@@ -105,6 +105,12 @@ ol {
   list-style: none;
 }
 
+/* O atributo hidden tem de ganhar sempre a regras como display: flex/grid
+   (ex.: linha de entrega, campo de fotos de referência, blocos do formulário). */
+[hidden] {
+  display: none !important;
+}
+
 
 /* =====================
    CONTAINER GLOBAL

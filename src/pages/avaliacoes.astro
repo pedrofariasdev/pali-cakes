@@ -64,13 +64,15 @@ const avaliacoes = await getAvaliacoesAprovadas(12);
             </label>
 
             <label class="form-field">
-              <span>Email (não será publicado)</span>
+              <span>Email * (não será publicado)</span>
               <input
                 type="email"
                 name="email"
                 maxlength="160"
                 autocomplete="email"
+                required
               />
+              <small>O cupão de desconto fica associado a este email.</small>
             </label>
 
             <label class="form-field">
