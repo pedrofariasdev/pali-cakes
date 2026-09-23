@@ -9,6 +9,8 @@ export interface CartItem {
   productSlug: string;
   /** Sabor escolhido, quando o produto tem variantes. */
   flavor: string | null;
+  /** Quantidade mínima por encomenda deste produto (1 = sem mínimo). */
+  minQuantity: number;
 }
 
 type NewCartItem = Omit<CartItem, "quantity">;
@@ -47,10 +49,15 @@ function normaliseCartItem(value: unknown): CartItem | null {
     return null;
   }
 
+  const minQuantity =
+    typeof value.minQuantity === "number" && Number.isFinite(value.minQuantity)
+      ? Math.min(99, Math.max(1, Math.trunc(value.minQuantity)))
+      : 1;
+
   const quantity =
     typeof value.quantity === "number" && Number.isFinite(value.quantity)
-      ? Math.min(99, Math.max(1, Math.trunc(value.quantity)))
-      : 1;
+      ? Math.min(99, Math.max(minQuantity, Math.trunc(value.quantity)))
+      : minQuantity;
 
   const price =
     typeof value.price === "number" &&
@@ -78,7 +85,8 @@ function normaliseCartItem(value: unknown): CartItem | null {
     quantity,
     categorySlug: categorySlug.slice(0, 160),
     productSlug: productSlug.slice(0, 160),
-    flavor
+    flavor,
+    minQuantity
   };
 }
 
@@ -146,19 +154,21 @@ export function buildCartItemId(productId: string, flavor: string | null): strin
   return `${productId}--${slugifyFlavor(flavor)}`;
 }
 
-export function addToCart(item: NewCartItem): void {
+export function addToCart(item: NewCartItem, quantity = item.minQuantity): void {
   const cart = getCart();
+  const quantidade = Math.min(99, Math.max(item.minQuantity, Math.trunc(quantity)));
 
   const existingItem = cart.find(
     (cartItem) => cartItem.id === item.id
   );
 
   if (existingItem) {
-    existingItem.quantity += 1;
+    existingItem.minQuantity = item.minQuantity;
+    existingItem.quantity = Math.min(99, existingItem.quantity + quantidade);
   } else {
     cart.push({
       ...item,
-      quantity: 1
+      quantity: quantidade
     });
   }
 
@@ -215,7 +225,9 @@ function bindAddToCartButtons(): void {
           productPriceLabel,
           categorySlug,
           productSlug,
-          productFlavor
+          productFlavor,
+          productMinQuantity,
+          productQuantity
         } = button.dataset;
 
         if (
@@ -242,20 +254,27 @@ function bindAddToCartButtons(): void {
             ? productFlavor.trim()
             : null;
 
-        addToCart({
-          id: buildCartItemId(productId, flavor),
-          name: productName,
-          image: productImage,
-          price:
-            numericPrice !== null && Number.isFinite(numericPrice)
-              ? numericPrice
-              : null,
-          priceLabel:
-            productPriceLabel || "Sob consulta",
-          categorySlug,
-          productSlug,
-          flavor
-        });
+        const minimo = Math.max(1, Math.trunc(Number(productMinQuantity) || 1));
+        const quantidade = Math.max(minimo, Math.trunc(Number(productQuantity) || minimo));
+
+        addToCart(
+          {
+            id: buildCartItemId(productId, flavor),
+            name: productName,
+            image: productImage,
+            price:
+              numericPrice !== null && Number.isFinite(numericPrice)
+                ? numericPrice
+                : null,
+            priceLabel:
+              productPriceLabel || "Sob consulta",
+            categorySlug,
+            productSlug,
+            flavor,
+            minQuantity: minimo
+          },
+          quantidade
+        );
 
         const originalText = button.textContent;
 

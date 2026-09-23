@@ -273,6 +273,50 @@ const productSchema = {
 
 
 
+        <div class="product-detail__quantity" data-quantity-picker>
+          <span class="product-detail__flavors-label">
+            Quantidade
+          </span>
+
+          <div class="product-detail__quantity-control">
+            <button
+              type="button"
+              data-quantity-decrease
+              aria-label="Diminuir quantidade"
+              disabled
+            >
+              −
+            </button>
+
+            <input
+              type="number"
+              inputmode="numeric"
+              min={product.minQuantity}
+              max="99"
+              step="1"
+              value={product.minQuantity}
+              aria-label="Quantidade"
+              data-quantity-input
+            />
+
+            <button
+              type="button"
+              data-quantity-increase
+              aria-label="Aumentar quantidade"
+            >
+              +
+            </button>
+          </div>
+
+          {product.minQuantity > 1 && (
+            <small class="product-detail__minimum">
+              Encomenda mínima: {product.minQuantity} unidades
+            </small>
+          )}
+        </div>
+
+
+
         <div class="product-detail__notice">
 
           <span aria-hidden="true">
@@ -303,6 +347,8 @@ const productSchema = {
             data-category-slug={product.categorySlug}
             data-product-slug={product.slug}
             data-product-flavor={defaultFlavor ? `Sabor: ${defaultFlavor.nome}` : ""}
+            data-product-min-quantity={product.minQuantity}
+            data-product-quantity={product.minQuantity}
             disabled={hasVariantGroups}
           >
             Adicionar à encomenda
@@ -341,6 +387,7 @@ const productSchema = {
     import "@/scripts/product-flavors.ts";
     import "@/scripts/product-variant-groups.ts";
     import "@/scripts/product-gallery.ts";
+    import "@/scripts/product-quantity.ts";
   </script>
 
 

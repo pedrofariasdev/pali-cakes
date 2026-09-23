@@ -50,6 +50,7 @@ function produtoVazio(): Produto {
     ativo: true,
     ordem: 0,
     opcoes: {},
+    quantidade_minima: 1,
     criado_em: "",
     atualizado_em: ""
   };
@@ -138,6 +139,18 @@ function criarCartao(produto: Produto, isNovo = false): HTMLElement {
         <label class="form-field">
           <span>Etiqueta de preço</span>
           <input type="text" data-campo="preco_label" value="${produto.preco_label}" />
+        </label>
+
+        <label class="form-field">
+          <span>Qtd. mínima</span>
+          <input
+            type="number"
+            min="1"
+            max="99"
+            step="1"
+            data-campo="quantidade_minima"
+            value="${produto.quantidade_minima ?? 1}"
+          />
         </label>
 
         <label class="form-field">
@@ -593,6 +606,11 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
 
     campos.imagens = [...galeria];
 
+    // Vazio ou inválido = sem mínimo (1). Limite de 99, como no carrinho.
+    const minimo = Number(campos.quantidade_minima);
+    campos.quantidade_minima =
+      Number.isFinite(minimo) && minimo >= 1 ? Math.min(99, Math.trunc(minimo)) : 1;
+
     if (isNovo) {
       const nome = String(campos.nome ?? "").trim();
       const categoriaSlug = String(campos.categoria_slug ?? "").trim();
@@ -632,6 +650,7 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
         destaque: Boolean(campos.destaque),
         ativo: Boolean(campos.ativo),
         ordem: (campos.ordem as number | null) ?? 0,
+        quantidade_minima: campos.quantidade_minima as number,
         opcoes: campos.opcoes as { sabores?: VarianteSabor[]; grupos_variantes?: GrupoVariante[] }
       });
 

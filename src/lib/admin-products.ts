@@ -45,6 +45,7 @@ export interface ProdutoEdicao {
   ativo: boolean;
   ordem: number;
   opcoes: OpcoesProduto;
+  quantidade_minima: number;
 }
 
 export async function actualizarProduto(

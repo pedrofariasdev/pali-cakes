@@ -18,6 +18,8 @@ export interface Product {
   variantGroups: GrupoVariante[];
   /** Todas as fotos do produto: a principal primeiro, seguida das fotos extra da galeria. */
   gallery: string[];
+  /** Quantidade mínima por encomenda (1 quando não há mínimo). */
+  minQuantity: number;
 }
 
 interface ProdutoRow {
@@ -34,6 +36,7 @@ interface ProdutoRow {
   ativo: boolean;
   ordem: number;
   opcoes: { sabores?: VarianteSabor[]; grupos_variantes?: GrupoVariante[] } | null;
+  quantidade_minima?: number | null;
 }
 
 function toFlavors(opcoes: ProdutoRow["opcoes"]): VarianteSabor[] {
@@ -112,7 +115,11 @@ function toProduct(row: ProdutoRow): Product {
     featured: row.destaque,
     flavors: toFlavors(row.opcoes),
     variantGroups: toVariantGroups(row.opcoes),
-    gallery: toGallery(row)
+    gallery: toGallery(row),
+    minQuantity:
+      typeof row.quantidade_minima === "number" && row.quantidade_minima > 1
+        ? Math.min(99, Math.trunc(row.quantidade_minima))
+        : 1
   };
 }
 

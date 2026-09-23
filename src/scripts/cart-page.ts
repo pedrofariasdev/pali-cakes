@@ -142,6 +142,12 @@ function renderCartPage(): void {
               <strong class="cart-item__price">
                 ${price}
               </strong>
+
+              ${
+                item.minQuantity > 1
+                  ? `<small class="cart-item__minimum">Mínimo de ${item.minQuantity} unidades</small>`
+                  : ""
+              }
             </div>
 
             <button
@@ -161,6 +167,7 @@ function renderCartPage(): void {
               type="button"
               aria-label="Diminuir quantidade"
               data-cart-action="decrease"
+              ${item.minQuantity > 1 && item.quantity <= item.minQuantity ? "disabled" : ""}
             >
               −
             </button>
@@ -171,6 +178,7 @@ function renderCartPage(): void {
               type="button"
               aria-label="Aumentar quantidade"
               data-cart-action="increase"
+              ${item.quantity >= 99 ? "disabled" : ""}
             >
               +
             </button>
@@ -237,11 +245,18 @@ function handleCartAction(event: MouseEvent): void {
   }
 
   if (action === "decrease") {
-    if (cart[itemIndex].quantity > 1) {
+    const minimo = cart[itemIndex].minQuantity;
+
+    if (cart[itemIndex].quantity > minimo) {
       cart[itemIndex].quantity -= 1;
-    } else {
+    } else if (minimo <= 1) {
       cart.splice(itemIndex, 1);
     }
+    // Com mínimo > 1, não desce abaixo dele; para retirar usa-se "Remover".
+  }
+
+  if (action === "increase") {
+    cart[itemIndex].quantity = Math.min(99, cart[itemIndex].quantity);
   }
 
   if (action === "remove") {

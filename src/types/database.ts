@@ -61,6 +61,8 @@ export interface Produto {
   ativo: boolean;
   ordem: number;
   opcoes: OpcoesProduto;
+  /** Quantidade mínima por encomenda (1 = sem mínimo). */
+  quantidade_minima: number;
   criado_em: string;
   atualizado_em: string;
 }
