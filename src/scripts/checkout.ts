@@ -2,6 +2,8 @@
 import {
   criarEncomenda,
   carregarImagemReferencia,
+  validarCupao,
+  normalizarCupao,
   type OrderItemInput
 } from "@/lib/orders";
 import { getCart, clearCart, type CartItem } from "./cart";
@@ -319,6 +321,90 @@ async function handleReferenceFiles(files: FileList): Promise<void> {
   mostrarEstadoReferencia("", false);
 }
 
+// ---------------------------------------------------------------------
+// Cupão de desconto
+// ---------------------------------------------------------------------
+
+type EstadoCupao = "vazio" | "valido" | "invalido" | "indisponivel";
+
+const MENSAGEM_CUPAO_PADRAO = "O desconto (6%) é aplicado no orçamento final.";
+
+let estadoCupao: EstadoCupao = "vazio";
+let pedidoCupaoActual = 0;
+let temporizadorCupao: number | undefined;
+
+function mostrarEstadoCupao(texto: string, tipo: "" | "is-success" | "is-error"): void {
+  const status = document.querySelector<HTMLElement>("[data-coupon-status]");
+  if (!status) return;
+
+  status.textContent = texto;
+  status.classList.remove("is-success", "is-error");
+  if (tipo) status.classList.add(tipo);
+}
+
+async function verificarCupao(): Promise<EstadoCupao> {
+  const input = document.querySelector<HTMLInputElement>("[data-coupon-input]");
+  const pedido = ++pedidoCupaoActual;
+  const codigo = normalizarCupao(input?.value ?? "");
+
+  if (!codigo) {
+    estadoCupao = "vazio";
+    mostrarEstadoCupao(MENSAGEM_CUPAO_PADRAO, "");
+    return estadoCupao;
+  }
+
+  mostrarEstadoCupao("A verificar o cupão…", "");
+
+  const resultado = await validarCupao(codigo);
+
+  // Ignora respostas de verificações antigas (o cliente continuou a escrever).
+  if (pedido !== pedidoCupaoActual) {
+    return estadoCupao;
+  }
+
+  if (resultado === true) {
+    estadoCupao = "valido";
+    mostrarEstadoCupao(
+      `Cupão ${codigo} válido ✓ 6% de desconto, aplicado no orçamento final.`,
+      "is-success"
+    );
+  } else if (resultado === false) {
+    estadoCupao = "invalido";
+    mostrarEstadoCupao(
+      "Este cupão não existe ou já expirou. Confirme o código ou deixe o campo vazio.",
+      "is-error"
+    );
+  } else {
+    estadoCupao = "indisponivel";
+    mostrarEstadoCupao(
+      "Não foi possível verificar o cupão agora. Será confirmado ao enviar a encomenda.",
+      ""
+    );
+  }
+
+  return estadoCupao;
+}
+
+function ligarCampoCupao(): void {
+  const input = document.querySelector<HTMLInputElement>("[data-coupon-input]");
+  if (!input || input.dataset.couponBound === "true") return;
+
+  input.dataset.couponBound = "true";
+
+  input.addEventListener("input", () => {
+    estadoCupao = "vazio";
+    window.clearTimeout(temporizadorCupao);
+    temporizadorCupao = window.setTimeout(() => {
+      void verificarCupao();
+    }, 700);
+  });
+
+  input.addEventListener("change", () => {
+    window.clearTimeout(temporizadorCupao);
+    void verificarCupao();
+  });
+}
+
 // Antecedência mínima divulgada na FAQ ("pelo menos 30 dias").
 const DIAS_ANTECEDENCIA_MINIMA = 30;
 
@@ -469,6 +555,21 @@ async function handleCheckoutSubmit(
     return;
   }
 
+  const cupao = normalizarCupao(readTextValue(formData, "cupao"));
+
+  if (cupao && estadoCupao !== "valido" && estadoCupao !== "indisponivel") {
+    window.clearTimeout(temporizadorCupao);
+
+    if ((await verificarCupao()) === "invalido") {
+      if (helper) {
+        helper.textContent =
+          "O cupão indicado não é válido. Confirme o código ou deixe o campo vazio.";
+      }
+      form.querySelector<HTMLInputElement>("[data-coupon-input]")?.focus();
+      return;
+    }
+  }
+
   // Bloqueia envios duplicados enquanto aguarda resposta
   if (submitButton) {
     submitButton.disabled = true;
@@ -492,7 +593,8 @@ async function handleCheckoutSubmit(
     observacoes: readTextValue(formData, "notes"),
     horarioPreferido: readTextValue(formData, "horarioPreferido"),
     itens: toOrderItems(cart),
-    imagensReferencia: imagensReferencia.map((item) => item.caminho)
+    imagensReferencia: imagensReferencia.map((item) => item.caminho),
+    cupao: cupao || undefined
   });
 
   if (!resultado.ok) {
@@ -557,6 +659,8 @@ function initialiseCheckout(): void {
   document
     .querySelector<HTMLInputElement>('input[name="postalCode"]')
     ?.addEventListener("input", actualizarEntrega);
+
+  ligarCampoCupao();
 
   const referenceInput = document.querySelector<HTMLInputElement>(
     "[data-reference-input]"

@@ -2809,6 +2809,29 @@ body.menu-is-open {
   color: #b3413f;
 }
 
+/* Cupão de desconto no checkout */
+
+.checkout-coupon input {
+  max-width: 280px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.checkout-coupon small {
+  color: var(--color-text-light);
+  font-size: 0.72rem;
+}
+
+.checkout-coupon small.is-success {
+  color: #3f7a4a;
+  font-weight: 600;
+}
+
+.checkout-coupon small.is-error {
+  color: #b3413f;
+  font-weight: 600;
+}
+
 /* Consentimento */
 
 .checkout-consent {

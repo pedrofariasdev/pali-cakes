@@ -3,7 +3,9 @@ import {
   listarEncomendas,
   actualizarEstado,
   obterUrlsAssinadas,
-  type EncomendaComItens
+  listarCuponsAvaliacoes,
+  type EncomendaComItens,
+  type CupaoAvaliacao
 } from "@/lib/admin-orders";
 import type { EstadoEncomenda } from "@/types/database";
 
@@ -26,7 +28,43 @@ const dataCurtaFormatter = new Intl.DateTimeFormat("pt-PT", {
 });
 
 let todasEncomendas: EncomendaComItens[] = [];
+let cuponsPorCodigo = new Map<string, CupaoAvaliacao>();
 let filtroActivo = "todos";
+
+/** Linha com o cupão usado, a quem pertence e se já foi usado noutra encomenda. */
+function criarLinhaCupao(encomenda: EncomendaComItens): HTMLElement | null {
+  if (!encomenda.cupao) return null;
+
+  const linha = document.createElement("p");
+  linha.className = "admin-order__coupon";
+
+  const rotulo = document.createElement("strong");
+  rotulo.textContent = `Cupão: ${encomenda.cupao}`;
+  linha.append(rotulo);
+
+  const origem = cuponsPorCodigo.get(encomenda.cupao);
+  if (origem) {
+    linha.append(document.createTextNode(` — avaliação de ${origem.nome}`));
+  }
+
+  const outrasEncomendas = todasEncomendas.filter(
+    (outra) =>
+      outra.id !== encomenda.id &&
+      outra.cupao === encomenda.cupao &&
+      outra.estado !== "cancelado"
+  );
+
+  if (outrasEncomendas.length > 0) {
+    const aviso = document.createElement("span");
+    aviso.className = "admin-order__coupon-warning";
+    aviso.textContent = ` ⚠ também usado em: ${outrasEncomendas
+      .map((outra) => outra.referencia)
+      .join(", ")}`;
+    linha.append(aviso);
+  }
+
+  return linha;
+}
 
 function criarCartao(encomenda: EncomendaComItens): HTMLElement {
   const estado = Object.hasOwn(ESTADOS, encomenda.estado)
@@ -124,6 +162,11 @@ function criarCartao(encomenda: EncomendaComItens): HTMLElement {
     observacoes.className = "admin-order__notes";
     observacoes.textContent = encomenda.observacoes;
     artigo.append(observacoes);
+  }
+
+  const linhaCupao = criarLinhaCupao(encomenda);
+  if (linhaCupao) {
+    artigo.append(linhaCupao);
   }
 
   if (encomenda.imagens_referencia && encomenda.imagens_referencia.length > 0) {
@@ -231,7 +274,13 @@ function renderizar(): void {
 }
 
 async function carregar(): Promise<void> {
-  todasEncomendas = await listarEncomendas();
+  const [encomendas, cupoes] = await Promise.all([
+    listarEncomendas(),
+    listarCuponsAvaliacoes()
+  ]);
+
+  todasEncomendas = encomendas;
+  cuponsPorCodigo = new Map(cupoes.map((cupao) => [cupao.cupao, cupao]));
   renderizar();
 }
 

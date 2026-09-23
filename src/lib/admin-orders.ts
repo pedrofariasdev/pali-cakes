@@ -36,6 +36,27 @@ export async function actualizarEstado(
   return true;
 }
 
+export interface CupaoAvaliacao {
+  cupao: string;
+  nome: string;
+  cupao_valido_ate: string | null;
+}
+
+/** Cupões gerados pelas avaliações, para mostrar a quem pertence cada um. */
+export async function listarCuponsAvaliacoes(): Promise<CupaoAvaliacao[]> {
+  const { data, error } = await supabase
+    .from("avaliacoes")
+    .select("cupao, nome, cupao_valido_ate")
+    .not("cupao", "is", null);
+
+  if (error) {
+    console.error("[listarCuponsAvaliacoes]", error.message);
+    return [];
+  }
+
+  return (data as CupaoAvaliacao[]) ?? [];
+}
+
 const REFERENCE_BUCKET = "encomendas-referencias";
 
 /**

@@ -159,6 +159,25 @@ import MainLayout from "../layouts/MainLayout.astro";
                   hidden
                 ></p>
               </div>
+
+              <label class="form-field form-field--full checkout-coupon">
+                <span>Cupão de desconto (opcional)</span>
+
+                <input
+                  type="text"
+                  name="cupao"
+                  maxlength="20"
+                  autocomplete="off"
+                  autocapitalize="characters"
+                  spellcheck="false"
+                  placeholder="Ex: PALI07"
+                  data-coupon-input
+                />
+
+                <small data-coupon-status>
+                  O desconto (6%) é aplicado no orçamento final.
+                </small>
+              </label>
             </div>
           </section>
 

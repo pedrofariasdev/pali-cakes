@@ -81,6 +81,7 @@ export interface Encomenda {
   observacoes: string | null;
   total_estimado: number | null;
   imagens_referencia: string[];
+  cupao: string | null;
 }
 
 export interface Personalizacao {
@@ -145,6 +146,7 @@ export interface Database {
           p_itens: OrderItemPayload[];
           p_horario_preferido?: string | null;
           p_imagens_referencia?: string[];
+          p_cupao?: string | null;
         };
         Returns: string;
       };

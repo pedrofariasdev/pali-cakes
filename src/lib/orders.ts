@@ -25,6 +25,30 @@ export interface OrderInput {
   itens: OrderItemInput[];
   /** Caminhos (no bucket privado "encomendas-referencias") das fotos de referência enviadas pelo cliente. */
   imagensReferencia?: string[];
+  /** Cupão de desconto (ex.: PALI07), já validado no checkout. */
+  cupao?: string;
+}
+
+/** Normaliza o código escrito pelo cliente (espaços e minúsculas). */
+export function normalizarCupao(codigo: string): string {
+  return codigo.replace(/\s+/g, "").toUpperCase();
+}
+
+/**
+ * Confirma se o cupão existe. Devolve null se não foi possível verificar
+ * (ex.: falha de rede), para o checkout não bloquear o cliente por isso.
+ */
+export async function validarCupao(codigo: string): Promise<boolean | null> {
+  const { data, error } = await (supabase.rpc as any)("validar_cupao", {
+    p_cupao: normalizarCupao(codigo)
+  });
+
+  if (error) {
+    console.error("[validarCupao]", error.message);
+    return null;
+  }
+
+  return data === true;
 }
 
 export type OrderResult =
@@ -77,11 +101,20 @@ export async function criarEncomenda(
     p_observacoes: input.observacoes || null,
     p_itens: input.itens,
     p_horario_preferido: input.horarioPreferido || null,
-    p_imagens_referencia: input.imagensReferencia ?? []
+    p_imagens_referencia: input.imagensReferencia ?? [],
+    p_cupao: input.cupao ? normalizarCupao(input.cupao) : null
   });
 
   if (error) {
     console.error("[criarEncomenda]", error.message);
+
+    if (error.message.includes("Cupão inválido")) {
+      return {
+        ok: false,
+        erro: "O cupão indicado não é válido. Confirme o código ou deixe o campo vazio."
+      };
+    }
+
     return {
       ok: false,
       erro: "Não foi possível enviar a encomenda. Tente novamente ou contacte-nos directamente."
@@ -117,6 +150,7 @@ async function notificarEncomendaNova(
       tipoCelebracao: input.tipoCelebracao,
       observacoes: input.observacoes,
       horarioPreferido: input.horarioPreferido,
+      cupao: input.cupao ? normalizarCupao(input.cupao) : "",
       itens: input.itens
     }
   });

@@ -69,7 +69,7 @@ async function tratarSubmit(evento: SubmitEvent): Promise<void> {
 
       const titulo = document.createElement("span");
       titulo.className = "reviews-coupon__label";
-      titulo.textContent = "Como agradecimento, aqui está o seu cupão de desconto:";
+      titulo.textContent = "Como agradecimento, aqui está o seu cupão de 6% de desconto:";
 
       const codigo = document.createElement("strong");
       codigo.className = "reviews-coupon__code";
@@ -77,7 +77,7 @@ async function tratarSubmit(evento: SubmitEvent): Promise<void> {
 
       const nota = document.createElement("small");
       nota.textContent =
-        "Guarde este código e indique-o na sua próxima encomenda, no campo de observações.";
+        "Guarde este código: é válido durante 1 ano. Basta escrevê-lo no campo \"Cupão de desconto\" ao finalizar a sua próxima encomenda.";
 
       cupao.append(titulo, codigo, nota);
       estado.append(cupao);

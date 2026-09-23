@@ -181,6 +181,23 @@
   border-radius: 10px;
 }
 
+.admin-order__coupon {
+  display: inline-block;
+  margin: 1.25rem 0 0;
+  padding: 0.45rem 0.9rem;
+
+  font-size: 0.85rem;
+
+  background: rgba(215, 162, 168, 0.12);
+  border: 1px dashed rgba(215, 162, 168, 0.7);
+  border-radius: 8px;
+}
+
+.admin-order__coupon-warning {
+  color: #b3261e;
+  font-weight: 600;
+}
+
 .admin-order__references {
   margin: 1.25rem 0 0;
 }
