@@ -39,6 +39,23 @@ function seleccionarTamanho(
       preco !== null && Number.isFinite(preco) ? String(preco) : "";
   }
 
+  // Foto do tamanho (se tiver): troca a foto principal e a do carrinho.
+  const imagem = opcao.dataset.sizeImage ?? "";
+  if (imagem) {
+    const fotoPrincipal = document.querySelector<HTMLImageElement>(
+      "[data-product-image-display]"
+    );
+
+    if (fotoPrincipal) {
+      fotoPrincipal.src = imagem;
+      fotoPrincipal.alt = nome || fotoPrincipal.alt;
+    }
+
+    if (addToCartButton) {
+      addToCartButton.dataset.productImage = imagem;
+    }
+  }
+
   // A quantidade volta ao mínimo do tamanho escolhido.
   const quantidade = document.querySelector<HTMLInputElement>("[data-quantity-input]");
   if (quantidade) {

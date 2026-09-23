@@ -33,6 +33,8 @@ export interface VarianteTamanho {
   /** null = sob consulta. */
   preco: number | null;
   quantidade_minima: number;
+  /** Foto do tamanho (opcional); troca a foto principal ao ser escolhido. */
+  imagem?: string;
 }
 
 /** Formato usado dentro da coluna jsonb `produtos.opcoes`. */

@@ -41,7 +41,13 @@ const { product, category } = Astro.props;
 const hasFlavors = product.flavors.length > 0;
 const canBrowseFlavors = product.flavors.length > 1;
 const defaultFlavor = hasFlavors ? product.flavors[0] : null;
-const displayImage = defaultFlavor?.imagem || product.image;
+
+// Tamanhos com preço próprio: o primeiro vem escolhido e define o preço, o
+// mínimo e (se tiver) a foto iniciais; ao trocar de tamanho, tudo muda no navegador.
+const hasSizes = product.sizes.length > 0;
+const defaultSize = hasSizes ? product.sizes[0] : null;
+
+const displayImage = defaultFlavor?.imagem || defaultSize?.imagem || product.image;
 const hasVariantGroups = product.variantGroups.length > 0;
 
 // Galeria: só quando as setas não estão a ser usadas para trocar de sabor.
@@ -50,10 +56,6 @@ const galleryImages = Array.from(
 );
 const showGallery = !canBrowseFlavors && galleryImages.length > 1;
 
-// Tamanhos com preço próprio: o primeiro vem escolhido e define o preço e o
-// mínimo iniciais; ao trocar de tamanho, ambos mudam no navegador.
-const hasSizes = product.sizes.length > 0;
-const defaultSize = hasSizes ? product.sizes[0] : null;
 const initialPrice = defaultSize ? defaultSize.preco : product.price;
 const initialMinQuantity = defaultSize ? defaultSize.quantidade_minima : product.minQuantity;
 
@@ -234,6 +236,7 @@ const productSchema = {
                   data-size-name={size.nome}
                   data-size-price={size.preco ?? ""}
                   data-size-min={size.quantidade_minima}
+                  data-size-image={size.imagem ?? ""}
                   aria-pressed={index === 0 ? "true" : "false"}
                 >
                   {size.nome}

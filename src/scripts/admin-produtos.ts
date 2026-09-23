@@ -350,11 +350,27 @@ interface TamanhoEdicao {
   nome: string;
   preco: string;
   minimo: string;
+  imagem: string;
 }
 
 function criarLinhaTamanho(tamanho: TamanhoEdicao, indice: number): string {
+  const semFoto = !tamanho.imagem.trim();
+
   return `
     <div class="admin-flavor-row admin-flavor-row--size" data-size-row data-indice="${indice}">
+      <div class="admin-flavor-row__image">
+        <img
+          src="${tamanho.imagem}"
+          alt=""
+          class="${semFoto ? "is-broken" : ""}"
+          onerror="this.onerror=null;this.classList.add('is-broken')"
+        />
+        <label class="admin-flavor-row__upload">
+          <input type="file" accept="image/jpeg,image/png,image/webp" data-size-upload hidden />
+          <span>Foto</span>
+        </label>
+      </div>
+
       <input
         type="text"
         class="admin-flavor-row__nome"
@@ -552,7 +568,8 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
   const tamanhos: TamanhoEdicao[] = (produto.opcoes?.tamanhos ?? []).map((tamanho) => ({
     nome: tamanho.nome,
     preco: tamanho.preco === null || tamanho.preco === undefined ? "" : String(tamanho.preco),
-    minimo: String(tamanho.quantidade_minima ?? 1)
+    minimo: String(tamanho.quantidade_minima ?? 1),
+    imagem: tamanho.imagem ?? ""
   }));
 
   const tamanhosContainer = artigo.querySelector<HTMLElement>("[data-size-rows]");
@@ -581,13 +598,43 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
         tamanhos.splice(indice, 1);
         renderizarTamanhos();
       });
+
+      linha.querySelector<HTMLInputElement>("[data-size-upload]")?.addEventListener(
+        "change",
+        async (evento) => {
+          const input = evento.target as HTMLInputElement;
+          const ficheiro = input.files?.[0];
+          if (!ficheiro) return;
+
+          if (ficheiro.size > TAMANHO_MAXIMO_FOTO) {
+            mostrar("A imagem excede 20 MB.", true);
+            input.value = "";
+            return;
+          }
+
+          mostrar("A carregar foto do tamanho…");
+
+          const slugBase = isNovo ? obterSlugActual() || "novo-produto" : produto.slug;
+          const url = await carregarImagem(ficheiro, `${slugBase}-tamanho`);
+
+          if (!url) {
+            mostrar("Não foi possível carregar a foto.", true);
+            input.value = "";
+            return;
+          }
+
+          tamanhos[indice].imagem = url;
+          mostrar("Foto carregada. Não esqueça de Guardar.");
+          renderizarTamanhos();
+        }
+      );
     });
   };
 
   renderizarTamanhos();
 
   artigo.querySelector("[data-add-size]")?.addEventListener("click", () => {
-    tamanhos.push({ nome: "", preco: "", minimo: "1" });
+    tamanhos.push({ nome: "", preco: "", minimo: "1", imagem: "" });
     renderizarTamanhos();
   });
 
@@ -749,7 +796,8 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
           nome: tamanho.nome.trim(),
           preco: tamanho.preco.trim() !== "" && Number.isFinite(preco) && preco > 0 ? preco : null,
           quantidade_minima:
-            Number.isFinite(minimo) && minimo >= 1 ? Math.min(99, Math.trunc(minimo)) : 1
+            Number.isFinite(minimo) && minimo >= 1 ? Math.min(99, Math.trunc(minimo)) : 1,
+          imagem: tamanho.imagem.trim()
         };
       })
       .filter((tamanho) => tamanho.nome !== "");

@@ -114,7 +114,8 @@ function toSizes(opcoes: ProdutoRow["opcoes"]): VarianteTamanho[] {
         preco:
           tamanho.preco !== null && Number.isFinite(preco) && preco > 0 ? preco : null,
         quantidade_minima:
-          Number.isFinite(minimo) && minimo >= 1 ? Math.min(99, Math.trunc(minimo)) : 1
+          Number.isFinite(minimo) && minimo >= 1 ? Math.min(99, Math.trunc(minimo)) : 1,
+        imagem: typeof tamanho.imagem === "string" ? tamanho.imagem.trim() : ""
       };
     });
 }
