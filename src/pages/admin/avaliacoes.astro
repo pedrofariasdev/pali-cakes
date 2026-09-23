@@ -43,12 +43,10 @@ import MainLayout from "@/layouts/MainLayout.astro";
       <p class="admin-publish__status" data-publicar-estado hidden></p>
 
       <div class="admin-filters" data-filters>
-        <button type="button" class="is-active" data-filter="pendente">
-          Pendentes
-        </button>
+        <button type="button" class="is-active" data-filter="todos">Todas</button>
+        <button type="button" data-filter="pendente">Pendentes</button>
         <button type="button" data-filter="aprovada">Aprovadas</button>
         <button type="button" data-filter="rejeitada">Rejeitadas</button>
-        <button type="button" data-filter="todos">Todas</button>
       </div>
 
       <div data-reviews-list>

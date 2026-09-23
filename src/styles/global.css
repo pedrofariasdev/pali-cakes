@@ -233,6 +233,32 @@ h4 {
   opacity: 0.85;
 }
 
+.faq-item__answer ol,
+.faq-item__answer ul {
+  display: grid;
+  gap: 0.55rem;
+  padding-left: 1.3rem;
+}
+
+.faq-item__answer ol {
+  list-style: decimal;
+}
+
+.faq-item__answer ul {
+  list-style: disc;
+}
+
+.faq-item__answer li::marker {
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+.faq-item__answer a {
+  color: var(--color-primary-dark);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
 .faq-notice {
   padding: 2rem;
   margin: 3rem 0;

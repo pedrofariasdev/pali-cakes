@@ -715,6 +715,22 @@
   opacity: 0.6;
 }
 
+.admin-review__coupon {
+  display: inline-block;
+  margin: 0.75rem 0 0;
+  padding: 0.35rem 0.8rem;
+
+  font-size: 0.85rem;
+
+  background: rgba(215, 162, 168, 0.12);
+  border: 1px dashed rgba(215, 162, 168, 0.7);
+  border-radius: 8px;
+}
+
+.admin-review__coupon strong {
+  letter-spacing: 0.06em;
+}
+
 .admin-review__actions {
   display: flex;
   align-items: center;

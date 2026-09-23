@@ -5,7 +5,8 @@ import {
   actualizarProduto,
   criarProduto,
   eliminarProduto,
-  carregarImagem
+  carregarImagem,
+  TAMANHO_MAXIMO_FOTO
 } from "@/lib/admin-products";
 import type { Produto, Categoria, VarianteSabor, GrupoVariante } from "@/types/database";
 
@@ -354,8 +355,8 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
           const ficheiro = input.files?.[0];
           if (!ficheiro) return;
 
-          if (ficheiro.size > 5 * 1024 * 1024) {
-            mostrar("A imagem excede 5 MB.", true);
+          if (ficheiro.size > TAMANHO_MAXIMO_FOTO) {
+            mostrar("A imagem excede 20 MB.", true);
             input.value = "";
             return;
           }
@@ -478,7 +479,7 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
       let falhadas = 0;
 
       for (const [posicao, ficheiro] of ficheiros.entries()) {
-        if (ficheiro.size > 5 * 1024 * 1024) {
+        if (ficheiro.size > TAMANHO_MAXIMO_FOTO) {
           falhadas += 1;
           continue;
         }
@@ -500,7 +501,7 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
 
       if (falhadas > 0) {
         mostrar(
-          `${carregadas} foto(s) carregada(s), ${falhadas} falharam (máx. 5 MB cada). Não esqueça de Guardar.`,
+          `${carregadas} foto(s) carregada(s), ${falhadas} falharam (máx. 20 MB cada). Não esqueça de Guardar.`,
           true
         );
       } else {
@@ -657,8 +658,8 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
       const ficheiro = input.files?.[0];
       if (!ficheiro) return;
 
-      if (ficheiro.size > 5 * 1024 * 1024) {
-        mostrar("A imagem excede 5 MB.", true);
+      if (ficheiro.size > TAMANHO_MAXIMO_FOTO) {
+        mostrar("A imagem excede 20 MB.", true);
         input.value = "";
         return;
       }

@@ -12,9 +12,11 @@ export interface Avaliacao {
   ocasiao: string | null;
   estado: "pendente" | "aprovada" | "rejeitada";
   aprovada_em: string | null;
+  /** Cupão de desconto atribuído a quem avaliou (só visível no admin). */
+  cupao: string | null;
 }
 
-export type AvaliacaoPublica = Omit<Avaliacao, "email">;
+export type AvaliacaoPublica = Omit<Avaliacao, "email" | "cupao">;
 
 const COLUNAS_PUBLICAS_AVALIACAO =
   "id,criado_em,nome,localidade,classificacao,comentario,produto_slug,ocasiao,estado,aprovada_em" as const;
@@ -30,7 +32,7 @@ export interface NovaAvaliacao {
 }
 
 export type ResultadoAvaliacao =
-  | { ok: true }
+  | { ok: true; cupao: string | null; publicada: boolean }
   | { ok: false; erro: string };
 
 /** Avaliações aprovadas — usado no build para a home. */
@@ -55,7 +57,7 @@ export async function getAvaliacoesAprovadas(
 export async function enviarAvaliacao(
   dados: NovaAvaliacao
 ): Promise<ResultadoAvaliacao> {
-  const { error } = await supabase.rpc("criar_avaliacao", {
+  const { data, error } = await supabase.rpc("criar_avaliacao_com_cupao", {
     p_nome: dados.nome,
     p_email: dados.email || null,
     p_localidade: dados.localidade || null,
@@ -88,5 +90,14 @@ export async function enviarAvaliacao(
     };
   }
 
-  return { ok: true };
+  const resposta = (data ?? {}) as { cupao?: unknown; publicada?: unknown };
+
+  return {
+    ok: true,
+    cupao:
+      typeof resposta.cupao === "string" && resposta.cupao.trim() !== ""
+        ? resposta.cupao
+        : null,
+    publicada: resposta.publicada === true
+  };
 }

@@ -7,7 +7,15 @@ const faqs = [
     perguntas: [
       {
         p: "Como faço uma encomenda?",
-        r: "Escolha os produtos no catálogo, adicione-os à sua encomenda e preencha o formulário com os seus dados, a data da celebração e os detalhes que imagina. Entramos em contacto para confirmar tudo e enviar o orçamento final. Só depois da sua aprovação a data fica reservada."
+        r: `<ol>
+          <li><strong>Escolha os produtos</strong> no menu Catálogo. Em alguns produtos escolhe também o sabor ou opções como massa, cobertura e recheio — nesse caso, é preciso escolher uma opção em cada grupo antes de continuar.</li>
+          <li><strong>Clique em "Adicionar à encomenda".</strong> Pode juntar vários produtos no mesmo pedido e revê-los no <a href="/carrinho">carrinho</a>, onde também pode ajustar as quantidades.</li>
+          <li><strong>Clique em "Finalizar encomenda"</strong> e preencha os seus dados de contacto, a data da celebração (com pelo menos 30 dias de antecedência) e o tipo de celebração.</li>
+          <li><strong>Conte-nos os detalhes</strong> em "Observações e personalização": tema, cores, número de pessoas, etc. Em bolos personalizados, bento cakes, cupcakes e miniaturas pode também enviar até 4 fotos de inspiração.</li>
+          <li><strong>Escolha levantamento ou entrega</strong> e indique o horário que prefere. Na entrega, a taxa é calculada automaticamente a partir do código postal.</li>
+          <li><strong>Envie o pedido.</strong> Recebe logo uma referência da encomenda.</li>
+          <li><strong>Entramos em contacto</strong> para confirmar os detalhes e enviar o orçamento final. Só depois da sua aprovação a data fica reservada.</li>
+        </ol>`
       },
       {
         p: "Com quanta antecedência devo encomendar?",
@@ -20,6 +28,31 @@ const faqs = [
       {
         p: "Posso alterar ou cancelar a minha encomenda?",
         r: "Alterações são possíveis desde que comunicadas com antecedência e antes do início da produção. Como cada criação é feita de raiz e por medida, alterações tardias podem não ser possíveis. Cancelamentos devem ser comunicados com pelo menos 7 dias úteis antes da data do evento: dentro deste prazo, o sinal de 50% pago é devolvido; após este prazo, o valor do sinal não é reembolsado."
+      }
+    ]
+  },
+  {
+    grupo: "Packs de festa",
+    perguntas: [
+      {
+        p: "O que são os packs de festa?",
+        r: "São conjuntos de doces pensados para festas de 10, 20, 30, 40 ou 50 pessoas. Reúnem tudo numa só encomenda, para tornar a sua festa mais simples — e o valor final mais vantajoso."
+      },
+      {
+        p: "Como encomendo um pack?",
+        r: `<ol>
+          <li>Abra a página <a href="/packs-festa">Packs Festa</a> e escolha o pack de acordo com o número de convidados.</li>
+          <li>Clique em "Adicionar à encomenda". Pode juntar o pack a outros produtos, como um bolo personalizado.</li>
+          <li>Finalize a encomenda como qualquer outro pedido e use as "Observações e personalização" para nos indicar o tema, as cores e os sabores preferidos.</li>
+        </ol>`
+      },
+      {
+        p: "Posso ajustar o que vem no pack?",
+        r: "Sim. Os sabores, as cores e os detalhes do pack podem ser ajustados à sua celebração. Indique o que pretende nas observações ao finalizar a encomenda e confirmamos tudo consigo antes do orçamento final."
+      },
+      {
+        p: "E se nenhum pack for o ideal para a minha festa?",
+        r: "Pode pedir um <strong>pack personalizado</strong>, montado à medida com as quantidades de cada doce para o seu número de convidados. O pack personalizado tem quantidades mínimas por tipo de doce. Use o botão \"Pedir pack personalizado\" na página <a href=\"/packs-festa\">Packs Festa</a>."
       }
     ]
   },
@@ -104,7 +137,7 @@ const faqs = [
 
 <MainLayout
   title="Perguntas frequentes | Pali Cakes"
-  description="Encomendas, alergénios, conservação, entregas e personalização. Tudo o que precisa de saber antes de encomendar na Pali Cakes."
+  description="Como encomendar, packs de festa, alergénios, conservação, entregas e personalização. Tudo o que precisa de saber antes de encomendar na Pali Cakes."
 >
   <section class="faq-hero">
     <div class="container">

@@ -18,7 +18,9 @@ const dataFormatter = new Intl.DateTimeFormat("pt-PT", {
 });
 
 let todas: Avaliacao[] = [];
-let filtroActivo = "pendente";
+// "Todas" por omissão: com a publicação automática do lançamento, as
+// avaliações novas entram directamente como aprovadas.
+let filtroActivo = "todos";
 
 function estrelas(n: number): string {
   return "★".repeat(n) + "☆".repeat(5 - n);
@@ -54,6 +56,12 @@ function criarCartao(review: Avaliacao): HTMLElement {
     <blockquote class="admin-review__comment">${escapar(review.comentario)}</blockquote>
 
     ${review.email ? `<p class="admin-review__email">${escapar(review.email)}</p>` : ""}
+
+    ${
+      review.cupao
+        ? `<p class="admin-review__coupon">Cupão: <strong>${escapar(review.cupao)}</strong></p>`
+        : ""
+    }
 
     <footer class="admin-review__actions">
       ${

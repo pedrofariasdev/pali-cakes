@@ -55,8 +55,34 @@ async function tratarSubmit(evento: SubmitEvent): Promise<void> {
   }
 
   if (estado) {
-    estado.textContent =
-      "Obrigado por partilhar a sua experiência. A avaliação será publicada após revisão.";
+    estado.replaceChildren();
+
+    const agradecimento = document.createElement("p");
+    agradecimento.textContent = resultado.publicada
+      ? "Obrigado por partilhar a sua experiência! A sua avaliação vai aparecer no site em breve."
+      : "Obrigado por partilhar a sua experiência. A avaliação será publicada após revisão.";
+    estado.append(agradecimento);
+
+    if (resultado.cupao) {
+      const cupao = document.createElement("div");
+      cupao.className = "reviews-coupon";
+
+      const titulo = document.createElement("span");
+      titulo.className = "reviews-coupon__label";
+      titulo.textContent = "Como agradecimento, aqui está o seu cupão de desconto:";
+
+      const codigo = document.createElement("strong");
+      codigo.className = "reviews-coupon__code";
+      codigo.textContent = resultado.cupao;
+
+      const nota = document.createElement("small");
+      nota.textContent =
+        "Guarde este código e indique-o na sua próxima encomenda, no campo de observações.";
+
+      cupao.append(titulo, codigo, nota);
+      estado.append(cupao);
+    }
+
     estado.className = "reviews-form__status is-success";
     estado.hidden = false;
   }
