@@ -39,6 +39,8 @@ export interface ProdutoEdicao {
   preco: number | null;
   preco_label: string;
   imagem_url: string;
+  /** Fotos extra da galeria (a principal continua em imagem_url). */
+  imagens: string[];
   destaque: boolean;
   ativo: boolean;
   ordem: number;

@@ -16,6 +16,8 @@ export interface Product {
   flavors: VarianteSabor[];
   /** Grupos de variantes sem foto (ex: massa, cobertura, recheio). Vazio quando não se aplica. */
   variantGroups: GrupoVariante[];
+  /** Todas as fotos do produto: a principal primeiro, seguida das fotos extra da galeria. */
+  gallery: string[];
 }
 
 interface ProdutoRow {
@@ -25,6 +27,7 @@ interface ProdutoRow {
   descricao: string | null;
   categoria_slug: string;
   imagem_url: string | null;
+  imagens: string[] | null;
   preco: number | null;
   preco_label: string;
   destaque: boolean;
@@ -81,6 +84,17 @@ function toVariantGroups(opcoes: ProdutoRow["opcoes"]): GrupoVariante[] {
     }));
 }
 
+function toGallery(row: ProdutoRow): string[] {
+  const extras = Array.isArray(row.imagens) ? row.imagens : [];
+
+  const todas = [row.imagem_url ?? "", ...extras]
+    .filter((url): url is string => typeof url === "string")
+    .map((url) => url.trim())
+    .filter((url) => url !== "");
+
+  return Array.from(new Set(todas));
+}
+
 function toProduct(row: ProdutoRow): Product {
   return {
     id: row.slug,
@@ -97,7 +111,8 @@ function toProduct(row: ProdutoRow): Product {
     active: row.ativo,
     featured: row.destaque,
     flavors: toFlavors(row.opcoes),
-    variantGroups: toVariantGroups(row.opcoes)
+    variantGroups: toVariantGroups(row.opcoes),
+    gallery: toGallery(row)
   };
 }
 

@@ -159,6 +159,20 @@ function criarCartao(produto: Produto, isNovo = false): HTMLElement {
 
       <div class="admin-product__flavors">
         <span class="admin-product__flavors-label">
+          Galeria de fotos
+          <small>Fotos extra do produto, além da principal. Pode escolher várias de uma vez.</small>
+        </span>
+
+        <div class="admin-gallery" data-gallery-rows></div>
+
+        <label class="button button--secondary button--small admin-gallery__add">
+          <input type="file" accept="image/jpeg,image/png,image/webp" multiple data-gallery-upload hidden />
+          + Adicionar fotos
+        </label>
+      </div>
+
+      <div class="admin-product__flavors">
+        <span class="admin-product__flavors-label">
           Sabores / variantes
           <small>Se este produto tiver sabores à escolha, adicione aqui um nome e uma foto para cada um.</small>
         </span>
@@ -420,6 +434,81 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
     renderizarGrupos();
   });
 
+  // Galeria de fotos extra, editada antes de "Guardar".
+  const galeria: string[] = Array.isArray(produto.imagens) ? [...produto.imagens] : [];
+
+  const galeriaContainer = artigo.querySelector<HTMLElement>("[data-gallery-rows]");
+
+  const renderizarGaleria = (): void => {
+    if (!galeriaContainer) return;
+
+    galeriaContainer.innerHTML = galeria
+      .map(
+        (url, indice) => `
+          <div class="admin-gallery__item" data-gallery-item data-indice="${indice}">
+            <img src="${url}" alt="" onerror="this.onerror=null;this.classList.add('is-broken')" />
+            <button type="button" class="admin-gallery__remove" data-remove-gallery aria-label="Remover foto">✕</button>
+          </div>
+        `
+      )
+      .join("");
+
+    galeriaContainer.querySelectorAll<HTMLElement>("[data-gallery-item]").forEach((item) => {
+      const indice = Number(item.dataset.indice);
+
+      item.querySelector("[data-remove-gallery]")?.addEventListener("click", () => {
+        galeria.splice(indice, 1);
+        renderizarGaleria();
+        mostrar("Foto removida. Não esqueça de Guardar.");
+      });
+    });
+  };
+
+  renderizarGaleria();
+
+  artigo.querySelector<HTMLInputElement>("[data-gallery-upload]")?.addEventListener(
+    "change",
+    async (evento) => {
+      const input = evento.target as HTMLInputElement;
+      const ficheiros = Array.from(input.files ?? []);
+      if (ficheiros.length === 0) return;
+
+      const slugBase = isNovo ? obterSlugActual() || "novo-produto" : produto.slug;
+      let carregadas = 0;
+      let falhadas = 0;
+
+      for (const [posicao, ficheiro] of ficheiros.entries()) {
+        if (ficheiro.size > 5 * 1024 * 1024) {
+          falhadas += 1;
+          continue;
+        }
+
+        mostrar(`A carregar foto ${posicao + 1} de ${ficheiros.length}…`);
+
+        const url = await carregarImagem(ficheiro, `${slugBase}-galeria`);
+
+        if (url) {
+          galeria.push(url);
+          carregadas += 1;
+          renderizarGaleria();
+        } else {
+          falhadas += 1;
+        }
+      }
+
+      input.value = "";
+
+      if (falhadas > 0) {
+        mostrar(
+          `${carregadas} foto(s) carregada(s), ${falhadas} falharam (máx. 5 MB cada). Não esqueça de Guardar.`,
+          true
+        );
+      } else {
+        mostrar(`${carregadas} foto(s) carregada(s). Não esqueça de Guardar.`);
+      }
+    }
+  );
+
   // Imagem principal: em produtos novos ainda não há id, por isso a foto
   // fica em memória e só é gravada quando se clica em "Criar produto".
   let imagemUrl = produto.imagem_url ?? "";
@@ -501,6 +590,8 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
       grupos_variantes: gruposVariantes
     };
 
+    campos.imagens = [...galeria];
+
     if (isNovo) {
       const nome = String(campos.nome ?? "").trim();
       const categoriaSlug = String(campos.categoria_slug ?? "").trim();
@@ -536,7 +627,7 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
         preco: (campos.preco as number | null) ?? null,
         preco_label: String(campos.preco_label ?? "Sob consulta"),
         imagem_url: imagemUrl,
-        imagens: [],
+        imagens: [...galeria],
         destaque: Boolean(campos.destaque),
         ativo: Boolean(campos.ativo),
         ordem: (campos.ordem as number | null) ?? 0,

@@ -18,6 +18,9 @@ export const getStaticPaths = (async () => {
 
 const { product } = Astro.props;
 
+const galleryImages = product.gallery.length > 0 ? product.gallery : [product.image];
+const showGallery = galleryImages.length > 1;
+
 
 const formattedPrice =
   product.price !== null
@@ -51,13 +54,55 @@ const productSchema = {
   <section class="product-detail">
     <div class="container product-detail__container">
 
-      <div class="product-detail__visual">
+      <div class="product-detail__visual" data-gallery>
         <div class="product-detail__image">
           <img
             src={product.image}
             alt={product.name}
+            data-gallery-image
           />
+
+          {showGallery && (
+            <>
+              <button
+                type="button"
+                class="product-detail__image-arrow product-detail__image-arrow--prev"
+                data-gallery-prev
+                aria-label="Foto anterior"
+              >
+                ‹
+              </button>
+
+              <button
+                type="button"
+                class="product-detail__image-arrow product-detail__image-arrow--next"
+                data-gallery-next
+                aria-label="Foto seguinte"
+              >
+                ›
+              </button>
+            </>
+          )}
         </div>
+
+        {showGallery && (
+          <div class="product-detail__thumbs">
+            {galleryImages.map((src, index) => (
+              <button
+                type="button"
+                class:list={[
+                  "product-detail__thumb",
+                  { "is-active": index === 0 }
+                ]}
+                data-gallery-thumb={src}
+                aria-label={`Ver foto ${index + 1}`}
+                aria-current={index === 0 ? "true" : "false"}
+              >
+                <img src={src} alt="" loading="lazy" />
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
 
@@ -130,4 +175,8 @@ const productSchema = {
 
     </div>
   </section>
+
+  <script>
+    import "@/scripts/product-gallery.ts";
+  </script>
 </MainLayout>

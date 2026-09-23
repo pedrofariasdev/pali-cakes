@@ -44,6 +44,12 @@ const defaultFlavor = hasFlavors ? product.flavors[0] : null;
 const displayImage = defaultFlavor?.imagem || product.image;
 const hasVariantGroups = product.variantGroups.length > 0;
 
+// Galeria: só quando as setas não estão a ser usadas para trocar de sabor.
+const galleryImages = Array.from(
+  new Set([displayImage, ...product.gallery].filter(Boolean))
+);
+const showGallery = !canBrowseFlavors && galleryImages.length > 1;
+
 const formattedPrice =
   product.price !== null
     ? new Intl.NumberFormat("pt-PT", {
@@ -80,7 +86,7 @@ const productSchema = {
     <div class="container product-detail__container">
 
 
-      <div class="product-detail__visual">
+      <div class="product-detail__visual" data-gallery>
 
         <div class="product-detail__image">
 
@@ -88,7 +94,30 @@ const productSchema = {
             src={displayImage}
             alt={product.name}
             data-product-image-display
+            data-gallery-image
           />
+
+          {showGallery && (
+            <>
+              <button
+                type="button"
+                class="product-detail__image-arrow product-detail__image-arrow--prev"
+                data-gallery-prev
+                aria-label="Foto anterior"
+              >
+                ‹
+              </button>
+
+              <button
+                type="button"
+                class="product-detail__image-arrow product-detail__image-arrow--next"
+                data-gallery-next
+                aria-label="Foto seguinte"
+              >
+                ›
+              </button>
+            </>
+          )}
 
           {canBrowseFlavors && (
             <>
@@ -113,6 +142,25 @@ const productSchema = {
           )}
 
         </div>
+
+        {showGallery && (
+          <div class="product-detail__thumbs">
+            {galleryImages.map((src, index) => (
+              <button
+                type="button"
+                class:list={[
+                  "product-detail__thumb",
+                  { "is-active": index === 0 }
+                ]}
+                data-gallery-thumb={src}
+                aria-label={`Ver foto ${index + 1}`}
+                aria-current={index === 0 ? "true" : "false"}
+              >
+                <img src={src} alt="" loading="lazy" />
+              </button>
+            ))}
+          </div>
+        )}
 
       </div>
 
@@ -292,6 +340,7 @@ const productSchema = {
   <script>
     import "@/scripts/product-flavors.ts";
     import "@/scripts/product-variant-groups.ts";
+    import "@/scripts/product-gallery.ts";
   </script>
 
 
