@@ -13,8 +13,55 @@ import type { Produto, Categoria, VarianteSabor, GrupoVariante } from "@/types/d
 let produtos: Produto[] = [];
 let categorias: Categoria[] = [];
 
+interface OpcaoCategoria {
+  valor: string;
+  nome: string;
+}
+
+/**
+ * Categorias que se podem escolher para um produto. A categoria "packs" da
+ * tabela corresponde, nos produtos, a "packs-festa" (é esse o slug que a
+ * página Packs Festa procura).
+ */
+function opcoesCategoria(): OpcaoCategoria[] {
+  return categorias.map((categoria) => ({
+    valor: categoria.slug === "packs" ? "packs-festa" : categoria.slug,
+    nome: categoria.nome
+  }));
+}
+
 function nomeCategoria(slug: string): string {
-  return categorias.find((c) => c.slug === slug)?.nome ?? slug;
+  return opcoesCategoria().find((opcao) => opcao.valor === slug)?.nome ?? slug;
+}
+
+function campoCategoria(produto: Produto, isNovo: boolean): string {
+  const opcoes = opcoesCategoria();
+  const actual = produto.categoria_slug;
+  const actualConhecida = opcoes.some((opcao) => opcao.valor === actual);
+
+  return `
+    <label class="form-field">
+      <span>Categoria</span>
+      <select data-campo="categoria_slug">
+        ${
+          isNovo && !actual
+            ? `<option value="" selected disabled>Escolha a categoria…</option>`
+            : ""
+        }
+        ${
+          actual && !actualConhecida
+            ? `<option value="${actual}" selected>${actual}</option>`
+            : ""
+        }
+        ${opcoes
+          .map(
+            (opcao) =>
+              `<option value="${opcao.valor}" ${opcao.valor === actual ? "selected" : ""}>${opcao.nome}</option>`
+          )
+          .join("")}
+      </select>
+    </label>
+  `;
 }
 
 function slugify(texto: string): string {
@@ -41,7 +88,8 @@ function produtoVazio(): Produto {
     slug: "",
     nome: "",
     descricao: "",
-    categoria_slug: categorias[0]?.slug ?? "",
+    // Sem categoria pré-escolhida: obriga a escolher uma de propósito.
+    categoria_slug: "",
     imagem_url: "",
     imagens: [],
     preco: null,
@@ -68,23 +116,9 @@ function criarCartao(produto: Produto, isNovo = false): HTMLElement {
     );
   }
 
-  const categoriaCampo = isNovo
-    ? `
-      <label class="form-field">
-        <span>Categoria</span>
-        <select data-campo="categoria_slug">
-          ${categorias
-            .map(
-              (categoria) =>
-                `<option value="${categoria.slug}" ${
-                  categoria.slug === produto.categoria_slug ? "selected" : ""
-                }>${categoria.nome}</option>`
-            )
-            .join("")}
-        </select>
-      </label>
-    `
-    : `<span class="admin-product__category">${nomeCategoria(produto.categoria_slug)}</span>`;
+  // Categoria editável em todos os produtos (antes só nos novos), para se
+  // poder corrigir um produto criado na categoria errada.
+  const categoriaCampo = campoCategoria(produto, isNovo);
 
   const slugCampo = isNovo
     ? `
@@ -658,6 +692,11 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
 
       if (novo) await carregar();
       return;
+    }
+
+    // Nunca gravar um produto existente sem categoria.
+    if (!String(campos.categoria_slug ?? "").trim()) {
+      delete campos.categoria_slug;
     }
 
     mostrar("A guardar…");
