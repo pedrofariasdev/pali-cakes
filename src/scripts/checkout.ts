@@ -427,7 +427,7 @@ async function verificarCupao(): Promise<EstadoCupao> {
     estadoCupao = "invalido";
     cupaoAplicado = null;
     mostrarEstadoCupao(
-      "Cupão não válido: confirme o código e use o mesmo email da avaliação. Cada cupão só pode ser usado uma vez e dura 1 ano.",
+      "Cupão não válido: confirme o código e use o mesmo email da avaliação. Cada cupão só pode ser usado uma vez e dentro do prazo de validade.",
       "is-error"
     );
   } else {

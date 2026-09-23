@@ -76,8 +76,17 @@ async function tratarSubmit(evento: SubmitEvent): Promise<void> {
       codigo.textContent = resultado.cupao;
 
       const nota = document.createElement("small");
+      const validade = resultado.validoAte
+        ? ` até ${new Intl.DateTimeFormat("pt-PT", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+            timeZone: "Europe/Lisbon"
+          }).format(new Date(resultado.validoAte))}`
+        : "";
+
       nota.textContent =
-        "Guarde este código: é válido para uma encomenda, durante 1 ano. Ao finalizar a encomenda, escreva-o no campo \"Cupão de desconto\" e use o mesmo email desta avaliação.";
+        `Guarde este código: é válido para uma encomenda${validade}. Ao finalizar a encomenda, escreva-o no campo "Cupão de desconto" e use o mesmo email desta avaliação.`;
 
       cupao.append(titulo, codigo, nota);
       estado.append(cupao);

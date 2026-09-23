@@ -32,7 +32,7 @@ export interface NovaAvaliacao {
 }
 
 export type ResultadoAvaliacao =
-  | { ok: true; cupao: string | null; publicada: boolean }
+  | { ok: true; cupao: string | null; validoAte: string | null; publicada: boolean }
   | { ok: false; erro: string };
 
 /** Avaliações aprovadas — usado no build para a home. */
@@ -90,7 +90,11 @@ export async function enviarAvaliacao(
     };
   }
 
-  const resposta = (data ?? {}) as { cupao?: unknown; publicada?: unknown };
+  const resposta = (data ?? {}) as {
+    cupao?: unknown;
+    valido_ate?: unknown;
+    publicada?: unknown;
+  };
 
   return {
     ok: true,
@@ -98,6 +102,7 @@ export async function enviarAvaliacao(
       typeof resposta.cupao === "string" && resposta.cupao.trim() !== ""
         ? resposta.cupao
         : null,
+    validoAte: typeof resposta.valido_ate === "string" ? resposta.valido_ate : null,
     publicada: resposta.publicada === true
   };
 }
