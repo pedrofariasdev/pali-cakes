@@ -580,7 +580,13 @@ function toOrderItems(cart: CartItem[]): OrderItemInput[] {
     categoria: item.categorySlug,
     quantidade: item.quantity,
     preco: item.price,
-    personalizacao: item.flavor ? { sabor: item.flavor } : undefined
+    personalizacao:
+      item.flavor || item.size
+        ? {
+            ...(item.flavor ? { sabor: item.flavor } : {}),
+            ...(item.size ? { tamanho: item.size } : {})
+          }
+        : undefined
   }));
 }
 

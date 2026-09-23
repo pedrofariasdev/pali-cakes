@@ -24,10 +24,22 @@ export interface GrupoVariante {
   opcoes: string[];
 }
 
+/**
+ * Tamanho do produto com preço e quantidade mínima próprios (ex.: brownie
+ * Mini / Normal / Inteiro). É a única variante que altera o preço.
+ */
+export interface VarianteTamanho {
+  nome: string;
+  /** null = sob consulta. */
+  preco: number | null;
+  quantidade_minima: number;
+}
+
 /** Formato usado dentro da coluna jsonb `produtos.opcoes`. */
 export interface OpcoesProduto {
   sabores?: VarianteSabor[];
   grupos_variantes?: GrupoVariante[];
+  tamanhos?: VarianteTamanho[];
   [chave: string]: unknown;
 }
 
@@ -90,6 +102,7 @@ export interface Encomenda {
 
 export interface Personalizacao {
   sabor?: string;
+  tamanho?: string;
   [chave: string]: unknown;
 }
 

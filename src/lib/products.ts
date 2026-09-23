@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { VarianteSabor, GrupoVariante } from "@/types/database";
+import type { VarianteSabor, GrupoVariante, VarianteTamanho } from "@/types/database";
 
 export interface Product {
   id: string;
@@ -20,6 +20,8 @@ export interface Product {
   gallery: string[];
   /** Quantidade mínima por encomenda (1 quando não há mínimo). */
   minQuantity: number;
+  /** Tamanhos com preço e mínimo próprios. Vazio quando o produto não tem tamanhos. */
+  sizes: VarianteTamanho[];
 }
 
 interface ProdutoRow {
@@ -35,7 +37,11 @@ interface ProdutoRow {
   destaque: boolean;
   ativo: boolean;
   ordem: number;
-  opcoes: { sabores?: VarianteSabor[]; grupos_variantes?: GrupoVariante[] } | null;
+  opcoes: {
+    sabores?: VarianteSabor[];
+    grupos_variantes?: GrupoVariante[];
+    tamanhos?: VarianteTamanho[];
+  } | null;
   quantidade_minima?: number | null;
 }
 
@@ -87,6 +93,32 @@ function toVariantGroups(opcoes: ProdutoRow["opcoes"]): GrupoVariante[] {
     }));
 }
 
+function toSizes(opcoes: ProdutoRow["opcoes"]): VarianteTamanho[] {
+  const tamanhos = opcoes?.tamanhos;
+
+  if (!Array.isArray(tamanhos)) {
+    return [];
+  }
+
+  return tamanhos
+    .filter(
+      (tamanho): tamanho is VarianteTamanho =>
+        !!tamanho && typeof tamanho.nome === "string" && tamanho.nome.trim() !== ""
+    )
+    .map((tamanho) => {
+      const preco = Number(tamanho.preco);
+      const minimo = Number(tamanho.quantidade_minima);
+
+      return {
+        nome: tamanho.nome.trim(),
+        preco:
+          tamanho.preco !== null && Number.isFinite(preco) && preco > 0 ? preco : null,
+        quantidade_minima:
+          Number.isFinite(minimo) && minimo >= 1 ? Math.min(99, Math.trunc(minimo)) : 1
+      };
+    });
+}
+
 function toGallery(row: ProdutoRow): string[] {
   const extras = Array.isArray(row.imagens) ? row.imagens : [];
 
@@ -119,7 +151,8 @@ function toProduct(row: ProdutoRow): Product {
     minQuantity:
       typeof row.quantidade_minima === "number" && row.quantidade_minima > 1
         ? Math.min(99, Math.trunc(row.quantidade_minima))
-        : 1
+        : 1,
+    sizes: toSizes(row.opcoes)
   };
 }
 

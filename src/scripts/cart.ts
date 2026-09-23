@@ -11,6 +11,8 @@ export interface CartItem {
   flavor: string | null;
   /** Quantidade mínima por encomenda deste produto (1 = sem mínimo). */
   minQuantity: number;
+  /** Tamanho escolhido (só em produtos com tamanhos com preço). */
+  size: string | null;
 }
 
 type NewCartItem = Omit<CartItem, "quantity">;
@@ -86,7 +88,11 @@ function normaliseCartItem(value: unknown): CartItem | null {
     categorySlug: categorySlug.slice(0, 160),
     productSlug: productSlug.slice(0, 160),
     flavor,
-    minQuantity
+    minQuantity,
+    size:
+      typeof value.size === "string" && value.size.trim()
+        ? value.size.trim().slice(0, 60)
+        : null
   };
 }
 
@@ -227,7 +233,8 @@ function bindAddToCartButtons(): void {
           productSlug,
           productFlavor,
           productMinQuantity,
-          productQuantity
+          productQuantity,
+          productSize
         } = button.dataset;
 
         if (
@@ -249,10 +256,16 @@ function bindAddToCartButtons(): void {
             ? Number(productPrice)
             : null;
 
-        const flavor =
-          productFlavor && productFlavor.trim() !== ""
-            ? productFlavor.trim()
-            : null;
+        const size =
+          productSize && productSize.trim() !== "" ? productSize.trim() : null;
+
+        // Texto da personalização: tamanho (se houver) + sabor/variantes.
+        const partes = [
+          size ? `Tamanho: ${size}` : "",
+          productFlavor?.trim() ?? ""
+        ].filter((parte) => parte !== "");
+
+        const flavor = partes.length > 0 ? partes.join(" • ") : null;
 
         const minimo = Math.max(1, Math.trunc(Number(productMinQuantity) || 1));
         const quantidade = Math.max(minimo, Math.trunc(Number(productQuantity) || minimo));
@@ -271,7 +284,8 @@ function bindAddToCartButtons(): void {
             categorySlug,
             productSlug,
             flavor,
-            minQuantity: minimo
+            minQuantity: minimo,
+            size
           },
           quantidade
         );

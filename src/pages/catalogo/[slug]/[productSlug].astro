@@ -50,13 +50,20 @@ const galleryImages = Array.from(
 );
 const showGallery = !canBrowseFlavors && galleryImages.length > 1;
 
+// Tamanhos com preço próprio: o primeiro vem escolhido e define o preço e o
+// mínimo iniciais; ao trocar de tamanho, ambos mudam no navegador.
+const hasSizes = product.sizes.length > 0;
+const defaultSize = hasSizes ? product.sizes[0] : null;
+const initialPrice = defaultSize ? defaultSize.preco : product.price;
+const initialMinQuantity = defaultSize ? defaultSize.quantidade_minima : product.minQuantity;
+
+const euro = new Intl.NumberFormat("pt-PT", {
+  style: "currency",
+  currency: "EUR"
+});
+
 const formattedPrice =
-  product.price !== null
-    ? new Intl.NumberFormat("pt-PT", {
-        style: "currency",
-        currency: "EUR"
-      }).format(product.price)
-    : product.priceLabel;
+  initialPrice !== null ? euro.format(initialPrice) : product.priceLabel;
 
 const productSchema = {
   "@context": "https://schema.org",
@@ -192,11 +199,50 @@ const productSchema = {
             Valor
           </span>
 
-          <strong>
+          <strong
+            data-price-display
+            data-price-label={product.priceLabel}
+          >
             {formattedPrice}
           </strong>
 
         </div>
+
+
+
+        {hasSizes && (
+          <div class="product-detail__flavors">
+
+            <span class="product-detail__flavors-label">
+              Escolha o tamanho
+            </span>
+
+            <div
+              class="product-detail__flavor-options"
+              role="radiogroup"
+              aria-label="Tamanho"
+              data-size-group
+            >
+              {product.sizes.map((size, index) => (
+                <button
+                  type="button"
+                  class:list={[
+                    "product-detail__flavor-option",
+                    { "is-selected": index === 0 }
+                  ]}
+                  data-size-option
+                  data-size-name={size.nome}
+                  data-size-price={size.preco ?? ""}
+                  data-size-min={size.quantidade_minima}
+                  aria-pressed={index === 0 ? "true" : "false"}
+                >
+                  {size.nome}
+                </button>
+              ))}
+            </div>
+
+          </div>
+        )}
 
 
 
@@ -291,10 +337,10 @@ const productSchema = {
             <input
               type="number"
               inputmode="numeric"
-              min={product.minQuantity}
+              min={initialMinQuantity}
               max="99"
               step="1"
-              value={product.minQuantity}
+              value={initialMinQuantity}
               aria-label="Quantidade"
               data-quantity-input
             />
@@ -308,11 +354,13 @@ const productSchema = {
             </button>
           </div>
 
-          {product.minQuantity > 1 && (
-            <small class="product-detail__minimum">
-              Encomenda mínima: {product.minQuantity} unidades
-            </small>
-          )}
+          <small
+            class="product-detail__minimum"
+            data-minimum-note
+            hidden={initialMinQuantity <= 1}
+          >
+            Encomenda mínima: <span data-minimum-value>{initialMinQuantity}</span> unidades
+          </small>
         </div>
 
 
@@ -342,13 +390,14 @@ const productSchema = {
             data-product-id={product.id}
             data-product-name={product.name}
             data-product-image={displayImage}
-            data-product-price={product.price ?? ""}
+            data-product-price={initialPrice ?? ""}
+            data-product-size={defaultSize?.nome ?? ""}
             data-product-price-label={product.priceLabel}
             data-category-slug={product.categorySlug}
             data-product-slug={product.slug}
             data-product-flavor={defaultFlavor ? `Sabor: ${defaultFlavor.nome}` : ""}
-            data-product-min-quantity={product.minQuantity}
-            data-product-quantity={product.minQuantity}
+            data-product-min-quantity={initialMinQuantity}
+            data-product-quantity={initialMinQuantity}
             disabled={hasVariantGroups}
           >
             Adicionar à encomenda
@@ -388,6 +437,7 @@ const productSchema = {
     import "@/scripts/product-variant-groups.ts";
     import "@/scripts/product-gallery.ts";
     import "@/scripts/product-quantity.ts";
+    import "@/scripts/product-sizes.ts";
   </script>
 
 

@@ -595,6 +595,10 @@
   grid-template-columns: 1fr 1.6fr auto;
 }
 
+.admin-flavor-row--size {
+  grid-template-columns: 1.4fr 0.8fr 0.6fr auto;
+}
+
 /* Galeria de fotos extra do produto */
 
 .admin-gallery {
@@ -662,7 +666,8 @@
     grid-template-columns: 44px 1fr auto;
   }
 
-  .admin-flavor-row--group {
+  .admin-flavor-row--group,
+  .admin-flavor-row--size {
     grid-template-columns: 1fr;
   }
 }

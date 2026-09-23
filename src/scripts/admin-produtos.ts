@@ -8,7 +8,13 @@ import {
   carregarImagem,
   TAMANHO_MAXIMO_FOTO
 } from "@/lib/admin-products";
-import type { Produto, Categoria, VarianteSabor, GrupoVariante } from "@/types/database";
+import type {
+  Produto,
+  Categoria,
+  VarianteSabor,
+  GrupoVariante,
+  VarianteTamanho
+} from "@/types/database";
 
 let produtos: Produto[] = [];
 let categorias: Categoria[] = [];
@@ -245,6 +251,19 @@ function criarCartao(produto: Produto, isNovo = false): HTMLElement {
         </button>
       </div>
 
+      <div class="admin-product__flavors">
+        <span class="admin-product__flavors-label">
+          Tamanhos (com preço)
+          <small>Só para produtos em que o tamanho muda o preço e a quantidade mínima (ex.: brownie Mini / Normal / Inteiro). Preço vazio = sob consulta.</small>
+        </span>
+
+        <div class="admin-flavor-rows" data-size-rows></div>
+
+        <button type="button" class="button button--secondary button--small" data-add-size>
+          + Adicionar tamanho
+        </button>
+      </div>
+
       <div class="admin-product__actions">
         <button type="button" class="button button--primary" data-guardar>
           ${isNovo ? "Criar produto" : "Guardar"}
@@ -321,6 +340,53 @@ function criarLinhaGrupo(grupo: GrupoVarianteEdicao, indice: number): string {
       />
 
       <button type="button" class="admin-flavor-row__remove" data-remove-group aria-label="Remover grupo">
+        ✕
+      </button>
+    </div>
+  `;
+}
+
+interface TamanhoEdicao {
+  nome: string;
+  preco: string;
+  minimo: string;
+}
+
+function criarLinhaTamanho(tamanho: TamanhoEdicao, indice: number): string {
+  return `
+    <div class="admin-flavor-row admin-flavor-row--size" data-size-row data-indice="${indice}">
+      <input
+        type="text"
+        class="admin-flavor-row__nome"
+        data-size-nome
+        value="${tamanho.nome}"
+        placeholder="Tamanho (ex: Mini)"
+      />
+
+      <input
+        type="number"
+        step="0.01"
+        min="0"
+        class="admin-flavor-row__nome"
+        data-size-preco
+        value="${tamanho.preco}"
+        placeholder="Preço €"
+        aria-label="Preço"
+      />
+
+      <input
+        type="number"
+        step="1"
+        min="1"
+        max="99"
+        class="admin-flavor-row__nome"
+        data-size-minimo
+        value="${tamanho.minimo}"
+        placeholder="Mín."
+        aria-label="Quantidade mínima"
+      />
+
+      <button type="button" class="admin-flavor-row__remove" data-remove-size aria-label="Remover tamanho">
         ✕
       </button>
     </div>
@@ -482,6 +548,49 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
     renderizarGrupos();
   });
 
+  // Tamanhos com preço e mínimo próprios, editados antes de "Guardar".
+  const tamanhos: TamanhoEdicao[] = (produto.opcoes?.tamanhos ?? []).map((tamanho) => ({
+    nome: tamanho.nome,
+    preco: tamanho.preco === null || tamanho.preco === undefined ? "" : String(tamanho.preco),
+    minimo: String(tamanho.quantidade_minima ?? 1)
+  }));
+
+  const tamanhosContainer = artigo.querySelector<HTMLElement>("[data-size-rows]");
+
+  const renderizarTamanhos = (): void => {
+    if (!tamanhosContainer) return;
+
+    tamanhosContainer.innerHTML = tamanhos
+      .map((tamanho, indice) => criarLinhaTamanho(tamanho, indice))
+      .join("");
+
+    tamanhosContainer.querySelectorAll<HTMLElement>("[data-size-row]").forEach((linha) => {
+      const indice = Number(linha.dataset.indice);
+
+      const ligarCampo = (seletor: string, campo: keyof TamanhoEdicao): void => {
+        linha.querySelector<HTMLInputElement>(seletor)?.addEventListener("input", (evento) => {
+          tamanhos[indice][campo] = (evento.target as HTMLInputElement).value;
+        });
+      };
+
+      ligarCampo("[data-size-nome]", "nome");
+      ligarCampo("[data-size-preco]", "preco");
+      ligarCampo("[data-size-minimo]", "minimo");
+
+      linha.querySelector("[data-remove-size]")?.addEventListener("click", () => {
+        tamanhos.splice(indice, 1);
+        renderizarTamanhos();
+      });
+    });
+  };
+
+  renderizarTamanhos();
+
+  artigo.querySelector("[data-add-size]")?.addEventListener("click", () => {
+    tamanhos.push({ nome: "", preco: "", minimo: "1" });
+    renderizarTamanhos();
+  });
+
   // Galeria de fotos extra, editada antes de "Guardar".
   const galeria: string[] = Array.isArray(produto.imagens) ? [...produto.imagens] : [];
 
@@ -631,11 +740,26 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
       }))
       .filter((grupo) => grupo.nome !== "" && grupo.opcoes.length > 0);
 
+    const tamanhosValidos: VarianteTamanho[] = tamanhos
+      .map((tamanho) => {
+        const preco = Number(tamanho.preco.replace(",", "."));
+        const minimo = Number(tamanho.minimo);
+
+        return {
+          nome: tamanho.nome.trim(),
+          preco: tamanho.preco.trim() !== "" && Number.isFinite(preco) && preco > 0 ? preco : null,
+          quantidade_minima:
+            Number.isFinite(minimo) && minimo >= 1 ? Math.min(99, Math.trunc(minimo)) : 1
+        };
+      })
+      .filter((tamanho) => tamanho.nome !== "");
+
     campos.opcoes = {
       sabores: sabores
         .map((sabor) => ({ nome: sabor.nome.trim(), imagem: sabor.imagem.trim() }))
         .filter((sabor) => sabor.nome !== ""),
-      grupos_variantes: gruposVariantes
+      grupos_variantes: gruposVariantes,
+      tamanhos: tamanhosValidos
     };
 
     campos.imagens = [...galeria];
@@ -685,7 +809,11 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
         ativo: Boolean(campos.ativo),
         ordem: (campos.ordem as number | null) ?? 0,
         quantidade_minima: campos.quantidade_minima as number,
-        opcoes: campos.opcoes as { sabores?: VarianteSabor[]; grupos_variantes?: GrupoVariante[] }
+        opcoes: campos.opcoes as {
+          sabores?: VarianteSabor[];
+          grupos_variantes?: GrupoVariante[];
+          tamanhos?: VarianteTamanho[];
+        }
       });
 
       mostrar(novo ? "Produto criado ✓" : "Não foi possível criar o produto.", !novo);
