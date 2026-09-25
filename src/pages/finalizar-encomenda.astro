@@ -114,13 +114,36 @@ import MainLayout from "../layouts/MainLayout.astro";
                 </select>
               </label>
 
+              <div
+                class="form-field--full checkout-pack-notice"
+                data-pack-notice
+                hidden
+              >
+                <strong>A sua encomenda inclui um pack</strong>
+                <ul>
+                  <li>
+                    Indique nas observações a <b>massa e o recheio do bolo</b>
+                    e os <b>sabores dos doces</b> — no pack não há opções para
+                    escolher, por isso estas informações são obrigatórias.
+                  </li>
+                  <li>
+                    Envie <b>pelo menos uma foto de referência</b> para o bolo.
+                  </li>
+                  <li>
+                    A encomenda fica sujeita a avaliação e ao orçamento final,
+                    com base nas informações enviadas.
+                  </li>
+                </ul>
+              </div>
+
               <label class="form-field form-field--full">
-                <span>Observações e personalização</span>
+                <span data-notes-label>Observações e personalização</span>
 
                 <textarea
                   name="notes"
                   rows="5"
                   placeholder="Tema, cores, sabores, quantidade de pessoas e outros detalhes importantes."
+                  data-notes-input
                 ></textarea>
               </label>
 
@@ -129,7 +152,7 @@ import MainLayout from "../layouts/MainLayout.astro";
                 data-references-field
                 hidden
               >
-                <span>Fotos de referência (opcional)</span>
+                <span data-references-label>Fotos de referência (opcional)</span>
 
                 <small>
                   Tem uma foto de inspiração? Envie aqui para ajudar

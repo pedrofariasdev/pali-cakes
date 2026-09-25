@@ -22,8 +22,20 @@ const CATEGORIAS_COM_REFERENCIA = [
   "bolos-personalizados",
   "bento-cakes",
   "cupcakes",
-  "miniaturas"
+  "miniaturas",
+  "packs-festa"
 ];
+
+const CATEGORIA_PACKS = "packs-festa";
+
+const PLACEHOLDER_NOTAS =
+  "Tema, cores, sabores, quantidade de pessoas e outros detalhes importantes.";
+const PLACEHOLDER_NOTAS_PACK =
+  "Ex.: Bolo — massa de chocolate, recheio de brigadeiro. Brigadeiros — tradicional e Nido. Cupcakes — baunilha com frutos vermelhos. Tema e cores da festa…";
+
+function temPack(cart: CartItem[]): boolean {
+  return cart.some((item) => item.categorySlug === CATEGORIA_PACKS);
+}
 
 const MAX_IMAGENS_REFERENCIA = 4;
 
@@ -248,6 +260,32 @@ function actualizarVisibilidadeReferencias(cart: CartItem[]): void {
   );
 
   campo.hidden = !relevante;
+
+  // Com pack: aviso, observações obrigatórias e foto do bolo obrigatória.
+  const comPack = temPack(cart);
+
+  const aviso = document.querySelector<HTMLElement>("[data-pack-notice]");
+  if (aviso) aviso.hidden = !comPack;
+
+  const notas = document.querySelector<HTMLTextAreaElement>("[data-notes-input]");
+  if (notas) {
+    notas.required = comPack;
+    notas.placeholder = comPack ? PLACEHOLDER_NOTAS_PACK : PLACEHOLDER_NOTAS;
+  }
+
+  const rotuloNotas = document.querySelector<HTMLElement>("[data-notes-label]");
+  if (rotuloNotas) {
+    rotuloNotas.textContent = comPack
+      ? "Observações e personalização * (massa, recheio e sabores)"
+      : "Observações e personalização";
+  }
+
+  const rotuloFotos = document.querySelector<HTMLElement>("[data-references-label]");
+  if (rotuloFotos) {
+    rotuloFotos.textContent = comPack
+      ? "Fotos de referência * (pelo menos uma para o bolo do pack)"
+      : "Fotos de referência (opcional)";
+  }
 }
 
 function mostrarEstadoReferencia(texto: string, erro: boolean): void {
@@ -633,6 +671,17 @@ async function handleCheckoutSubmit(
         "Confirme um código postal abrangido pela zona de entrega ou escolha levantamento.";
     }
     form.querySelector<HTMLInputElement>('input[name="postalCode"]')?.focus();
+    return;
+  }
+
+  if (temPack(cart) && imagensReferencia.length === 0) {
+    if (helper) {
+      helper.textContent =
+        "Para encomendas com pack, envie pelo menos uma foto de referência para o bolo.";
+    }
+    document
+      .querySelector<HTMLElement>("[data-references-field]")
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
     return;
   }
 

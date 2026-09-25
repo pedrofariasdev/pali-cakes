@@ -1,5 +1,24 @@
 ---
 import MainLayout from "@/layouts/MainLayout.astro";
+import { getProductsByCategory } from "@/lib/products";
+
+// Conteúdo de cada pack vem do admin (campo "O que inclui o pack").
+const packs = (await getProductsByCategory("packs-festa")).filter(
+  (pack) => pack.packContents.length > 0
+);
+
+const escaparHtml = (texto: string): string =>
+  texto.replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] ?? c
+  );
+
+const respostaConteudoPacks = packs
+  .map(
+    (pack) =>
+      `<p><strong><a href="/packs-festa/${pack.slug}">${escaparHtml(pack.name)}</a></strong></p>
+       <ul>${pack.packContents.map((linha) => `<li>${escaparHtml(linha)}</li>`).join("")}</ul>`
+  )
+  .join("");
 
 const faqs = [
   {
@@ -11,7 +30,7 @@ const faqs = [
           <li><strong>Escolha os produtos</strong> no menu Catálogo. Em alguns produtos escolhe também o sabor ou opções como massa, cobertura e recheio — nesse caso, é preciso escolher uma opção em cada grupo antes de continuar.</li>
           <li><strong>Clique em "Adicionar à encomenda".</strong> Pode juntar vários produtos no mesmo pedido e revê-los no <a href="/carrinho">carrinho</a>, onde também pode ajustar as quantidades.</li>
           <li><strong>Clique em "Finalizar encomenda"</strong> e preencha os seus dados de contacto, a data da celebração (com pelo menos 30 dias de antecedência) e o tipo de celebração.</li>
-          <li><strong>Conte-nos os detalhes</strong> em "Observações e personalização": tema, cores, número de pessoas, etc. Em bolos personalizados, bento cakes, cupcakes e miniaturas pode também enviar até 4 fotos de inspiração.</li>
+          <li><strong>Conte-nos os detalhes</strong> em "Observações e personalização": tema, cores, número de pessoas, etc. Em bolos personalizados, bento cakes, cupcakes, miniaturas e packs pode também enviar até 4 fotos de inspiração (nos packs, pelo menos uma foto para o bolo é obrigatória).</li>
           <li><strong>Escolha levantamento ou entrega</strong> e indique o horário que prefere. Na entrega, a taxa é calculada automaticamente a partir do código postal.</li>
           <li><strong>Envie o pedido.</strong> Recebe logo uma referência da encomenda.</li>
           <li><strong>Entramos em contacto</strong> para confirmar os detalhes e enviar o orçamento final. Só depois da sua aprovação a data fica reservada.</li>
@@ -38,17 +57,27 @@ const faqs = [
         p: "O que são os packs de festa?",
         r: "São conjuntos de doces pensados para festas de 10, 20, 30, 40 ou 50 pessoas. Reúnem tudo numa só encomenda, para tornar a sua festa mais simples — e o valor final mais vantajoso."
       },
+      ...(respostaConteudoPacks
+        ? [
+            {
+              p: "O que inclui cada pack?",
+              r: respostaConteudoPacks
+            }
+          ]
+        : []),
       {
         p: "Como encomendo um pack?",
         r: `<ol>
           <li>Abra a página <a href="/packs-festa">Packs Festa</a> e escolha o pack de acordo com o número de convidados.</li>
-          <li>Clique em "Adicionar à encomenda". Pode juntar o pack a outros produtos, como um bolo personalizado.</li>
-          <li>Finalize a encomenda como qualquer outro pedido e use as "Observações e personalização" para nos indicar o tema, as cores e os sabores preferidos.</li>
-        </ol>`
+          <li>Clique em "Adicionar à encomenda". Pode juntar o pack a outros produtos.</li>
+          <li>Ao finalizar a encomenda, indique nas "Observações e personalização" a <strong>massa e o recheio do bolo</strong> e os <strong>sabores dos doces</strong> — no pack não há opções para escolher, por isso estas informações são obrigatórias.</li>
+          <li>Envie <strong>pelo menos uma foto de referência</strong> para o bolo.</li>
+        </ol>
+        <p>A encomenda fica sujeita a avaliação e ao orçamento final, com base nas informações enviadas.</p>`
       },
       {
-        p: "Posso ajustar o que vem no pack?",
-        r: "Sim. Os sabores, as cores e os detalhes do pack podem ser ajustados à sua celebração. Indique o que pretende nas observações ao finalizar a encomenda e confirmamos tudo consigo antes do orçamento final."
+        p: "Posso escolher os sabores do pack?",
+        r: "Sim. As quantidades de cada pack são fixas, mas a massa e o recheio do bolo e os sabores dos doces são escolhidos por si: basta indicá-los nas observações ao finalizar a encomenda. Confirmamos tudo consigo antes do orçamento final."
       },
       {
         p: "E se nenhum pack for o ideal para a minha festa?",

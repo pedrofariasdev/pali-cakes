@@ -1,6 +1,7 @@
 ---
 import Navbar from "../components/layout/Navbar.astro";
 import Footer from "../components/layout/Footer.astro";
+import CookieBanner from "../components/layout/CookieBanner.astro";
 
 import "../styles/global.css";
 import "../styles/admin.css";
@@ -55,6 +56,9 @@ const baseSchema = {
 };
 
 const structuredData = schema ? [baseSchema, schema] : [baseSchema];
+
+// O painel de administração não entra nas estatísticas.
+const isAdmin = Astro.url.pathname.startsWith("/admin");
 const serializarSchema = (value: Record<string, unknown>) =>
   JSON.stringify(value).replace(/</g, "\\u003c");
 ---
@@ -148,8 +152,11 @@ const serializarSchema = (value: Record<string, unknown>) =>
 
   <Footer />
 
+  {!isAdmin && <CookieBanner />}
+
   <script>
     import "../scripts/cart.ts";
+    import "../scripts/analytics.ts";
   </script>
 
 </body>

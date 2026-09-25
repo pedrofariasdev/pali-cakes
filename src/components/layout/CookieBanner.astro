@@ -1,0 +1,34 @@
+---
+/**
+ * Aviso de cookies. Fica escondido até o script analytics.ts decidir
+ * mostrá-lo (primeira visita, ou quando se clica em "Preferências de
+ * cookies" no rodapé). O Google Analytics só é carregado depois de "Aceitar".
+ */
+---
+
+<div
+  class="cookie-banner"
+  role="dialog"
+  aria-live="polite"
+  aria-label="Preferências de cookies"
+  data-cookie-banner
+  hidden
+>
+  <div class="cookie-banner__content">
+    <p>
+      Usamos cookies de análise (Google Analytics) para perceber como o site
+      é utilizado e melhorá-lo. Só são ativados se aceitar. Saiba mais na
+      <a href="/privacidade">Política de Privacidade</a>.
+    </p>
+
+    <div class="cookie-banner__actions">
+      <button type="button" class="button button--secondary" data-cookie-reject>
+        Recusar
+      </button>
+
+      <button type="button" class="button button--primary" data-cookie-accept>
+        Aceitar
+      </button>
+    </div>
+  </div>
+</div>

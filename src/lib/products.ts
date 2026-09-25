@@ -22,6 +22,8 @@ export interface Product {
   minQuantity: number;
   /** Tamanhos com preço e mínimo próprios. Vazio quando o produto não tem tamanhos. */
   sizes: VarianteTamanho[];
+  /** Conteúdo de um pack, uma linha por item ("Bolo — 1 kg"). */
+  packContents: string[];
 }
 
 interface ProdutoRow {
@@ -41,6 +43,7 @@ interface ProdutoRow {
     sabores?: VarianteSabor[];
     grupos_variantes?: GrupoVariante[];
     tamanhos?: VarianteTamanho[];
+    conteudo?: string[];
   } | null;
   quantidade_minima?: number | null;
 }
@@ -153,7 +156,13 @@ function toProduct(row: ProdutoRow): Product {
       typeof row.quantidade_minima === "number" && row.quantidade_minima > 1
         ? Math.min(99, Math.trunc(row.quantidade_minima))
         : 1,
-    sizes: toSizes(row.opcoes)
+    sizes: toSizes(row.opcoes),
+    packContents: Array.isArray(row.opcoes?.conteudo)
+      ? row.opcoes.conteudo
+          .filter((linha): linha is string => typeof linha === "string")
+          .map((linha) => linha.trim())
+          .filter((linha) => linha !== "")
+      : []
   };
 }
 

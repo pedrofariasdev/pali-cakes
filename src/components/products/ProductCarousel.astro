@@ -1,11 +1,24 @@
 ---
 import ProductCard from "./ProductCard.astro";
 import { getCategories } from "@/lib/categories";
+import { getProducts } from "@/lib/products";
 
-const categories = await getCategories();
+const [categories, products] = await Promise.all([
+  getCategories(),
+  getProducts()
+]);
+
+// Só categorias com pelo menos um produto visível, para o carrossel não
+// levar a páginas vazias (ex.: "Doces para festa").
+const categoriasComProdutos = new Set(
+  products.map((product) =>
+    product.categorySlug === "packs-festa" ? "packs" : product.categorySlug
+  )
+);
 
 const featuredCategories = categories.filter(
-  (category) => category.featured
+  (category) =>
+    category.featured && categoriasComProdutos.has(category.categorySlug)
 );
 
 const carouselDuration = `${Math.max(

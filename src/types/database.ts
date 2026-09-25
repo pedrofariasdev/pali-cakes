@@ -42,6 +42,8 @@ export interface OpcoesProduto {
   sabores?: VarianteSabor[];
   grupos_variantes?: GrupoVariante[];
   tamanhos?: VarianteTamanho[];
+  /** Conteúdo de um pack, uma linha por item ("Bolo — 1 kg"). */
+  conteudo?: string[];
   [chave: string]: unknown;
 }
 

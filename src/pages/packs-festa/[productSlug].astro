@@ -130,13 +130,35 @@ const productSchema = {
         </div>
 
 
+        {product.packContents.length > 0 && (
+          <div class="pack-contents">
+            <span class="product-detail__flavors-label">
+              O que inclui
+            </span>
+
+            <ul class="pack-contents__list">
+              {product.packContents.map((linha) => {
+                const [item, quantidade] = linha.split(/\s+[—–-]\s+/);
+                return (
+                  <li>
+                    <span>{item}</span>
+                    {quantidade && <strong>{quantidade}</strong>}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+
+
         <div class="product-detail__notice">
           <span aria-hidden="true">✦</span>
 
           <p>
-            Os produtos, as quantidades, os sabores, as cores
-            e os detalhes do pack podem ser ajustados de acordo
-            com a celebração.
+            Ao finalizar a encomenda, indique nas observações a massa e o
+            recheio do bolo e os sabores dos doces, e envie uma foto de
+            referência para o bolo. A encomenda fica sujeita a avaliação e
+            ao orçamento final, com base nas informações enviadas.
           </p>
         </div>
 

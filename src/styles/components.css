@@ -499,6 +499,88 @@
 
 }
 
+/* Botão "Preferências de cookies" com o mesmo aspeto dos links */
+
+.footer__cookie-button {
+  padding: 0;
+
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  color: rgba(255,250,246,.7);
+  font: inherit;
+  font-size: .85rem;
+  text-align: left;
+
+  transition:
+    color var(--transition),
+    transform var(--transition);
+}
+
+.footer__cookie-button:hover {
+  color: var(--color-primary);
+  transform: translateX(4px);
+}
+
+/* =========================
+   AVISO DE COOKIES
+========================= */
+
+.cookie-banner {
+  position: fixed;
+  inset: auto 16px 16px 16px;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: center;
+}
+
+.cookie-banner__content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  width: min(100%, 860px);
+  padding: 18px 22px;
+
+  background-color: var(--color-surface);
+  border: 1px solid rgba(215, 162, 168, 0.35);
+  border-radius: 18px;
+  box-shadow: 0 12px 40px rgba(60, 30, 30, 0.18);
+}
+
+.cookie-banner__content p {
+  flex: 1;
+
+  color: var(--color-text);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.cookie-banner__content a {
+  color: var(--color-primary-dark);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.cookie-banner__actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .cookie-banner__content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cookie-banner__actions .button {
+    flex: 1;
+  }
+}
+
 
 
 .footer__hours {
@@ -506,9 +588,6 @@
   margin-top: 6px;
 
   padding-top: 14px;
-
-  border-top:
-    1px solid rgba(255,250,246,.12);
 
   color: rgba(255,250,246,.55);
 
@@ -575,6 +654,9 @@
     display: flex;
     align-items: center;
     gap: 10px;
+
+    /* Respiro entre a frase da marca e os botões das redes sociais */
+    margin-top: 18px;
   }
 
   .footer__social a {
@@ -1901,6 +1983,40 @@ body.menu-is-open {
   color: #ffffff;
 }
 
+/* Conteúdo do pack */
+
+.pack-contents {
+  margin-top: 30px;
+}
+
+.pack-contents__list {
+  display: grid;
+
+  border: 1px solid rgba(215, 162, 168, 0.3);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.pack-contents__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 12px 18px;
+
+  color: var(--color-text);
+  font-size: 0.88rem;
+}
+
+.pack-contents__list li:nth-child(odd) {
+  background-color: var(--color-soft);
+}
+
+.pack-contents__list strong {
+  color: var(--color-primary-dark);
+  white-space: nowrap;
+}
+
 /* Seletor de quantidade */
 
 .product-detail__quantity {
@@ -2892,6 +3008,36 @@ body.menu-is-open {
 
 .checkout-references__status.is-error {
   color: #b3413f;
+}
+
+/* Aviso para encomendas com pack */
+
+.checkout-pack-notice {
+  padding: 18px 20px;
+
+  background-color: var(--color-soft);
+  border-left: 4px solid var(--color-primary-dark);
+  border-radius: 12px;
+
+  color: var(--color-text);
+  font-size: 0.8rem;
+  line-height: 1.65;
+}
+
+.checkout-pack-notice strong {
+  display: block;
+  margin-bottom: 8px;
+
+  color: var(--color-primary-dark);
+  font-size: 0.88rem;
+}
+
+.checkout-pack-notice ul {
+  display: grid;
+  gap: 6px;
+
+  padding-left: 1.1rem;
+  list-style: disc;
 }
 
 /* Cupão de desconto no checkout */

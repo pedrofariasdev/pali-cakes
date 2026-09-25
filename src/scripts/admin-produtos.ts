@@ -163,6 +163,20 @@ function criarCartao(produto: Produto, isNovo = false): HTMLElement {
         <textarea data-campo="descricao" rows="2">${produto.descricao ?? ""}</textarea>
       </label>
 
+      ${
+        produto.categoria_slug === "packs-festa"
+          ? `
+      <label class="form-field">
+        <span>O que inclui o pack — um item por linha</span>
+        <textarea
+          data-pack-conteudo
+          rows="${Math.max(3, (produto.opcoes?.conteudo ?? []).length)}"
+          placeholder="Ex: Bolo — 1 kg&#10;Brigadeiros — 6 unidades"
+        >${(produto.opcoes?.conteudo ?? []).join("\n")}</textarea>
+      </label>`
+          : ""
+      }
+
       <div class="admin-product__row">
         <label class="form-field">
           <span>Preço (€)</span>
@@ -802,7 +816,18 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
       })
       .filter((tamanho) => tamanho.nome !== "");
 
+    const campoConteudo = artigo.querySelector<HTMLTextAreaElement>("[data-pack-conteudo]");
+    const conteudoPack = campoConteudo
+      ? campoConteudo.value
+          .split("\n")
+          .map((linha) => linha.trim())
+          .filter((linha) => linha !== "")
+      : produto.opcoes?.conteudo ?? [];
+
     campos.opcoes = {
+      // Mantém outras opções que existam no produto (não se perde nada ao guardar).
+      ...(produto.opcoes ?? {}),
+      conteudo: conteudoPack,
       sabores: sabores
         .map((sabor) => ({ nome: sabor.nome.trim(), imagem: sabor.imagem.trim() }))
         .filter((sabor) => sabor.nome !== ""),
@@ -861,6 +886,7 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
           sabores?: VarianteSabor[];
           grupos_variantes?: GrupoVariante[];
           tamanhos?: VarianteTamanho[];
+          conteudo?: string[];
         }
       });
 
