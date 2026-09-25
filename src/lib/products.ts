@@ -24,6 +24,8 @@ export interface Product {
   sizes: VarianteTamanho[];
   /** Conteúdo de um pack, uma linha por item ("Bolo — 1 kg"). */
   packContents: string[];
+  /** "A partir de X €" quando o preço depende do sabor/tamanho; senão null. */
+  cardPriceLabel: string | null;
 }
 
 interface ProdutoRow {
@@ -61,10 +63,35 @@ function toFlavors(opcoes: ProdutoRow["opcoes"]): VarianteSabor[] {
       (item): item is VarianteSabor =>
         !!item && typeof item.nome === "string" && item.nome.trim() !== ""
     )
-    .map((item) => ({
-      nome: item.nome,
-      imagem: typeof item.imagem === "string" ? item.imagem : ""
-    }));
+    .map((item) => {
+      const preco = Number(item.preco);
+
+      return {
+        nome: item.nome,
+        imagem: typeof item.imagem === "string" ? item.imagem : "",
+        preco:
+          item.preco !== null && item.preco !== undefined && Number.isFinite(preco) && preco > 0
+            ? preco
+            : null
+      };
+    });
+}
+
+const euro = new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" });
+
+/**
+ * Nos cartões do catálogo: quando o preço depende do sabor ou do tamanho,
+ * mostra "A partir de X €" com o valor mais baixo.
+ */
+function toCardPriceLabel(
+  flavors: VarianteSabor[],
+  sizes: VarianteTamanho[]
+): string | null {
+  const precos = [...sizes.map((s) => s.preco), ...flavors.map((f) => f.preco ?? null)].filter(
+    (preco): preco is number => typeof preco === "number" && preco > 0
+  );
+
+  return precos.length > 0 ? `A partir de ${euro.format(Math.min(...precos))}` : null;
 }
 
 function toVariantGroups(opcoes: ProdutoRow["opcoes"]): GrupoVariante[] {
@@ -135,6 +162,9 @@ function toGallery(row: ProdutoRow): string[] {
 }
 
 function toProduct(row: ProdutoRow): Product {
+  const flavors = toFlavors(row.opcoes);
+  const sizes = toSizes(row.opcoes);
+
   return {
     id: row.slug,
     name: row.nome,
@@ -149,14 +179,15 @@ function toProduct(row: ProdutoRow): Product {
     priceLabel: row.preco_label?.trim() || "Sob consulta",
     active: row.ativo,
     featured: row.destaque,
-    flavors: toFlavors(row.opcoes),
+    flavors,
     variantGroups: toVariantGroups(row.opcoes),
     gallery: toGallery(row),
     minQuantity:
       typeof row.quantidade_minima === "number" && row.quantidade_minima > 1
         ? Math.min(99, Math.trunc(row.quantidade_minima))
         : 1,
-    sizes: toSizes(row.opcoes),
+    sizes,
+    cardPriceLabel: toCardPriceLabel(flavors, sizes),
     packContents: Array.isArray(row.opcoes?.conteudo)
       ? row.opcoes.conteudo
           .filter((linha): linha is string => typeof linha === "string")

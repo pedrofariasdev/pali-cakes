@@ -12,6 +12,8 @@ export type MetodoEntrega = "levantamento" | "entrega";
 export interface VarianteSabor {
   nome: string;
   imagem: string;
+  /** Preço próprio do sabor (opcional). Vazio = usa o preço do produto. */
+  preco?: number | null;
 }
 
 /**

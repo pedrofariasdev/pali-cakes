@@ -242,7 +242,7 @@ function criarCartao(produto: Produto, isNovo = false): HTMLElement {
       <div class="admin-product__flavors">
         <span class="admin-product__flavors-label">
           Sabores / variantes
-          <small>Se este produto tiver sabores à escolha, adicione aqui um nome e uma foto para cada um.</small>
+          <small>Se este produto tiver sabores à escolha, adicione aqui um nome e uma foto para cada um. Se o sabor tiver um preço diferente, preencha o preço; se ficar vazio, usa o preço do produto.</small>
         </span>
 
         <div class="admin-flavor-rows" data-flavor-rows></div>
@@ -319,6 +319,17 @@ function criarLinhaSabor(sabor: VarianteSabor, indice: number): string {
         data-flavor-nome
         value="${sabor.nome}"
         placeholder="Nome do sabor (ex: Ninho)"
+      />
+
+      <input
+        type="number"
+        step="0.01"
+        min="0"
+        class="admin-flavor-row__nome"
+        data-flavor-preco
+        value="${sabor.preco ?? ""}"
+        placeholder="Preço € (opcional)"
+        aria-label="Preço do sabor"
       />
 
       <button type="button" class="admin-flavor-row__remove" data-remove-flavor aria-label="Remover sabor">
@@ -483,6 +494,15 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
         }
       );
 
+      linha.querySelector<HTMLInputElement>("[data-flavor-preco]")?.addEventListener(
+        "input",
+        (evento) => {
+          const valor = (evento.target as HTMLInputElement).value.replace(",", ".").trim();
+          const preco = Number(valor);
+          sabores[indice].preco = valor !== "" && Number.isFinite(preco) && preco > 0 ? preco : null;
+        }
+      );
+
       linha.querySelector<HTMLButtonElement>("[data-remove-flavor]")?.addEventListener(
         "click",
         () => {
@@ -526,7 +546,7 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
   renderizarSabores();
 
   artigo.querySelector("[data-add-flavor]")?.addEventListener("click", () => {
-    sabores.push({ nome: "", imagem: "" });
+    sabores.push({ nome: "", imagem: "", preco: null });
     renderizarSabores();
   });
 
@@ -829,7 +849,11 @@ function ligarEventos(artigo: HTMLElement, produto: Produto, isNovo = false): vo
       ...(produto.opcoes ?? {}),
       conteudo: conteudoPack,
       sabores: sabores
-        .map((sabor) => ({ nome: sabor.nome.trim(), imagem: sabor.imagem.trim() }))
+        .map((sabor) => ({
+          nome: sabor.nome.trim(),
+          imagem: sabor.imagem.trim(),
+          preco: typeof sabor.preco === "number" && sabor.preco > 0 ? sabor.preco : null
+        }))
         .filter((sabor) => sabor.nome !== ""),
       grupos_variantes: gruposVariantes,
       tamanhos: tamanhosValidos

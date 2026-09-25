@@ -31,6 +31,44 @@ function selectFlavor(
       addToCartButton.dataset.productImage = flavorImage;
     }
   }
+
+  aplicarPrecoDoSabor(option, addToCartButton);
+}
+
+const euroSabor = new Intl.NumberFormat("pt-PT", {
+  style: "currency",
+  currency: "EUR"
+});
+
+/**
+ * Sabores com preço próprio (ex.: Hambúrguer Dubai). Se o produto tiver
+ * tamanhos com preço, é o tamanho que manda no preço e isto não faz nada.
+ */
+function aplicarPrecoDoSabor(
+  option: HTMLButtonElement,
+  addToCartButton: HTMLButtonElement | null
+): void {
+  if (document.querySelector("[data-size-group]")) return;
+
+  const precoMostrado = document.querySelector<HTMLElement>("[data-price-display]");
+  if (!precoMostrado) return;
+
+  const precoSabor = Number(option.dataset.flavorPrice);
+  const precoBase = Number(precoMostrado.dataset.basePrice);
+
+  const preco =
+    option.dataset.flavorPrice && Number.isFinite(precoSabor) && precoSabor > 0
+      ? precoSabor
+      : precoMostrado.dataset.basePrice && Number.isFinite(precoBase) && precoBase > 0
+        ? precoBase
+        : null;
+
+  precoMostrado.textContent =
+    preco !== null ? euroSabor.format(preco) : precoMostrado.dataset.priceLabel || "Sob consulta";
+
+  if (addToCartButton) {
+    addToCartButton.dataset.productPrice = preco !== null ? String(preco) : "";
+  }
 }
 
 function bindFlavorSelectors(): void {

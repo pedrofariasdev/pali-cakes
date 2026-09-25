@@ -170,8 +170,8 @@ const categoryProducts = await getProductsByCategory(slug);
                   category={category.name}
                   image={product.image}
                   href={`/catalogo/${product.categorySlug}/${product.slug}`}
-                  price={product.price}
-                  priceLabel={product.priceLabel}
+                  price={product.cardPriceLabel ? null : product.price}
+                  priceLabel={product.cardPriceLabel ?? product.priceLabel}
                   linkLabel="Ver detalhes"
                 />
               ))

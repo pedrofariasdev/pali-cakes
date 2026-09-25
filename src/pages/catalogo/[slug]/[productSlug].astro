@@ -56,7 +56,10 @@ const galleryImages = Array.from(
 );
 const showGallery = !canBrowseFlavors && galleryImages.length > 1;
 
-const initialPrice = defaultSize ? defaultSize.preco : product.price;
+// Preço inicial: tamanho escolhido > sabor escolhido (se tiver preço) > produto.
+const initialPrice = defaultSize
+  ? defaultSize.preco
+  : defaultFlavor?.preco ?? product.price;
 const initialMinQuantity = defaultSize ? defaultSize.quantidade_minima : product.minQuantity;
 
 const euro = new Intl.NumberFormat("pt-PT", {
@@ -204,6 +207,7 @@ const productSchema = {
           <strong
             data-price-display
             data-price-label={product.priceLabel}
+            data-base-price={product.price ?? ""}
           >
             {formattedPrice}
           </strong>
@@ -272,6 +276,7 @@ const productSchema = {
                   data-flavor-option
                   data-flavor-name={flavor.nome}
                   data-flavor-image={flavor.imagem}
+                  data-flavor-price={flavor.preco ?? ""}
                   aria-pressed={index === 0 ? "true" : "false"}
                 >
                   {flavor.nome}
