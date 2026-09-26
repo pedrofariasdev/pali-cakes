@@ -38,6 +38,7 @@ interface OrderItemPayload {
   nome?: string;
   quantidade?: number;
   preco?: number | null;
+  personalizacao?: { sabor?: string; tamanho?: string } | null;
 }
 
 interface OrderNotificationPayload {
@@ -53,8 +54,13 @@ interface OrderNotificationPayload {
   tipoCelebracao?: string;
   observacoes?: string;
   horarioPreferido?: string;
+  cupao?: string;
+  descontoPercentagem?: number;
+  fotosReferencia?: number;
   itens?: OrderItemPayload[];
 }
+
+const ADMIN_ENCOMENDAS_URL = "https://palicakes.pt/admin/encomendas";
 
 const currencyFormatter = new Intl.NumberFormat("pt-PT", {
   style: "currency",
@@ -112,15 +118,64 @@ export default {
     const horarioPreferido = (payload.horarioPreferido ?? "").trim();
     const itens = Array.isArray(payload.itens) ? payload.itens : [];
 
+    const cupao = (payload.cupao ?? "").trim().toUpperCase();
+    const descontoPercentagem =
+      typeof payload.descontoPercentagem === "number" && payload.descontoPercentagem > 0
+        ? payload.descontoPercentagem
+        : 0;
+    const fotosReferencia =
+      typeof payload.fotosReferencia === "number" && payload.fotosReferencia > 0
+        ? payload.fotosReferencia
+        : 0;
+
     const itensHtml = itens
       .map((item) => {
         const nome = escapeHtml(item.nome ?? "Produto");
         const quantidade = item.quantidade ?? 1;
         const preco = formatPreco(item.preco);
+        // O texto da personalização já inclui o tamanho (ex.: "Tamanho: Mini • Sabor: Nido").
+        const detalhe = (item.personalizacao?.sabor ?? "").trim();
 
-        return `<li>${quantidade} × ${nome} — ${preco}</li>`;
+        return `<li>${quantidade} × ${nome} — ${preco}${
+          detalhe ? `<br><small>${escapeHtml(detalhe)}</small>` : ""
+        }</li>`;
       })
       .join("");
+
+    // Total estimado só com os itens com preço (os "sob consulta" ficam de fora).
+    const subtotal = itens.reduce(
+      (total, item) =>
+        typeof item.preco === "number"
+          ? total + item.preco * (item.quantidade ?? 1)
+          : total,
+      0
+    );
+    const desconto =
+      cupao && descontoPercentagem > 0
+        ? Math.round(subtotal * descontoPercentagem) / 100
+        : 0;
+
+    const totaisHtml =
+      subtotal > 0
+        ? `<p><strong>Total dos itens com preço:</strong> ${currencyFormatter.format(subtotal)}${
+            desconto > 0
+              ? `<br><strong>Desconto do cupão (${descontoPercentagem}%):</strong> −${currencyFormatter.format(desconto)}<br><strong>Total estimado:</strong> ${currencyFormatter.format(subtotal - desconto)}`
+              : ""
+          }<br><small>Sem taxa de entrega; itens sob consulta não incluídos.</small></p>`
+        : "";
+
+    const cupaoHtml = cupao
+      ? `<p><strong>Cupão:</strong> ${escapeHtml(cupao)}${
+          descontoPercentagem > 0 ? ` (${descontoPercentagem}% de desconto)` : ""
+        } — validado pelo site para o email do cliente.</p>`
+      : "";
+
+    const fotosHtml =
+      fotosReferencia > 0
+        ? `<p><strong>Fotos de referência:</strong> ${fotosReferencia} ${
+            fotosReferencia === 1 ? "foto enviada" : "fotos enviadas"
+          } — veja-as no <a href="${ADMIN_ENCOMENDAS_URL}">painel de encomendas</a>.</p>`
+        : "";
 
     const enderecoHtml =
       metodoEntrega === "Entrega"
@@ -139,7 +194,10 @@ export default {
       ${horarioPreferido ? `<p><strong>Horário preferido:</strong> ${escapeHtml(horarioPreferido)}</p>` : ""}
       <p><strong>Itens:</strong></p>
       <ul>${itensHtml}</ul>
+      ${cupaoHtml}
+      ${totaisHtml}
       ${observacoes ? `<p><strong>Observações:</strong><br>${escapeHtml(observacoes).replace(/\n/g, "<br>")}</p>` : ""}
+      ${fotosHtml}
     `;
 
     const resendResponse = await fetch("https://api.resend.com/emails", {

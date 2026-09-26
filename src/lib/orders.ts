@@ -166,6 +166,8 @@ async function notificarEncomendaNova(
       observacoes: input.observacoes,
       horarioPreferido: input.horarioPreferido,
       cupao: input.cupao ? normalizarCupao(input.cupao) : "",
+      descontoPercentagem: input.cupao ? DESCONTO_CUPAO_PERCENTAGEM : 0,
+      fotosReferencia: input.imagensReferencia?.length ?? 0,
       itens: input.itens
     }
   });
